@@ -138,6 +138,10 @@ Cette architecture peut évoluer vers :
 - une couche de synchronisation offline si l’expérience doit fonctionner sans réseau,
 - une stratégie d’analytics et de monitoring plus avancée.
 
-## 11. Conclusion
+## 11. Visuel de site et ressemblence
+
+Site d'annonce, listing. voici le lien de theme wordpress la quelle correspond plus le site que je voulais creer - https://wpdirectorykit.com/theme_preview/classified-ads-directory
+
+## 12. Conclusion
 
 Cette architecture offre une base solide pour une solution moderne, modulable et prête à évoluer. Elle peut être ajustée en fonction des contraintes techniques réelles du projet, des services backend et des besoins fonctionnels.
