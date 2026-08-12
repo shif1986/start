@@ -2,18 +2,71 @@
 
 Ce document est la référence unique pour construire l'interface React. Le code se trouve dans `frontend/`, mais **toutes les commandes ci-dessous se lancent depuis la racine du projet**. Il n'est jamais nécessaire d'exécuter `cd frontend`.
 
+## Principes produit confirmés
+
+- Nom : START Réseau Chrétien.
+
+- Marketplace / annuaire d'annonces pour professionnels etparticuliers chrétiens.
+
+- Compte particulier : gratuit.
+
+- Compte professionnel : publication conditionnée à un abonnement.
+
+- Abonnement pro prévu : 7 € / mois ou 84 € / an.
+
+- Authentification : e-mail classique + Google.
+
+- Les visiteurs peuvent parcourir les annonces, mais les coordonnéesprivées (téléphone/e-mail) sont réservées aux particuliers sont passé par creer un compte.
+
+- Carte de France avec recherche par département sur l'accueil et dansle catalogue.
+
+- Paiement prévu avec Stripe et mode de payment Google Pay + mode classique lorsque disponible.
+
+- Identité visuelle : Manrope, #22221E, #F4EFE5, #C7A45D.
+
 ## 1. Objectif du front-end
 
-Créer une marketplace locale rapide, accessible et responsive qui permet à un visiteur de :
+Créer une marketplace (site d'annonce) locale rapide, accessible, dynamique, moderne, avec animation, professionnelle et responsive qui permet à un visiteur de :
 
 1. rechercher une annonce ;
 2. filtrer et trier les résultats avec une URL partageable ;
-3. consulter une fiche annonce et un profil vendeur ;
-4. créer un compte ;
-5. déposer, prévisualiser et gérer ses annonces ;
-6. enregistrer des favoris ;
-7. signaler un contenu ;
-8. utiliser un dashboard vendeur et, selon son rôle, un dashboard de modération.
+3. consulter une fiche annonce et un profil professionnel ;
+4. créer un compte professionel, les professionnels peuvent avoir un access a cet compte pour deposer une annonce apres avoir pris un abonement 7 euro par moi, ou 84 euros par an.
+5. créer un compte particulier qui vas etre gratuit, qui permet les client de faire des commentaires et cette compte permet aussi pour prendre contact avec les professionnels, cette a dire qu'ils peuvent voir le numero de telephone et adresse email;
+6. les visiteur particulier peuvent voir toute l'annonce sauf pour voir le numero de telephone et adresse email,signaler un souci, et mettre un commentaire il faut creer un compte
+7. enregistrer des favoris ;
+8. signaler un contenu ;
+9. utiliser un dashboard professionnel et, particuliere, selon son rôle, un dashboard de modération, garder l'historique de leur interaction avec le site.
+10. tu peux faire l'option pour creer un compte pro ou particulier soit par compte gmail et option classique par n'importe quelle mail
+
+## 2. les pages
+
+- le nom de site est Start reseau chrétien, le site ressemble a cette site vient de theme wordpress que tu peux voir : https://wpdirectorykit.com/theme_preview/classified-ads-directory
+
+- j'ai deja un logo
+- font : Manrope
+- couleur : #22221E, #F4EFE5, #C7A45D
+
+1. accueil :
+
+- titre : Start reseau chrétien
+- description met une correspond - (cette une site d'association chretienne qui accueil les professionnel chretien et particulier chretien de travailler pour le royaume de Dieu)
+- il faut une carte geographique pour que les client puisse faire une recherche d'annonce depuis la carte le plan geograpique.
+- une gallerie de cards de tout les annonces
+
+2. page annonce et sous page d'abonnement:
+
+- tout un haut une carte goegraphique qui montre la presence d'annonce sur la carte selon le choix client de departement
+- un bar de recherche de d'annonce
+- filtrer les annonces
+- clique sur annonce, permet d'ouvrir le profile de professionnel
+- sous page d'abonnement soit expliquer les deux option professionnele 7 euros par mois et 84€ par an. les option classique, permet de creer des annonces, etc...
+
+3. page a propos : te laisse creer avec le style moderne, ou je vais ecrire et mettre une video youtube pour expliquer le vision
+
+4. page Don : tu peux creer une page pour recevoir les dons, par un bouton, tu le garde sur le header
+
+5. page de contact : classique
 
 ## 2. Stack retenue
 
@@ -25,7 +78,7 @@ Créer une marketplace locale rapide, accessible et responsive qui permet à un 
 - Supabase JS pour Auth, PostgreSQL, Storage et les appels RPC ;
 - Zustand seulement pour un futur état d'interface réellement global ;
 - Vitest + Testing Library pour le TDD ;
-- CSS centralisé au départ, avec variables et composants visuels cohérents.
+- CSS en tailwind centralisé au départ, avec variables et composants visuels cohérents.
 
 ## 3. Commandes depuis la racine
 
@@ -201,3 +254,13 @@ Une tranche front-end est terminée uniquement quand :
 5. le parcours clavier est utilisable ;
 6. les états erreur et vide ont été vérifiés ;
 7. le contrat back-end utilisé est documenté dans `BACKEND.md`.
+
+## 11. Payement par stripe
+
+- tu peux mettre de le fonctionnement par stripe
+- mode de payement en option google pay
+
+## 12. Carte localisation de plan de la france
+
+- je souhaite avoir une carte de plan geographique sur la page d'accuille, pour que les cliens puisse faire une recherche d'annonce
+- pour que clients puisse cliquer sur la carte departement par departement

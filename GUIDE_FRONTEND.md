@@ -464,7 +464,12 @@ Une fonctionnalité front-end est terminée seulement si :
 9. mobile et clavier ont été vérifiés ;
 10. le contrat utilisé est cohérent avec `BACKEND.md`.
 
-## 18. Références officielles
+## 18. Payement par stripe
+
+- tu peux mettre de le fonctionnement par stripe
+- mode de payement en option google pay
+
+## 19. Références officielles
 
 - [shadcn/ui avec Vite](https://ui.shadcn.com/docs/installation/vite)
 - [TanStack Query pour React](https://tanstack.com/query/latest/docs/framework/react/overview)
@@ -474,3 +479,8 @@ Une fonctionnalité front-end est terminée seulement si :
 - [Tailwind CSS avec Vite](https://tailwindcss.com/docs/installation/using-vite)
 
 Le développeur doit commencer par lire ce fichier, puis `FRONTEND.md`, puis consulter `BACKEND.md` uniquement pour comprendre les contrats et permissions dont son interface dépend.
+
+## 20. Carte localisation de plan de la france
+
+- je souhaite avoir une carte de plan geographique sur la page d'accuille, pour que les cliens puisse faire une recherche d'annonce
+- pour que clients puisse cliquer sur la carte departement par departement
