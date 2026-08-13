@@ -1,74 +1,68 @@
 # Front-end — Place
 
-Ce document est la référence unique pour construire l'interface React. Le code se trouve dans `frontend/`, mais **toutes les commandes ci-dessous se lancent depuis la racine du projet**. Il n'est jamais nécessaire d'exécuter `cd frontend`.
+Ce document est la référence unique pour construire l'interface React. Le code se trouve dans `frontend/`, mais toutes les commandes ci-dessous se lancent depuis la racine du projet. Il n'est jamais nécessaire d'exécuter `cd frontend`.
 
 ## Principes produit confirmés
 
 - Nom : START Réseau Chrétien.
-
-- Marketplace / annuaire d'annonces pour professionnels etparticuliers chrétiens.
-
+- Marketplace / annuaire d'annonces pour professionnels et particuliers chrétiens.
 - Compte particulier : gratuit.
-
-- Compte professionnel : publication conditionnée à un abonnement.
-
+- Compte professionnel : publication conditionnée à un abonnement actif.
 - Abonnement pro prévu : 7 € / mois ou 84 € / an.
-
 - Authentification : e-mail classique + Google.
-
-- Les visiteurs peuvent parcourir les annonces, mais les coordonnéesprivées (téléphone/e-mail) sont réservées aux particuliers sont passé par creer un compte.
-
-- Carte de France avec recherche par département sur l'accueil et dansle catalogue.
-
-- Paiement prévu avec Stripe et mode de payment Google Pay + mode classique lorsque disponible.
-
+- Un visiteur non connecté peut consulter les annonces et les profils publics, mais il ne peut pas voir le numéro de téléphone ni l’adresse e-mail professionnelle.
+- Un particulier connecté peut consulter les annonces, commenter, signaler un contenu, enregistrer des favoris et prendre contact selon le parcours défini par le site, sans pouvoir publier d’annonce.
+- Un professionnel connecté peut consulter les annonces et les profils publics, et peut voir les coordonnées d’un autre professionnel.
+- Une annonce professionnelle ne peut être publiée qu’après souscription à un abonnement actif et validation du compte / statut pro.
+- Carte de France avec recherche par département sur l'accueil et dans le catalogue.
+- Paiement prévu avec Stripe, avec un mode de paiement Google Pay et un mode classique lorsque disponible.
 - Identité visuelle : Manrope, #22221E, #F4EFE5, #C7A45D.
 
 ## 1. Objectif du front-end
 
-Créer une marketplace (site d'annonce) locale rapide, accessible, dynamique, moderne, avec animation, professionnelle et responsive qui permet à un visiteur de :
+Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, moderne, animée, professionnelle et responsive, qui permet à un visiteur de :
 
 1. rechercher une annonce ;
 2. filtrer et trier les résultats avec une URL partageable ;
 3. consulter une fiche annonce et un profil professionnel ;
-4. créer un compte professionel, les professionnels peuvent avoir un access a cet compte pour deposer une annonce apres avoir pris un abonement 7 euro par moi, ou 84 euros par an.
-5. créer un compte particulier qui vas etre gratuit, qui permet les client de faire des commentaires et cette compte permet aussi pour prendre contact avec les professionnels, cette a dire qu'ils peuvent voir le numero de telephone et adresse email;
-6. les visiteur particulier peuvent voir toute l'annonce sauf pour voir le numero de telephone et adresse email,signaler un souci, et mettre un commentaire il faut creer un compte
+4. créer un compte professionnel ; les professionnels peuvent y accéder pour déposer une annonce après avoir souscrit un abonnement de 7 € par mois ou 84 € par an ;
+5. créer un compte particulier gratuit, qui permet au client de laisser des commentaires, enregistrer des favoris et prendre contact selon les règles du site, sans avoir le droit de publier une annonce ;
+6. consulter l'ensemble des annonces, sans voir les coordonnées privées professionnelles, signaler un problème et laisser un commentaire après création d'un compte ;
 7. enregistrer des favoris ;
 8. signaler un contenu ;
-9. utiliser un dashboard professionnel et, particuliere, selon son rôle, un dashboard de modération, garder l'historique de leur interaction avec le site.
-10. tu peux faire l'option pour creer un compte pro ou particulier soit par compte gmail et option classique par n'importe quelle mail
+9. utiliser un tableau de bord professionnel ou particulier selon son rôle, ainsi qu'un tableau de bord de modération, tout en conservant l'historique de ses interactions sur le site ;
+10. choisir entre la création d'un compte pro ou particulier via Google ou via un identifiant classique avec n'importe quelle adresse e-mail.
 
-## 2. les pages
+## 2. Les pages
 
-- le nom de site est Start reseau chrétien, le site ressemble a cette site vient de theme wordpress que tu peux voir : https://wpdirectorykit.com/theme_preview/classified-ads-directory
+- Le nom du site est Start Réseau Chrétien. Le site s'inspire d'un thème WordPress que l'on peut consulter ici : https://wpdirectorykit.com/theme_preview/classified-ads-directory
+- J'ai déjà un logo.
+- Police : Manrope.
+- Couleurs : #22221E, #F4EFE5, #C7A45D.
 
-- j'ai deja un logo
-- font : Manrope
-- couleur : #22221E, #F4EFE5, #C7A45D
+1. Accueil :
+   - titre : Start Réseau Chrétien ;
+   - description : mettre une proposition correspondant à un site d'association chrétienne qui accueille des professionnels chrétiens et des particuliers chrétiens pour travailler pour le Royaume de Dieu ;
+   - carte des départements de France et des DOM-TOM avec une barre de recherche ; les utilisateurs peuvent cliquer sur les départements pour lancer une recherche ; cela redirige vers la page d'annonces, avec la recherche et le département transmis dans l'URL ;
+   - section secondaire avec une galerie de 5 cartes d'annonces, avec un bouton "Voir plus" ; ces annonces doivent être triées du plus récent au plus ancien.
 
-1. accueil :
+2. Page de recherche d'annonces :
+   - si l'utilisateur n'est pas authentifié, proposer un bouton pour l'inviter à créer un compte ;
+   - en haut, une carte géographique affichant la présence des annonces selon le département choisi par le client ;
+   - une barre de recherche d'annonces ;
+   - filtres et tri des annonces ;
+   - cliquer sur une annonce ouvre le profil du professionnel ;
+   - sous-page d'abonnement pour expliquer les deux options professionnelles : 7 € par mois et 84 € par an. Les options classiques permettent de créer des annonces, etc.
 
-- titre : Start reseau chrétien
-- description met une correspond - (cette une site d'association chretienne qui accueil les professionnel chretien et particulier chretien de travailler pour le royaume de Dieu)
-- il faut une carte geographique pour que les client puisse faire une recherche d'annonce depuis la carte le plan geograpique.
-- une gallerie de cards de tout les annonces
+3. Page de détail d'une annonce avec un bouton permettant de revenir à la page de recherche.
 
-2. page annonce et sous page d'abonnement:
+4. Page À propos : laisser créer un style moderne, puis ajouter le texte et une vidéo YouTube pour expliquer la vision.
 
-- tout un haut une carte goegraphique qui montre la presence d'annonce sur la carte selon le choix client de departement
-- un bar de recherche de d'annonce
-- filtrer les annonces
-- clique sur annonce, permet d'ouvrir le profile de professionnel
-- sous page d'abonnement soit expliquer les deux option professionnele 7 euros par mois et 84€ par an. les option classique, permet de creer des annonces, etc...
+5. Page de dons : créer une page dédiée pour recevoir des dons, avec un bouton conservé dans le header.
 
-3. page a propos : te laisse creer avec le style moderne, ou je vais ecrire et mettre une video youtube pour expliquer le vision
+6. Page de contact : classique.
 
-4. page Don : tu peux creer une page pour recevoir les dons, par un bouton, tu le garde sur le header
-
-5. page de contact : classique
-
-## 2. Stack retenue
+## 3. Stack retenue
 
 - React 19 + TypeScript strict ;
 - Vite pour le développement et le build ;
@@ -76,11 +70,11 @@ Créer une marketplace (site d'annonce) locale rapide, accessible, dynamique, mo
 - TanStack Query pour les données serveur et le cache ;
 - React Hook Form + Zod pour les formulaires et leur validation ;
 - Supabase JS pour Auth, PostgreSQL, Storage et les appels RPC ;
-- Zustand seulement pour un futur état d'interface réellement global ;
+- Zustand uniquement pour un futur état d'interface réellement global ;
 - Vitest + Testing Library pour le TDD ;
-- CSS en tailwind centralisé au départ, avec variables et composants visuels cohérents.
+- CSS en Tailwind centralisé au départ, avec variables et composants visuels cohérents.
 
-## 3. Commandes depuis la racine
+## 4. Commandes depuis la racine
 
 ```bash
 npm run setup
@@ -97,20 +91,19 @@ npm run check
 
 Le serveur front-end utilise `http://127.0.0.1:5173`.
 
-## 4. Configuration locale
+## 5. Configuration locale
 
 Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les valeurs retournées par `npm run backend:start` :
 
 ```dotenv
-
 VITE_SUPABASE_URL=https://ybfjjuznkfaftudtysge.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliZmpqdXpua2ZhZnR1ZHR5c2dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MzUwMjIsImV4cCI6MjEwMjExMTAyMn0.pXs6udT7zoAe0ceUGA1NVmD3lVTgIBasYvKSoVjBaPc
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_pcCWg0bAE4p0A4VNOuPUUg_CMLwdOTf
 ```
 
-La clé `service_role` ne doit **jamais** être mise dans le front-end.
+La clé `service_role` ne doit jamais être mise dans le front-end.
 
-## 5. Organisation des fichiers
+## 6. Organisation des fichiers
 
 ```text
 frontend/
@@ -145,7 +138,7 @@ features/listings/
 └── hooks/                   # hooks réutilisés dans la feature
 ```
 
-## 6. Responsabilité des états
+## 7. Responsabilité des états
 
 ### TanStack Query
 
@@ -157,7 +150,7 @@ Utiliser TanStack Query pour les annonces, catégories, profils, favoris, signal
 ];
 ```
 
-Après une mutation, invalider seulement les données touchées. Ne pas déclencher des rafraîchissements globaux.
+Après une mutation, invalider uniquement les données touchées. Ne pas déclencher de rafraîchissement global.
 
 ### URL
 
@@ -171,9 +164,9 @@ Cela garantit le partage, le retour navigateur, le cache et une future stratégi
 
 ### Zustand
 
-Réserver Zustand à l'état d'interface non persistant : ouverture d'une sidebar, mode grille/liste, étape courante d'un formulaire ou brouillon local. Les données Supabase n'y sont pas dupliquées.
+Réserver Zustand à l'état d'interface non persistant : ouverture d'une sidebar, mode grille / liste, étape courante d'un formulaire ou brouillon local. Les données Supabase ne doivent pas y être dupliquées.
 
-## 7. Routes V1
+## 8. Routes V1
 
 | Route                 | Accès            | But                             |
 | --------------------- | ---------------- | ------------------------------- |
@@ -193,9 +186,9 @@ Réserver Zustand à l'état d'interface non persistant : ouverture d'une sideba
 
 Les routes non encore implémentées affichent actuellement une page neutre. Ce comportement est volontaire : il évite les liens morts tout en signalant clairement la tranche suivante.
 
-## 8. Ordre de réalisation TDD
+## 9. Ordre de réalisation TDD
 
-Chaque tranche suit strictement : **test rouge → code minimal correct → test vert → nettoyage → build**.
+Chaque tranche suit strictement : test rouge → code minimal correct → test vert → nettoyage → build.
 
 ### Tranche F1 — catalogue
 
@@ -206,17 +199,17 @@ Chaque tranche suit strictement : **test rouge → code minimal correct → test
 - [ ] pagination avec conservation des filtres ;
 - [ ] état favori relié à Supabase et retour de connexion explicite.
 
-Critères de fin : URL partageable, aucune erreur TypeScript, navigation clavier, états chargement/vide/erreur visibles.
+Critères de fin : URL partageable, aucune erreur TypeScript, navigation clavier, états chargement / vide / erreur visibles.
 
 ### Tranche F2 — fiche annonce
 
-Écrire d'abord les tests couvrant : chargement par slug, annonce absente, galerie clavier/tactile, prix absent, champs dynamiques et informations vendeur.
+Écrire d'abord les tests couvrant : chargement par slug, annonce absente, galerie clavier / tactile, prix absent, champs dynamiques et informations vendeur.
 
 Critères de fin : aucune donnée privée exposée, galerie responsive, bouton contact clair, signalement authentifié.
 
 ### Tranche F3 — authentification et profil
 
-Écrire d'abord les tests couvrant : validation email/mot de passe, erreur Supabase lisible, redirection après connexion et session expirée.
+Écrire d'abord les tests couvrant : validation e-mail / mot de passe, erreur Supabase lisible, redirection après connexion et session expirée.
 
 Critères de fin : aucun secret client, erreurs non techniques, déconnexion fiable, routes privées protégées.
 
@@ -224,13 +217,13 @@ Critères de fin : aucun secret client, erreurs non techniques, déconnexion fia
 
 Étapes : catégorie, informations, champs dynamiques, images, localisation, prévisualisation, envoi en modération.
 
-Écrire d'abord les tests des schémas Zod, puis des changements d'étape, enfin de la mutation. Le brouillon local ne doit jamais être confondu avec une annonce sauvegardée côté serveur.
+Écrire d'abord les tests des schémas Zod, puis des changements d'étape, enfin de la mutation. Le brouillon local ne doit jamais être confondu avec une annonce enregistrée côté serveur.
 
 ### Tranche F5 — dashboard et modération
 
 Tester les permissions visibles, mais ne jamais compter sur l'interface comme sécurité : les décisions définitives restent dans les politiques RLS du back-end.
 
-## 9. Règles de qualité
+## 10. Règles de qualité
 
 - TypeScript `strict` reste activé ;
 - aucun `any` implicite ;
@@ -238,12 +231,12 @@ Tester les permissions visibles, mais ne jamais compter sur l'interface comme s�
 - aucune donnée serveur dupliquée dans Zustand ;
 - chaque formulaire possède un schéma Zod ;
 - chaque bouton icône possède un nom accessible ;
-- tous les états asynchrones ont chargement, succès, vide et erreur ;
+- tous les états asynchrones ont un état de chargement, de succès, de vide et d'erreur ;
 - mobile testé à 320 px minimum ;
 - animations désactivables avec `prefers-reduced-motion` ;
 - aucun placeholder silencieux dans un parcours critique.
 
-## 10. Définition de « terminé »
+## 11. Définition de « terminé »
 
 Une tranche front-end est terminée uniquement quand :
 
@@ -255,12 +248,12 @@ Une tranche front-end est terminée uniquement quand :
 6. les états erreur et vide ont été vérifiés ;
 7. le contrat back-end utilisé est documenté dans `BACKEND.md`.
 
-## 11. Payement par stripe
+## 12. Paiement par Stripe
 
-- tu peux mettre de le fonctionnement par stripe
-- mode de payement en option google pay
+- mettre en place le fonctionnement par Stripe ;
+- proposer un mode de paiement Google Pay comme option.
 
-## 12. Carte localisation de plan de la france
+## 13. Carte de localisation du plan de la France
 
-- je souhaite avoir une carte de plan geographique sur la page d'accuille, pour que les cliens puisse faire une recherche d'annonce
-- pour que clients puisse cliquer sur la carte departement par departement
+- souhaité : une carte géographique sur la page d'accueil pour que les clients puissent rechercher des annonces ;
+- les clients doivent pouvoir cliquer sur la carte, département par département, pour lancer une recherche.
