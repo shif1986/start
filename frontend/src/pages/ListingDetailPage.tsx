@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import ListingLocationMap from "../components/ListingLocationMap";
 import { mockListings } from "../data/mockListings";
 
 export default function ListingDetailPage() {
@@ -51,6 +52,8 @@ export default function ListingDetailPage() {
                 </strong>
               </div>
             </div>
+
+            <ListingLocationMap listing={listing} />
 
             <div className="video-placeholder">Vidéo / galerie annonce</div>
           </div>

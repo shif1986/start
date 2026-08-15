@@ -4,6 +4,7 @@ export type Listing = {
   category: string;
   department: string;
   city: string;
+  coordinates: [number, number];
   price: number | null;
   description: string;
   professional: {
@@ -22,6 +23,7 @@ export const mockListings: Listing[] = [
     category: "Services",
     department: "Paris",
     city: "Paris",
+    coordinates: [48.8566, 2.3522],
     price: 120,
     description:
       "Accompagnement administratif, comptabilité légère et organisation pour structures chrétiennes.",
@@ -39,6 +41,7 @@ export const mockListings: Listing[] = [
     category: "Éducation",
     department: "Rhône",
     city: "Lyon",
+    coordinates: [45.764, 4.8357],
     price: 45,
     description:
       "Cours de piano, chant et musique avec approche douce et spirituelle pour les familles.",
@@ -56,6 +59,7 @@ export const mockListings: Listing[] = [
     category: "Bricolage",
     department: "Gironde",
     city: "Bordeaux",
+    coordinates: [44.8378, -0.5792],
     price: 80,
     description:
       "Petits travaux, dépannage et entretien ménager pour les familles et les lieux de rencontre.",
@@ -72,6 +76,7 @@ export const mockListings: Listing[] = [
     category: "Santé",
     department: "Bouches-du-Rhône",
     city: "Marseille",
+    coordinates: [43.2965, 5.3698],
     price: null,
     description:
       "Accompagnement pastoral et conseil familial sur demande, avec écoute et accompagnement humain.",
@@ -88,6 +93,7 @@ export const mockListings: Listing[] = [
     category: "Événementiel",
     department: "Loire-Atlantique",
     city: "Nantes",
+    coordinates: [47.2184, -1.5536],
     price: 350,
     description:
       "Traiteur pour réunions, conférences, mariages et événements associatifs avec menu 100% artisanal.",

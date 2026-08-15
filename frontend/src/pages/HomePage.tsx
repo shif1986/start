@@ -1,77 +1,13 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import FranceListingsMap from "../components/FranceListingsMap";
 import { mockListings } from "../data/mockListings";
 
 const featuredListings = mockListings.slice(0, 5);
 
 const franceDepartments = [
-  { name: "Paris", x: 50, y: 18 },
-  { name: "Rhône", x: 72, y: 33 },
-  { name: "Gironde", x: 24, y: 46 },
-  { name: "Bouches-du-Rhône", x: 78, y: 60 },
-  { name: "Loire-Atlantique", x: 38, y: 54 },
-  { name: "Martinique", x: 18, y: 80 },
-  { name: "Guadeloupe", x: 28, y: 86 },
-  { name: "Réunion", x: 86, y: 82 },
-  { name: "Mayotte", x: 92, y: 88 },
-  { name: "Nouvelle-Calédonie", x: 76, y: 92 },
+  ...new Set(mockListings.map((listing) => listing.department)),
 ];
-
-function FranceDepartmentMap({
-  onSelect,
-}: {
-  onSelect: (department: string) => void;
-}) {
-  return (
-    <div
-      className="france-department-map"
-      aria-label="Carte des départements de France et des DOM-TOM"
-    >
-      <svg
-        className="france-svg"
-        viewBox="0 0 950 760"
-        aria-hidden="true"
-        preserveAspectRatio="xMidYMid meet"
-      >
-        <path
-          className="france-shape"
-          d="M165 120 L200 90 L244 74 L286 78 L323 61 L375 68 L415 92 L445 92 L472 102 L505 105 L541 126 L557 142 L589 176 L603 230 L620 247 L616 273 L633 286 L627 333 L646 365 L635 404 L640 445 L611 477 L618 505 L590 534 L602 560 L565 586 L555 615 L527 630 L484 646 L448 640 L418 621 L379 625 L356 585 L325 571 L306 585 L280 572 L254 540 L231 531 L214 496 L167 470 L145 422 L130 389 L103 349 L92 321 L82 294 L88 258 L101 214 L103 181 L125 153 L143 130 Z"
-        />
-        <path
-          className="france-shape island"
-          d="M530 651 L542 639 L562 644 L576 660 L565 682 L545 690 L528 680 Z"
-        />
-        <path
-          className="france-shape island"
-          d="M117 504 L128 495 L144 498 L154 512 L148 531 L133 539 L118 525 Z"
-        />
-        <path
-          className="france-shape island"
-          d="M652 606 L669 598 L685 606 L687 621 L675 636 L659 635 L648 621 Z"
-        />
-        <path
-          className="france-shape island"
-          d="M710 680 L728 675 L740 690 L734 707 L715 714 L700 698 Z"
-        />
-      </svg>
-
-      {franceDepartments.map((department) => (
-        <button
-          key={department.name}
-          type="button"
-          className="map-pin"
-          style={{
-            left: `${department.x}%`,
-            top: `${department.y}%`,
-          }}
-          onClick={() => onSelect(department.name)}
-        >
-          {department.name}
-        </button>
-      ))}
-    </div>
-  );
-}
 
 function SearchByLocation({
   query,
@@ -131,19 +67,23 @@ function SearchByLocation({
         <div className="department-pills" aria-label="Départements">
           {franceDepartments.map((department) => (
             <button
-              key={department.name}
+              key={department}
               type="button"
-              className={`chip${selectedDepartment === department.name ? " selected" : ""}`}
-              onClick={() => onDepartmentSelect(department.name)}
+              className={`chip${selectedDepartment === department ? " selected" : ""}`}
+              onClick={() => onDepartmentSelect(department)}
             >
-              {department.name}
+              {department}
             </button>
           ))}
         </div>
       </div>
 
       <div className="location-map-panel">
-        <FranceDepartmentMap onSelect={onDepartmentSelect} />
+        <FranceListingsMap
+          listings={mockListings}
+          selectedDepartment={selectedDepartment}
+          onDepartmentSelect={onDepartmentSelect}
+        />
       </div>
     </section>
   );
@@ -164,13 +104,9 @@ export default function HomePage() {
   }
 
   function handleDepartmentSelect(department: string) {
-    setSelectedDepartment(department);
-    const params = new URLSearchParams();
-
-    if (query.trim()) params.set("q", query.trim());
-    params.set("department", department);
-
-    navigate(`/annonces?${params.toString()}`);
+    setSelectedDepartment((current) =>
+      current === department ? "" : department,
+    );
   }
 
   return (
