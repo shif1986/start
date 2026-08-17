@@ -16,7 +16,7 @@ Ce document est la référence unique pour construire l'interface React. Le code
 - Une annonce professionnelle ne peut être publiée qu’après souscription à un abonnement actif et validation du compte / statut pro.
 - Carte de France avec recherche par département sur l'accueil et dans le catalogue.
 - Paiement prévu avec Stripe, avec un mode de paiement Google Pay et un mode classique lorsque disponible.
-- Identité visuelle : Manrope, #22221E, #F4EFE5, #C7A45D.
+- Identité visuelle : Sora, #22221E, #F4EFE5, #C7A45D.
 
 ## 1. Objectif du front-end
 
@@ -37,7 +37,7 @@ Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, 
 
 - Le nom du site est Start Réseau Chrétien. Le site s'inspire d'un thème WordPress que l'on peut consulter ici : https://wpdirectorykit.com/theme_preview/classified-ads-directory
 - J'ai déjà un logo.
-- Police : Manrope.
+- Police : Sora.
 - Couleurs : #22221E, #F4EFE5, #C7A45D.
 
 1. Accueil :
@@ -73,6 +73,23 @@ Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, 
 - Zustand uniquement pour un futur état d'interface réellement global ;
 - Vitest + Testing Library pour le TDD ;
 - CSS en Tailwind centralisé au départ, avec variables et composants visuels cohérents.
+
+### Tailwind CSS
+
+Tailwind CSS 4 est installé avec son plugin Vite officiel dans `frontend/`.
+L'import global et les tokens de l'identité START se trouvent dans
+`frontend/src/index.css` :
+
+- `font-sans` : Sora ;
+- `font-script` : MonteCarlo ;
+- `start-ink` : `#22221E` ;
+- `start-cream` : `#F4EFE5` ;
+- `start-gold` : `#C7A45D`.
+
+Exemples : `bg-start-ink`, `text-start-cream`, `border-start-gold` et
+`font-script`. Les composants de l'interface utilisent directement les classes
+utilitaires Tailwind. `App.css` est conservé temporairement comme archive de la
+maquette précédente, mais il n'est plus chargé par l'application.
 
 ## 4. Commandes depuis la racine
 

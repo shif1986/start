@@ -56,7 +56,7 @@ export default function ListingsPage() {
           <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">Catalogue</span>
           <h1 className="mt-2 font-serif text-[clamp(2.4rem,5vw,4.5rem)]">Rechercher une annonce</h1>
         </div>
-        <Link to="/" className="shrink-0 rounded-xl border border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 transition hover:border-start-gold hover:text-start-gold">
+        <Link to="/" className="shrink-0 rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] transition hover:border-start-gold hover:text-start-gold">
           Retour à l’accueil
         </Link>
       </section>
@@ -80,7 +80,7 @@ export default function ListingsPage() {
               <button
                 key={item}
                 type="button"
-                className={`rounded-xl border px-3 py-3 text-sm font-semibold transition focus-visible:outline-2 focus-visible:outline-start-gold ${department === item ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/10 bg-start-cream/5 text-start-cream/75 hover:border-start-gold hover:text-start-gold"}`}
+                className={`rounded-xl px-3 py-3 text-sm font-semibold [border-style:solid] [border-width:.5px] transition focus-visible:outline-2 focus-visible:outline-start-gold ${department === item ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/10 bg-start-cream/5 text-start-cream/75 hover:border-start-gold hover:text-start-gold"}`}
                 onClick={() =>
                   updateParam("department", department === item ? "" : item)
                 }

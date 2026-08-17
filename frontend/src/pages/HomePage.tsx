@@ -74,7 +74,7 @@ function SearchByLocation({
         </span>
 
         <h1 className="my-6 flex flex-col items-start font-sans text-[clamp(3.4rem,6.2vw,6.7rem)] leading-none font-extrabold tracking-[-.06em] text-start-cream">
-          <span>START</span>
+          <span className="text-[.78em]">START</span>
           <span className="mt-3 text-[.4em] font-semibold tracking-[.12em]">
             RÉSEAU
           </span>
@@ -97,7 +97,7 @@ function SearchByLocation({
         <div className="mt-5 flex items-center gap-4 max-sm:flex-col max-sm:items-start">
           <Link
             to="/publier"
-            className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-gold bg-transparent px-5 font-bold text-start-gold transition hover:-translate-y-0.5 hover:bg-start-gold/10"
+            className="inline-flex min-h-12 items-center justify-center rounded-xl border-start-gold bg-transparent px-5 font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10"
           >
             Rejoindre le réseau
             <span className="ml-3" aria-hidden="true">
@@ -176,7 +176,7 @@ export default function HomePage() {
           </div>
           <Link
             to="/annonces"
-            className="shrink-0 rounded-xl border border-start-gold px-4 py-2.5 font-bold text-start-gold transition hover:bg-start-gold hover:text-start-ink"
+            className="shrink-0 rounded-xl border-start-gold px-4 py-2.5 font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:bg-start-gold hover:text-start-ink"
           >
             Voir plus
           </Link>

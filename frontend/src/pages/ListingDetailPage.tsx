@@ -10,7 +10,7 @@ export default function ListingDetailPage() {
     return (
       <div className="grid min-h-[50vh] place-content-center gap-5 text-center">
         <h1>Annonce introuvable</h1>
-        <Link to="/annonces" className="rounded-xl border border-start-gold px-4 py-2.5 font-bold text-start-gold">
+        <Link to="/annonces" className="rounded-xl border-start-gold px-4 py-2.5 font-bold text-start-gold [border-style:solid] [border-width:.5px]">
           Retour au catalogue
         </Link>
       </div>
@@ -19,7 +19,7 @@ export default function ListingDetailPage() {
 
   return (
     <div className="rounded-3xl bg-[#0e121e] px-[clamp(20px,4vw,56px)] py-12">
-      <Link to="/annonces" className="inline-flex rounded-xl border border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 hover:border-start-gold hover:text-start-gold">
+      <Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">
         ← Retour à la recherche
       </Link>
 

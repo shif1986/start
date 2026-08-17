@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { useState, type ReactNode } from "react";
 import { NavLink } from "react-router-dom";
 
 type LayoutProps = {
@@ -23,41 +23,82 @@ function StartLogo() {
 }
 
 export default function Layout({ children }: LayoutProps) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  function closeMenu() {
+    setIsMenuOpen(false);
+  }
+
   return (
     <div className="mx-auto min-h-screen max-w-[1600px] px-[30px] pt-3 pb-6 max-sm:px-3">
-      <header className="sticky top-2 z-50 flex min-h-13 items-center justify-between gap-3 rounded-3xl bg-start-cream/10 px-4 py-1 shadow-[inset_0_.5px_0_rgba(255,255,255,.12),0_10px_35px_rgba(0,0,0,.18)] backdrop-blur-xl max-lg:flex-wrap max-md:relative max-md:top-0 max-md:rounded-2xl">
+      <header className="sticky top-2 z-50 flex min-h-13 items-center justify-between gap-3 rounded-3xl bg-white/[.025] px-4 py-1 shadow-[inset_0_.5px_0_rgba(255,255,255,.08),0_8px_28px_rgba(0,0,0,.1)] backdrop-blur-2xl backdrop-saturate-150 max-md:rounded-2xl">
         <div className="flex min-w-0 flex-1 items-center">
           <StartLogo />
         </div>
 
-        <nav className="mx-3 flex flex-[1.6] flex-wrap items-center justify-center gap-2.5 max-lg:order-3 max-lg:w-full max-lg:flex-none" aria-label="Navigation principale">
+        <nav
+          id="main-navigation"
+          className={`${isMenuOpen ? "flex" : "hidden"} absolute top-[calc(100%+10px)] right-0 left-0 flex-col gap-1 bg-transparent p-3 lg:static lg:mx-3 lg:flex lg:flex-[1.6] lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-2.5 lg:p-0`}
+          aria-label="Navigation principale"
+        >
           {navItems.map((item) => (
             <NavLink
               key={item.id}
               to={item.to}
+              onClick={closeMenu}
               className={({ isActive }) =>
-                `rounded-lg px-3 py-1.5 text-[clamp(1rem,1.15vw,1.18rem)] font-semibold tracking-[-.02em] text-start-cream/90 transition hover:text-start-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-start-gold ${isActive ? "text-start-gold" : ""}`
+                `rounded-lg px-3 py-2 text-[clamp(1rem,1.15vw,1.18rem)] font-semibold tracking-[-.02em] text-start-cream/90 transition hover:bg-start-cream/5 hover:text-start-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-start-gold lg:py-1.5 ${isActive ? "text-start-gold" : ""}`
               }
             >
               {item.label}
             </NavLink>
           ))}
+          <NavLink
+            to="/publier"
+            onClick={closeMenu}
+            className="mt-2 rounded-lg bg-start-gold px-3 py-2.5 text-center text-sm font-bold text-start-ink lg:hidden"
+          >
+            Publier une annonce
+          </NavLink>
+          <button
+            type="button"
+            className="rounded-lg px-3 py-2.5 text-left text-sm font-bold text-start-gold lg:hidden"
+          >
+            Se connecter
+          </button>
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-3">
           <NavLink
             to="/don"
-            className="inline-flex min-h-10 min-w-20 items-center justify-center rounded-lg border border-start-gold/80 bg-transparent px-3.5 text-sm font-bold text-start-gold transition hover:-translate-y-0.5 hover:bg-start-gold/10"
+            className="inline-flex min-h-10 min-w-20 items-center justify-center rounded-lg border-start-gold/80 bg-transparent px-3.5 text-sm font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10 max-sm:min-w-14 max-sm:px-2.5"
           >
             Don
           </NavLink>
-          <button type="button" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border border-start-gold/80 px-3.5 text-sm font-bold text-start-gold transition hover:-translate-y-0.5 hover:bg-start-gold/10 max-sm:hidden">
+          <button type="button" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border-start-gold/80 px-3.5 text-sm font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10 max-lg:hidden">
             Connecter
           </button>
-          <NavLink to="/publier" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border border-start-gold bg-gradient-to-b from-start-gold to-[#ab8947] px-3.5 text-sm font-bold text-[#111827] shadow-[0_6px_14px_rgba(199,164,93,.22)] transition hover:-translate-y-0.5 hover:bg-none hover:bg-start-gold/10 hover:text-start-gold max-sm:min-w-0">
+          <NavLink to="/publier" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border-start-gold bg-gradient-to-b from-start-gold to-[#ab8947] px-3.5 text-sm font-bold text-[#111827] [border-style:solid] [border-width:.5px] shadow-[0_6px_14px_rgba(199,164,93,.22)] transition hover:-translate-y-0.5 hover:bg-none hover:bg-start-gold/10 hover:text-start-gold max-lg:hidden">
             <span className="mr-2 inline-flex size-[22px] items-center justify-center rounded-full bg-[#111827]/10 text-xl font-extrabold">+</span>
             Annonce
           </NavLink>
+          <button
+            type="button"
+            className="inline-flex size-10 items-center justify-center rounded-lg text-start-cream transition hover:bg-start-cream/10 focus-visible:outline-2 focus-visible:outline-start-gold lg:hidden"
+            aria-label={isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            aria-expanded={isMenuOpen}
+            aria-controls="main-navigation"
+            onClick={() => setIsMenuOpen((current) => !current)}
+          >
+            <span className="sr-only">
+              {isMenuOpen ? "Fermer le menu" : "Ouvrir le menu"}
+            </span>
+            <span className="relative block h-4.5 w-5" aria-hidden="true">
+              <span className={`absolute left-0 h-px w-5 bg-current transition ${isMenuOpen ? "top-2 rotate-45" : "top-0"}`} />
+              <span className={`absolute top-2 left-0 h-px w-5 bg-current transition ${isMenuOpen ? "opacity-0" : "opacity-100"}`} />
+              <span className={`absolute left-0 h-px w-5 bg-current transition ${isMenuOpen ? "top-2 -rotate-45" : "top-4"}`} />
+            </span>
+          </button>
         </div>
       </header>
 
