@@ -5,10 +5,6 @@ import { mockListings } from "../data/mockListings";
 
 const featuredListings = mockListings.slice(0, 5);
 
-const franceDepartments = [
-  ...new Set(mockListings.map((listing) => listing.department)),
-];
-
 function SearchByLocation({
   query,
   selectedDepartment,
@@ -25,9 +21,18 @@ function SearchByLocation({
   return (
     <section className="search-by-location">
       <div className="search-copy">
-        <span className="eyebrow">Réseau chrétien local</span>
-        <h1 className="hero-title">START Réseau Chrétien</h1>
-        <p>
+        <span className="eyebrow">RÉSEAU CHRÉTIEN LOCAL</span>
+
+        <h1 className="hero-title">
+          <span className="title-line">CONNECTER</span>
+          <span className="title-line title-line-soft">
+            <span className="title-light">POUR</span>
+            <span className="title-script">Grandir</span>
+          </span>
+          <span className="title-line">ENSEMBLE</span>
+        </h1>
+
+        <p className="hero-subtitle">
           Une plateforme qui met en relation les professionnels et particuliers
           chrétiens pour développer un réseau utile, local et inspiré par la
           foi.
@@ -63,19 +68,6 @@ function SearchByLocation({
             </svg>
           </button>
         </div>
-
-        <div className="department-pills" aria-label="Départements">
-          {franceDepartments.map((department) => (
-            <button
-              key={department}
-              type="button"
-              className={`chip${selectedDepartment === department ? " selected" : ""}`}
-              onClick={() => onDepartmentSelect(department)}
-            >
-              {department}
-            </button>
-          ))}
-        </div>
       </div>
 
       <div className="location-map-panel">
@@ -84,6 +76,11 @@ function SearchByLocation({
           selectedDepartment={selectedDepartment}
           onDepartmentSelect={onDepartmentSelect}
         />
+      </div>
+
+      <div className="scroll-cue" aria-label="Découvrir la suite">
+        <span>DÉCOUVRIR</span>
+        <span className="scroll-arrow">↓</span>
       </div>
     </section>
   );

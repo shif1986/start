@@ -6,11 +6,11 @@ type LayoutProps = {
 };
 
 const navItems = [
-  { to: "/", label: "Accueil" },
-  { to: "/annonces", label: "Annonces" },
-  { to: "/a-propos", label: "À propos" },
-  { to: "/don", label: "Don" },
-  { to: "/contact", label: "Contact" },
+  { id: "annuaire", to: "/", label: "Annuaire" },
+  { id: "annonces", to: "/annonces", label: "Annonces" },
+  { id: "evenements", to: "/contact", label: "Événements" },
+  { id: "ressources", to: "/contact", label: "Ressources" },
+  { id: "a-propos", to: "/a-propos", label: "À propos" },
 ];
 
 function StartLogo() {
@@ -34,7 +34,7 @@ export default function Layout({ children }: LayoutProps) {
         <nav className="main-nav" aria-label="Navigation principale">
           {navItems.map((item) => (
             <NavLink
-              key={item.to}
+              key={item.id}
               to={item.to}
               className={({ isActive }) =>
                 isActive ? "nav-link active" : "nav-link"
@@ -46,16 +46,13 @@ export default function Layout({ children }: LayoutProps) {
         </nav>
 
         <div className="header-actions">
+          <button type="button" className="btn btn-ghost action-secondary">
+            Connecter
+          </button>
           <NavLink to="/publier" className="btn btn-primary action-primary">
             <span className="btn-icon">+</span>
             Annonce
           </NavLink>
-          <button type="button" className="btn btn-ghost action-secondary">
-            Connexion
-          </button>
-          <button type="button" className="btn btn-primary action-secondary">
-            S’inscrire
-          </button>
         </div>
       </header>
 
