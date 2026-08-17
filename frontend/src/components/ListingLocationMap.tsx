@@ -17,11 +17,11 @@ export default function ListingLocationMap({
 }: ListingLocationMapProps) {
   return (
     <section
-      className="leaflet-map-shell listing-map-shell"
+      className="my-7 overflow-hidden rounded-2xl border border-start-cream/10 bg-[#080c12]/60"
       aria-label={`Localisation de l’annonce à ${listing.city}`}
     >
-      <div className="listing-map-heading">
-        <span>Localisation</span>
+      <div className="flex items-center justify-between gap-4 px-5 py-4">
+        <span className="text-xs font-bold tracking-wider text-start-gold uppercase">Localisation</span>
         <strong>
           {listing.city} · {listing.department}
         </strong>
@@ -29,7 +29,7 @@ export default function ListingLocationMap({
 
       <MapContainer
         key={listing.id}
-        className="listing-leaflet-map"
+        className="h-[380px] w-full max-sm:h-[300px]"
         center={listing.coordinates}
         zoom={12}
         minZoom={5}
@@ -59,7 +59,7 @@ export default function ListingLocationMap({
           </Tooltip>
 
           <Popup>
-            <div className="map-popup-content">
+            <div className="grid gap-1 text-start-ink">
               <span>{listing.category}</span>
               <strong>{listing.title}</strong>
               <p>

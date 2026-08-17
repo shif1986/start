@@ -1,9 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&display=swap");
+@import "tailwindcss";
+
+@font-face {
+  font-family: "MonteCarlo";
+  src: url("./assets/fonts/MonteCarlo-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@theme {
+  --font-sans: "Sora", Inter, "Segoe UI", sans-serif;
+  --font-script: "MonteCarlo", cursive;
+  --color-start-ink: #22221e;
+  --color-start-cream: #f4efe5;
+  --color-start-gold: #c7a45d;
+}
+
 :root {
-  font-family: Inter, "Segoe UI", sans-serif;
+  font-family: "Sora", Inter, "Segoe UI", sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color: #22221e;
-  background: #f4efe5;
+  color: #f4efe5;
+  background: #070b10;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -18,7 +37,11 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: #f4efe5;
+  background:
+    radial-gradient(circle at 10% 10%, rgb(199 164 93 / 18%), transparent 18%),
+    radial-gradient(circle at 100% 100%, rgb(199 164 93 / 8%), transparent 26%),
+    linear-gradient(180deg, #05080d 0%, #0d1017 28%, #0f1118 56%, #070b10 100%);
+  color: #f4efe5;
 }
 
 img {
@@ -26,9 +49,10 @@ img {
   display: block;
 }
 
-p,
-h1,
-h2,
-h3 {
-  margin-top: 0;
+button {
+  cursor: pointer;
+}
+
+#root {
+  min-height: 100vh;
 }

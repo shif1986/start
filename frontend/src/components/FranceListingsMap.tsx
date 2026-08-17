@@ -264,20 +264,20 @@ export default function FranceListingsMap({
         };
       })
       .filter((item): item is DepartmentMapItem => Boolean(item));
-  }, [geoJson, listingCounts]);
+  }, [listingCounts]);
 
   return (
     <section
-      className="france-map-shell"
+      className="relative overflow-hidden bg-transparent p-2"
       aria-label="Carte interactive des départements de France"
     >
-      <div className="map-summary">
-        <span>France</span>
-        <strong>{listings.length} annonces disponibles</strong>
+      <div className="absolute top-5 left-5 z-10 flex flex-col rounded-xl border border-start-cream/10 bg-[#090e12]/80 px-4 py-3 backdrop-blur">
+        <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase">France</span>
+        <strong className="text-sm text-start-cream">{listings.length} annonces disponibles</strong>
       </div>
 
       <svg
-        className="france-departments-svg"
+        className="block h-auto w-full overflow-visible"
         viewBox="0 0 1000 800"
         preserveAspectRatio="xMidYMid meet"
         role="img"
@@ -290,23 +290,10 @@ export default function FranceListingsMap({
             <g key={name}>
               <path
                 d={d}
-                className={`department-shape${
-                  isSelected ? " selected" : ""
-                }${hasListings ? " has-listings" : ""}`}
+                className={`cursor-pointer stroke-start-gold outline-none transition-all duration-200 ${isSelected ? "fill-start-gold/80 [filter:drop-shadow(0_0_10px_rgba(199,164,93,.5))]" : hasListings ? "fill-start-gold/20 hover:fill-start-gold/35" : "fill-start-cream/[.02] hover:fill-start-gold/15"}`}
                 onClick={() => onDepartmentSelect(name)}
                 style={{
-                  fill: isSelected
-                    ? "rgba(199, 164, 93, 0.8)"
-                    : hasListings
-                      ? "rgba(199, 164, 93, 0.18)"
-                      : "rgba(244, 239, 229, 0.02)",
-                  stroke: "#C7A45D",
                   strokeWidth: isSelected ? 2.1 : 1,
-                  cursor: "pointer",
-                  transition: "all 0.2s ease",
-                  filter: isSelected
-                    ? "drop-shadow(0 0 10px rgba(199, 164, 93, 0.5))"
-                    : "none",
                 }}
                 aria-label={name}
                 tabIndex={0}
@@ -320,9 +307,8 @@ export default function FranceListingsMap({
 
               {count > 0 && (
                 <g
-                  className="department-counter"
+                  className="cursor-pointer outline-none"
                   onClick={() => onDepartmentSelect(name)}
-                  style={{ cursor: "pointer" }}
                   tabIndex={0}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
@@ -338,9 +324,7 @@ export default function FranceListingsMap({
                     fill="rgba(9, 14, 18, 0.72)"
                     stroke="rgba(199, 164, 93, 0.7)"
                     strokeWidth={isSelected ? 2.2 : 1.5}
-                    style={{
-                      filter: "drop-shadow(0 0 12px rgba(199, 164, 93, 0.3))",
-                    }}
+                    className="[filter:drop-shadow(0_0_12px_rgba(199,164,93,.3))]"
                   />
                   <text
                     x={x}
