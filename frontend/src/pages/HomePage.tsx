@@ -2,6 +2,10 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import FranceListingsMap from "../components/FranceListingsMap";
 import { mockListings } from "../data/mockListings";
+import { homeCategories } from "../data/categories";
+import CategoryCard from "../components/CategoryCard";
+import ListingCard from "../components/ListingCard";
+import BrandPattern from "../components/BrandPattern";
 
 const featuredListings = mockListings.slice(0, 5);
 
@@ -30,17 +34,46 @@ function SearchByLocation({
           SITE D'ANNONCE PROFESSIONNEL
         </span>
 
-        <h1 className="my-6 flex w-[min(100%,350px)] flex-col items-stretch font-sans text-[clamp(3.4rem,6.5vw,7rem)] leading-none font-extrabold text-start-cream max-lg:my-4 max-lg:w-[300px] max-lg:text-[3.5rem] max-sm:w-[260px] max-sm:text-[3rem]">
-          <span className="flex w-full items-center justify-between">
-            {"START".split("").map((letter, index) => (
-              <span key={`${letter}-${index}`}>{letter}</span>
-            ))}
+        <h1 className="my-6 flex w-[min(100%,350px)] flex-col items-stretch font-sans leading-none font-extrabold max-lg:my-4 max-lg:w-[300px] max-sm:w-[260px]">
+          <span className="sr-only">
+            START Réseau Chrétien Professionnel
           </span>
-          <span className="mt-3 flex w-full items-center justify-between whitespace-nowrap text-[.24em] font-semibold tracking-[.31em] text-start-cream/95 max-lg:mt-2 max-lg:tracking-[.2em]">
+          <span
+            className="flex w-full items-center justify-between text-[clamp(4rem,6.2vw,6.5rem)] font-medium tracking-[-.07em] text-start-cream max-lg:text-[4.8rem] max-sm:text-[4.1rem]"
+            aria-hidden="true"
+          >
+            <span>S</span>
+            <span>T</span>
+            <svg
+              className="h-[.95em] w-[.82em] shrink-0 overflow-visible"
+              viewBox="0 0 100 120"
+              fill="none"
+            >
+              <path
+                d="M45 31L22 83M55 31L78 83"
+                stroke="#F4EFE5"
+                strokeWidth="11"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+              <circle cx="50" cy="19" r="17" fill="#C7A45D" stroke="#F4EFE5" strokeWidth="8" />
+              <circle cx="19" cy="94" r="17" fill="#C7A45D" stroke="#F4EFE5" strokeWidth="8" />
+              <circle cx="81" cy="94" r="17" fill="#C7A45D" stroke="#F4EFE5" strokeWidth="8" />
+            </svg>
+            <span>R</span>
+            <span>T</span>
+          </span>
+          <span
+            className="mt-2 flex w-full items-center justify-between whitespace-nowrap text-[clamp(.88rem,1.35vw,1.25rem)] font-normal tracking-[.22em] text-start-cream/95 max-lg:text-[1rem] max-lg:tracking-[.17em] max-sm:text-[.82rem] max-sm:tracking-[.12em]"
+            aria-hidden="true"
+          >
             <span>RÉSEAU</span>
             <span>CHRÉTIEN</span>
           </span>
-          <span className="mt-3 flex w-full items-center justify-between text-[.4em] font-extrabold tracking-[-.025em] text-start-gold max-lg:mt-2">
+          <span
+            className="mt-3 flex w-full items-center justify-between text-[clamp(1.4rem,2.6vw,2.8rem)] font-extrabold tracking-[-.025em] text-start-gold max-lg:mt-2 max-lg:text-[1.9rem] max-sm:text-[1.65rem]"
+            aria-hidden="true"
+          >
             {"PROFESSIONNEL".split("").map((letter, index) => (
               <span key={`${letter}-${index}`}>{letter}</span>
             ))}
@@ -85,11 +118,11 @@ function SearchByLocation({
       </div>
 
       <div
-        className="absolute bottom-5 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 text-[.65rem] tracking-[.25em] text-start-cream/50 max-lg:hidden"
+        className="absolute bottom-10 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-1.5 text-[.68rem] tracking-[.28em] text-start-cream/65 max-lg:hidden"
         aria-label="Découvrir la suite"
       >
         <span>DÉCOUVRIR</span>
-        <span className="animate-bounce text-xl text-start-gold">↓</span>
+        <span className="animate-bounce text-2xl leading-none text-start-gold">↓</span>
       </div>
     </section>
   );
@@ -111,50 +144,44 @@ export default function HomePage() {
         onDepartmentSelect={handleDepartmentSelect}
       />
 
-      <section className="px-[clamp(20px,4vw,56px)] py-16">
-        <div className="mb-8 flex items-end justify-between gap-5 max-sm:flex-col max-sm:items-start">
+      <section className="relative overflow-hidden bg-start-cream px-[clamp(20px,4vw,56px)] py-14 text-start-ink">
+        <BrandPattern className="-top-24 -right-20 h-[560px] w-[370px] rotate-6 text-start-gold/[.065] max-sm:hidden" />
+        <div className="relative z-10 mb-8 flex items-end justify-between gap-5 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">
-              Annonces récentes
+              À la une
             </span>
-            <h2 className="mt-2 font-serif text-[clamp(2rem,4vw,3.5rem)]">
-              Découvrir les derniers services
+            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
+              Les dernières annonces
             </h2>
+            <p className="mt-2 max-w-xl text-start-ink/65">Découvrez les nouvelles opportunités et services proposés par le réseau.</p>
           </div>
           <Link
             to="/annonces"
-            className="shrink-0 rounded-xl border-start-gold px-4 py-2.5 font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:bg-start-gold hover:text-start-ink"
+            className="shrink-0 rounded-lg border border-start-ink/15 px-5 py-3 font-semibold text-start-ink transition hover:border-start-gold hover:text-start-gold"
           >
-            Voir plus
+            Voir toutes les annonces <span className="ml-3 text-start-gold" aria-hidden="true">→</span>
           </Link>
         </div>
 
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(230px,1fr))] gap-5">
-          {featuredListings.map((listing) => (
-            <article
-              key={listing.id}
-              className="flex min-h-64 flex-col rounded-2xl border border-start-cream/10 bg-start-cream/5 p-6 shadow-xl transition hover:-translate-y-1 hover:border-start-gold/50"
-            >
-              <span className="mb-4 w-fit rounded-full bg-start-gold/15 px-3 py-1 text-xs font-bold text-start-gold">
-                {listing.category}
-              </span>
-              <h3 className="mb-3 text-xl font-bold">{listing.title}</h3>
-              <p className="text-start-cream/60">
-                {listing.city} • {listing.department}
-              </p>
-              <div className="mt-auto flex items-end justify-between gap-3 pt-5 text-sm text-start-cream/65">
-                <strong>
-                  {listing.price ? `${listing.price}€` : "Prix libre"}
-                </strong>
-                <span>{listing.professional.name}</span>
-              </div>
-              <Link
-                to={`/annonce/${listing.id}`}
-                className="mt-4 font-bold text-start-gold hover:underline"
-              >
-                Voir l’annonce
-              </Link>
-            </article>
+        <div className="relative z-10 grid grid-cols-3 gap-7 max-lg:grid-cols-2 max-sm:grid-cols-1">
+          {featuredListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)}
+        </div>
+      </section>
+
+      <section className="relative overflow-hidden bg-start-cream px-[clamp(20px,4vw,56px)] pb-16 pt-10 text-start-ink">
+        <BrandPattern className="-bottom-40 -left-24 h-[610px] w-[400px] -rotate-6 text-start-gold/[.055] max-sm:hidden" />
+        <div className="relative z-10 mb-6 flex items-end justify-between gap-5 max-sm:flex-col max-sm:items-start">
+          <div>
+            <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Explorez le réseau</span>
+            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">Parcourez les catégories</h2>
+            <p className="mt-2 max-w-xl text-start-ink/65">Trouvez facilement les services, opportunités et ressources dont vous avez besoin.</p>
+          </div>
+          <Link to="/categories" className="shrink-0 rounded-lg border border-start-ink/15 px-5 py-3 text-sm font-semibold text-start-ink transition hover:border-start-gold hover:text-start-gold">Voir toutes les catégories <span className="ml-3 text-start-gold" aria-hidden="true">→</span></Link>
+        </div>
+        <div className="relative z-10 grid grid-cols-[1.4fr_repeat(3,1fr)] gap-4 max-lg:grid-cols-2 max-sm:grid-cols-1">
+          {homeCategories.map((category, index) => (
+            <CategoryCard key={category.id} category={category} compact featured={index === 0} count={mockListings.filter((listing) => listing.categorySlug === category.slug).length} />
           ))}
         </div>
       </section>

@@ -2,11 +2,15 @@ export type Listing = {
   id: string;
   title: string;
   category: string;
+  categorySlug: string;
+  image: string;
   department: string;
   city: string;
   coordinates: [number, number];
   price: number | null;
   description: string;
+  rating: number;
+  reviewCount: number;
   professional: {
     name: string;
     role: string;
@@ -21,12 +25,16 @@ export const mockListings: Listing[] = [
     id: "1",
     title: "Aide à la gestion administrative pour PME chrétienne",
     category: "Services",
+    categorySlug: "professionnels-services",
+    image: "/images/categories/professionnels.webp",
     department: "Paris",
     city: "Paris",
     coordinates: [48.8566, 2.3522],
     price: 120,
     description:
       "Accompagnement administratif, comptabilité légère et organisation pour structures chrétiennes.",
+    rating: 4.9,
+    reviewCount: 18,
     professional: {
       name: "Impact Conseil",
       role: "Cabinet de conseil",
@@ -39,12 +47,16 @@ export const mockListings: Listing[] = [
     id: "2",
     title: "Cours de musique pour enfants et adolescents",
     category: "Éducation",
+    categorySlug: "famille-enfants",
+    image: "/images/categories/loisirs-culture.webp",
     department: "Rhône",
     city: "Lyon",
     coordinates: [45.764, 4.8357],
     price: 45,
     description:
       "Cours de piano, chant et musique avec approche douce et spirituelle pour les familles.",
+    rating: 4.8,
+    reviewCount: 12,
     professional: {
       name: "Musique Lumière",
       role: "Professeur de musique",
@@ -57,12 +69,16 @@ export const mockListings: Listing[] = [
     id: "3",
     title: "Service de maintenance de maison pour familles chrétiennes",
     category: "Bricolage",
+    categorySlug: "maison-jardin",
+    image: "/images/categories/materiel-professionnel.webp",
     department: "Gironde",
     city: "Bordeaux",
     coordinates: [44.8378, -0.5792],
     price: 80,
     description:
       "Petits travaux, dépannage et entretien ménager pour les familles et les lieux de rencontre.",
+    rating: 4.7,
+    reviewCount: 9,
     professional: {
       name: "Maison de Grâce",
       role: "Entreprise de maintenance",
@@ -74,12 +90,16 @@ export const mockListings: Listing[] = [
     id: "4",
     title: "Conseil d’accompagnement spirituel et familial",
     category: "Santé",
+    categorySlug: "professionnels-services",
+    image: "/images/categories/entraide.webp",
     department: "Bouches-du-Rhône",
     city: "Marseille",
     coordinates: [43.2965, 5.3698],
     price: null,
     description:
       "Accompagnement pastoral et conseil familial sur demande, avec écoute et accompagnement humain.",
+    rating: 5,
+    reviewCount: 7,
     professional: {
       name: "Médiation Vie",
       role: "Conseiller familial",
@@ -91,12 +111,16 @@ export const mockListings: Listing[] = [
     id: "5",
     title: "Traiteur pour événements chrétiens",
     category: "Événementiel",
+    categorySlug: "evenements",
+    image: "/images/categories/evenements.webp",
     department: "Loire-Atlantique",
     city: "Nantes",
     coordinates: [47.2184, -1.5536],
     price: 350,
     description:
       "Traiteur pour réunions, conférences, mariages et événements associatifs avec menu 100% artisanal.",
+    rating: 4.9,
+    reviewCount: 24,
     professional: {
       name: "Table du Royaume",
       role: "Traiteur",

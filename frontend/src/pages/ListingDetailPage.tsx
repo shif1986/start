@@ -56,6 +56,16 @@ export default function ListingDetailPage() {
             <ListingLocationMap listing={listing} />
 
             <div className="mt-6 grid min-h-56 place-content-center rounded-2xl border border-dashed border-start-cream/20 bg-[#080c12]/50 text-start-cream/45">Vidéo / galerie annonce</div>
+
+            <section id="avis" className="mt-8 scroll-mt-36 rounded-2xl border border-start-cream/10 bg-start-cream/5 p-6">
+              <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Avis et commentaires</span>
+              <div className="mt-3 flex items-center gap-3">
+                <strong className="text-2xl text-start-cream">{listing.rating.toFixed(1)}</strong>
+                <span className="text-start-gold" aria-hidden="true">★★★★★</span>
+                <span className="text-sm text-start-cream/55">{listing.reviewCount} avis</span>
+              </div>
+              <p className="mt-4 text-start-cream/60">Les commentaires détaillés seront reliés aux comptes utilisateurs lors de l'intégration des données.</p>
+            </section>
           </div>
 
           <aside className="h-fit rounded-2xl border border-start-gold/30 bg-[#080c12]/70 p-6">

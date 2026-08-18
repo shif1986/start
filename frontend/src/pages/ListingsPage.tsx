@@ -1,6 +1,8 @@
 import { useMemo } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { mockListings } from "../data/mockListings";
+import { categories } from "../data/categories";
+import ListingCard from "../components/ListingCard";
 
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -23,7 +25,9 @@ export default function ListingsPage() {
         listing.department.toLowerCase() === department.toLowerCase();
 
       const matchesCategory =
-        !category || listing.category.toLowerCase() === category.toLowerCase();
+        !category ||
+        listing.categorySlug === category ||
+        listing.category.toLowerCase() === category.toLowerCase();
 
       return matchesQuery && matchesDepartment && matchesCategory;
     });
@@ -31,10 +35,6 @@ export default function ListingsPage() {
 
   const departmentOptions = [
     ...new Set(mockListings.map((listing) => listing.department)),
-  ];
-
-  const categories = [
-    ...new Set(mockListings.map((listing) => listing.category)),
   ];
 
   function updateParam(key: string, value: string) {
@@ -130,32 +130,17 @@ export default function ListingsPage() {
             >
               <option value="">Toutes</option>
               {categories.map((item) => (
-                <option key={item} value={item}>
-                  {item}
+                <option key={item.id} value={item.slug}>
+                  {item.name}
                 </option>
               ))}
             </select>
           </label>
         </aside>
 
-        <div className="grid gap-4">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
           {filteredListings.length > 0 ? (
-            filteredListings.map((listing) => (
-              <article key={listing.id} className="rounded-2xl border border-start-cream/10 bg-start-cream/5 p-6 transition hover:border-start-gold/45">
-                <div className="mb-3 flex justify-between gap-4 text-xs font-bold tracking-wide text-start-gold uppercase">
-                  <span>{listing.category}</span>
-                  <span>{listing.department}</span>
-                </div>
-                <h3 className="mb-2 text-xl font-bold">{listing.title}</h3>
-                <p className="text-start-cream/65">{listing.description}</p>
-                <div className="mt-5 flex items-center justify-between gap-4">
-                  <strong>
-                    {listing.price ? `${listing.price} €` : "Prix libre"}
-                  </strong>
-                  <Link className="font-bold text-start-gold hover:underline" to={`/annonce/${listing.id}`}>Voir plus</Link>
-                </div>
-              </article>
-            ))
+            filteredListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)
           ) : (
             <div className="rounded-2xl border border-dashed border-start-cream/20 p-10 text-center text-start-cream/65">
               <h3>Aucune annonce trouvée</h3>

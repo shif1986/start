@@ -7,6 +7,7 @@ import AboutPage from "./pages/AboutPage";
 import DonationsPage from "./pages/DonationsPage";
 import ContactPage from "./pages/ContactPage";
 import PublishPage from "./pages/PublishPage";
+import CategoriesPage from "./pages/CategoriesPage";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/don" element={<DonationsPage />} />
           <Route path="/contact" element={<ContactPage />} />
           <Route path="/publier" element={<PublishPage />} />
+          <Route path="/categories" element={<CategoriesPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

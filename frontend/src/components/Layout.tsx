@@ -1,5 +1,6 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { homeCategories } from "../data/categories";
 
 type LayoutProps = {
   children: ReactNode;
@@ -12,8 +13,8 @@ const navItems = [
   { id: "contact", to: "/contact", label: "Contact" },
 ];
 
-const categoryLinksLeft = ["Services", "Éducation", "Bricolage"];
-const categoryLinksRight = ["Santé", "Événementiel", "Conseil"];
+const categoryLinksLeft = homeCategories.slice(0, 3);
+const categoryLinksRight = homeCategories.slice(3, 6);
 
 function StartLogo() {
   return (
@@ -116,11 +117,11 @@ export default function Layout({ children }: LayoutProps) {
           <nav className="hidden items-center justify-end gap-6 xl:flex" aria-label="Catégories principales, première partie">
             {categoryLinksLeft.map((category) => (
               <NavLink
-                key={category}
-                to={`/annonces?category=${encodeURIComponent(category)}`}
+                key={category.id}
+                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
                 className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
               >
-                {category}
+                {category.name}
               </NavLink>
             ))}
           </nav>
@@ -155,11 +156,11 @@ export default function Layout({ children }: LayoutProps) {
           <nav className="hidden items-center justify-start gap-6 xl:flex" aria-label="Catégories principales, seconde partie">
             {categoryLinksRight.map((category) => (
               <NavLink
-                key={category}
-                to={`/annonces?category=${encodeURIComponent(category)}`}
+                key={category.id}
+                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
                 className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
               >
-                {category}
+                {category.name}
               </NavLink>
             ))}
           </nav>
@@ -170,11 +171,11 @@ export default function Layout({ children }: LayoutProps) {
           >
             {[...categoryLinksLeft, ...categoryLinksRight].map((category) => (
               <NavLink
-                key={category}
-                to={`/annonces?category=${encodeURIComponent(category)}`}
+                key={category.id}
+                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
                 className="shrink-0 text-xs font-semibold text-start-cream/70 transition hover:text-start-gold"
               >
-                {category}
+                {category.name}
               </NavLink>
             ))}
           </nav>
