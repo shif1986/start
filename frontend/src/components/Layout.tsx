@@ -1,5 +1,5 @@
-import { useState, type ReactNode } from "react";
-import { NavLink } from "react-router-dom";
+import { useState, type FormEvent, type ReactNode } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
 
 type LayoutProps = {
   children: ReactNode;
@@ -11,6 +11,9 @@ const navItems = [
   { id: "vision", to: "/a-propos", label: "Vision" },
   { id: "contact", to: "/contact", label: "Contact" },
 ];
+
+const categoryLinksLeft = ["Services", "Éducation", "Bricolage"];
+const categoryLinksRight = ["Santé", "Événementiel", "Conseil"];
 
 function StartLogo() {
   return (
@@ -24,14 +27,22 @@ function StartLogo() {
 
 export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   function closeMenu() {
     setIsMenuOpen(false);
   }
 
+  function handleSearch(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const query = searchQuery.trim();
+    navigate(query ? `/annonces?q=${encodeURIComponent(query)}` : "/annonces");
+  }
+
   return (
     <div className="mx-auto min-h-screen max-w-[1600px] px-[30px] pt-3 pb-6 max-sm:px-3">
-      <header className="sticky top-2 z-50 flex min-h-13 items-center justify-between gap-3 rounded-3xl bg-white/[.025] px-4 py-1 shadow-[inset_0_.5px_0_rgba(255,255,255,.08),0_8px_28px_rgba(0,0,0,.1)] backdrop-blur-2xl backdrop-saturate-150 max-md:rounded-2xl">
+      <header className="sticky top-2 z-50 flex min-h-13 flex-wrap items-center justify-between gap-x-3 rounded-3xl bg-white/[.055] px-4 py-1 shadow-[inset_0_.5px_0_rgba(255,255,255,.1),0_8px_28px_rgba(0,0,0,.08)] backdrop-blur-2xl backdrop-saturate-150 max-md:rounded-2xl">
         <div className="flex min-w-0 flex-1 items-center">
           <StartLogo />
         </div>
@@ -99,6 +110,74 @@ export default function Layout({ children }: LayoutProps) {
               <span className={`absolute left-0 h-px w-5 bg-current transition ${isMenuOpen ? "top-2 -rotate-45" : "top-4"}`} />
             </span>
           </button>
+        </div>
+
+        <div className="order-4 grid w-full grid-cols-[1fr_minmax(280px,440px)_1fr] items-center gap-9 border-t border-start-cream/5 py-1.5 max-xl:grid-cols-1">
+          <nav className="hidden items-center justify-end gap-6 xl:flex" aria-label="Catégories principales, première partie">
+            {categoryLinksLeft.map((category) => (
+              <NavLink
+                key={category}
+                to={`/annonces?category=${encodeURIComponent(category)}`}
+                className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
+              >
+                {category}
+              </NavLink>
+            ))}
+          </nav>
+
+          <form
+            className="flex w-full items-center justify-center"
+            role="search"
+            onSubmit={handleSearch}
+          >
+            <div className="flex w-full items-center overflow-hidden rounded-lg border-start-cream/40 bg-black/10 [border-style:solid] [border-width:.5px] transition focus-within:border-start-gold/80 focus-within:bg-black/15">
+              <input
+                className="min-w-0 flex-1 bg-transparent px-3.5 py-1.5 text-sm text-start-cream outline-none placeholder:text-start-cream/35"
+                type="search"
+                value={searchQuery}
+                onChange={(event) => setSearchQuery(event.target.value)}
+                placeholder="Rechercher une annonce..."
+                aria-label="Rechercher une annonce"
+              />
+              <button
+                className="m-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-md text-start-gold transition hover:bg-start-gold/10"
+                type="submit"
+                aria-label="Lancer la recherche"
+              >
+                <svg className="size-4" viewBox="0 0 24 24" aria-hidden="true">
+                  <circle cx="11" cy="11" r="5.5" fill="none" stroke="currentColor" strokeWidth="2" />
+                  <path d="M16 16L21 21" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
+                </svg>
+              </button>
+            </div>
+          </form>
+
+          <nav className="hidden items-center justify-start gap-6 xl:flex" aria-label="Catégories principales, seconde partie">
+            {categoryLinksRight.map((category) => (
+              <NavLink
+                key={category}
+                to={`/annonces?category=${encodeURIComponent(category)}`}
+                className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
+              >
+                {category}
+              </NavLink>
+            ))}
+          </nav>
+
+          <nav
+            className="flex w-full items-center gap-5 overflow-x-auto px-1 pt-1 pb-0.5 [scrollbar-width:none] xl:hidden"
+            aria-label="Catégories d'annonces"
+          >
+            {[...categoryLinksLeft, ...categoryLinksRight].map((category) => (
+              <NavLink
+                key={category}
+                to={`/annonces?category=${encodeURIComponent(category)}`}
+                className="shrink-0 text-xs font-semibold text-start-cream/70 transition hover:text-start-gold"
+              >
+                {category}
+              </NavLink>
+            ))}
+          </nav>
         </div>
       </header>
 

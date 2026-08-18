@@ -268,12 +268,12 @@ export default function FranceListingsMap({
 
   return (
     <section
-      className="relative overflow-hidden bg-transparent p-2"
+      className="relative overflow-hidden bg-transparent p-2 max-sm:p-0"
       aria-label="Carte interactive des départements de France"
     >
-      <div className="absolute top-5 left-5 z-10 flex flex-col rounded-xl border border-start-cream/10 bg-[#090e12]/80 px-4 py-3 backdrop-blur">
-        <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase">France</span>
-        <strong className="text-sm text-start-cream">{listings.length} annonces disponibles</strong>
+      <div className="absolute top-5 left-5 z-10 flex flex-col rounded-xl border border-start-cream/12 bg-[#1b1e24]/72 px-4 py-3 backdrop-blur max-sm:top-2 max-sm:left-2 max-sm:rounded-lg max-sm:px-3 max-sm:py-2">
+        <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase max-sm:text-[.6rem]">France</span>
+        <strong className="text-sm text-start-cream max-sm:text-xs">{listings.length} annonces disponibles</strong>
       </div>
 
       <svg
