@@ -1,7 +1,6 @@
-import { useState, type FormEvent, type ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import { homeCategories } from "../data/categories";
-import BrandPattern from "./BrandPattern";
 
 type LayoutProps = {
   children: ReactNode;
@@ -31,6 +30,40 @@ export default function Layout({ children }: LayoutProps) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
+  const { pathname } = useLocation();
+  const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const main = mainRef.current;
+    if (!main) return;
+
+    const elements = Array.from(main.querySelectorAll<HTMLElement>("h1, h2, h3, p"));
+
+    elements.forEach((element, index) => {
+      element.dataset.scrollReveal = "";
+      element.style.setProperty("--reveal-delay", `${(index % 5) * 70}ms`);
+    });
+
+    if (!("IntersectionObserver" in window)) {
+      elements.forEach((element) => element.classList.add("is-visible"));
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -8%", threshold: 0.08 },
+    );
+
+    elements.forEach((element) => observer.observe(element));
+
+    return () => observer.disconnect();
+  }, [pathname]);
 
   function closeMenu() {
     setIsMenuOpen(false);
@@ -73,12 +106,13 @@ export default function Layout({ children }: LayoutProps) {
           >
             Publier une annonce
           </NavLink>
-          <button
-            type="button"
+          <NavLink
+            to="/connexion"
+            onClick={closeMenu}
             className="rounded-lg px-3 py-2.5 text-left text-sm font-bold text-start-gold lg:hidden"
           >
             Se connecter
-          </button>
+          </NavLink>
         </nav>
 
         <div className="flex flex-1 items-center justify-end gap-3">
@@ -88,9 +122,9 @@ export default function Layout({ children }: LayoutProps) {
           >
             Don
           </NavLink>
-          <button type="button" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border-start-gold/80 px-3.5 text-sm font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10 max-lg:hidden">
+          <NavLink to="/connexion" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border-start-gold/80 px-3.5 text-sm font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10 max-lg:hidden">
             Connecter
-          </button>
+          </NavLink>
           <NavLink to="/publier" className="inline-flex min-h-10 min-w-28 items-center justify-center rounded-lg border-start-gold bg-gradient-to-b from-start-gold to-[#ab8947] px-3.5 text-sm font-bold text-[#111827] [border-style:solid] [border-width:.5px] shadow-[0_6px_14px_rgba(199,164,93,.22)] transition hover:-translate-y-0.5 hover:bg-none hover:bg-start-gold/10 hover:text-start-gold max-lg:hidden">
             <span className="mr-2 inline-flex size-[22px] items-center justify-center rounded-full bg-[#111827]/10 text-xl font-extrabold">+</span>
             Annonce
@@ -183,34 +217,21 @@ export default function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
-      <main className="pt-3.5">{children}</main>
+      <main ref={mainRef} className="pt-3.5">{children}</main>
 
-      <footer className="relative isolate mt-8 overflow-hidden rounded-3xl border border-start-cream/10 bg-[radial-gradient(circle_at_12%_18%,rgba(199,164,93,.08),transparent_28%),linear-gradient(135deg,#11140f_0%,#080c12_58%,#101319_100%)] p-8 shadow-[0_24px_70px_rgba(0,0,0,.2)] max-sm:p-5">
-        <BrandPattern variant="landscape" className="right-0 bottom-0 -z-10 h-[78%] w-full text-start-cream/[.045] opacity-45 max-sm:opacity-30" />
-        <div className="relative grid grid-cols-[1.5fr_repeat(3,1fr)] gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
-          <div className="max-w-sm">
-            <StartLogo />
-            <p>
-              Une place de rencontre pour les professionnels et particuliers
-              chrétiens, près de chez vous.
-            </p>
-          </div>
-
-          <div className="flex flex-col gap-2 text-start-cream/70">
-            <h4>Explorer</h4>
-            <NavLink to="/">Accueil</NavLink>
-            <NavLink to="/annonces">Annonces</NavLink>
-            <NavLink to="/a-propos">À propos</NavLink>
-          </div>
-
-          <div className="flex flex-col gap-2 text-start-cream/70">
-            <h4>Ressources</h4>
+      <footer className="relative mt-8 overflow-hidden rounded-3xl border border-start-cream/15 bg-start-cream/[.09] p-5 shadow-[0_20px_55px_rgba(0,0,0,.16)] backdrop-blur-xl max-sm:p-4">
+        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-9 max-md:grid-cols-1 max-md:justify-items-center max-md:gap-5 max-md:text-center">
+          <nav className="flex flex-wrap items-center gap-x-6 gap-y-3 text-start-cream/70 max-md:justify-center" aria-label="Ressources du pied de page">
             <NavLink to="/contact">Contact</NavLink>
             <NavLink to="/don">Faire un don</NavLink>
             <NavLink to="/contact">Support</NavLink>
+          </nav>
+
+          <div className="flex min-h-20 min-w-32 items-center justify-center self-center max-md:order-first">
+            <img src="/logo-start-couleur.png" alt="START Réseau Chrétien" className="h-auto w-44 max-sm:w-40" />
           </div>
 
-          <div className="flex flex-col gap-2 text-start-cream/70">
+          <div className="flex flex-col gap-3 text-start-cream/70 max-md:w-full max-md:max-w-sm">
             <h4>Newsletter</h4>
             <div className="flex overflow-hidden rounded-xl border border-start-cream/15 bg-start-cream/5">
               <input className="min-w-0 flex-1 bg-transparent px-3 py-2 outline-none placeholder:text-start-cream/40" type="email" placeholder="Votre email" />
@@ -219,7 +240,7 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
 
-        <div className="mt-8 flex justify-between gap-4 border-t border-start-cream/10 pt-5 text-sm text-start-cream/55 max-sm:flex-col">
+        <div className="mt-5 flex justify-between gap-4 border-t border-start-cream/10 pt-4 text-xs text-start-cream/55 max-sm:flex-col">
           <span>© 2026 START Réseau Chrétien</span>
           <span>Mentions légales • Confidentialité</span>
         </div>

@@ -3,10 +3,12 @@ import ListingLocationMap from "../components/ListingLocationMap";
 import { mockListings } from "../data/mockListings";
 import ThemedPage from "../components/ThemedPage";
 import BrandPattern from "../components/BrandPattern";
+import ListingReviews from "../components/ListingReviews";
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
   const listing = mockListings.find((item) => item.id === slug);
+  const hasContactAccess = false;
 
   if (!listing) {
     return (
@@ -20,12 +22,12 @@ export default function ListingDetailPage() {
   }
 
   return (
-    <ThemedPage ambiance="network" className="px-[clamp(20px,5vw,72px)] py-[clamp(48px,7vw,96px)]">
+    <ThemedPage ambiance="network" className="px-[clamp(12px,5vw,72px)] py-[clamp(28px,7vw,96px)]">
       <Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">
         ← Retour à la recherche
       </Link>
 
-      <div className="mt-10 rounded-2xl border border-start-cream/10 bg-[#121418]/95 p-[clamp(24px,5vw,56px)] shadow-[0_26px_80px_rgba(0,0,0,.25)]">
+      <div className="mt-10 rounded-2xl border border-start-cream/10 bg-[#121418]/95 p-[clamp(18px,5vw,56px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-7">
         <div className="border-b border-start-cream/10 pb-7">
           <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">{listing.category}</span>
           <h1 className="my-3 font-serif text-[clamp(2.2rem,5vw,4.5rem)]">{listing.title}</h1>
@@ -59,15 +61,7 @@ export default function ListingDetailPage() {
 
             <div className="mt-6 grid min-h-56 place-content-center rounded-2xl border border-dashed border-start-cream/20 bg-[#080c12]/50 text-start-cream/45">Vidéo / galerie annonce</div>
 
-            <section id="avis" className="mt-8 scroll-mt-36 rounded-2xl border border-start-cream/10 bg-[#17191e] p-6">
-              <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Avis et commentaires</span>
-              <div className="mt-3 flex items-center gap-3">
-                <strong className="text-2xl text-start-cream">{listing.rating.toFixed(1)}</strong>
-                <span className="text-start-gold" aria-hidden="true">★★★★★</span>
-                <span className="text-sm text-start-cream/55">{listing.reviewCount} avis</span>
-              </div>
-              <p className="mt-4 text-start-cream/60">Les commentaires détaillés seront reliés aux comptes utilisateurs lors de l'intégration des données.</p>
-            </section>
+            <ListingReviews listing={listing} canReview={false} />
           </div>
 
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
@@ -75,13 +69,36 @@ export default function ListingDetailPage() {
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Profil professionnel</span>
             <h3 className="mt-3">{listing.professional.name}</h3>
             <p className="text-start-cream/65">{listing.professional.role}</p>
-            <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
-              <li>Tel : {listing.professional.phone}</li>
-              <li>Email : {listing.professional.email}</li>
-            </ul>
-            <button type="button" className="w-full rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
-              Contacter
-            </button>
+            {hasContactAccess ? (
+              <>
+                <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
+                  <li>Tél. : {listing.professional.phone}</li>
+                  <li>E-mail : {listing.professional.email}</li>
+                </ul>
+                <button type="button" className="w-full rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
+                  Contacter
+                </button>
+              </>
+            ) : (
+              <div className="mt-6 rounded-xl border border-start-gold/20 bg-start-gold/[.055] p-5">
+                <span className="inline-flex size-10 items-center justify-center rounded-full border border-start-gold/30 text-start-gold" aria-hidden="true">
+                  <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
+                    <rect x="5" y="10" width="14" height="10" rx="2" />
+                    <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                  </svg>
+                </span>
+                <h4 className="mt-4 font-semibold text-start-cream">Coordonnées privées</h4>
+                <p className="mt-2 text-sm leading-6 text-start-cream/60">
+                  Créez un compte gratuit pour voir le téléphone et l’e-mail de ce professionnel, puis prendre contact.
+                </p>
+                <button type="button" className="mt-5 w-full rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
+                  Créer un compte gratuit
+                </button>
+                <button type="button" className="mt-3 w-full rounded-xl border border-start-cream/15 px-5 py-3 font-semibold text-start-cream/75 transition hover:border-start-gold hover:text-start-gold">
+                  Se connecter
+                </button>
+              </div>
+            )}
           </aside>
         </div>
       </div>

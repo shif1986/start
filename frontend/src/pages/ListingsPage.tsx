@@ -1,10 +1,10 @@
 import { useMemo } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 import { mockListings } from "../data/mockListings";
 import { categories } from "../data/categories";
 import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
-import BrandPattern from "../components/BrandPattern";
+import ListingsMap from "../components/ListingsMap";
 
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -52,96 +52,43 @@ export default function ListingsPage() {
   }
 
   return (
-    <ThemedPage ambiance="dark" className="px-[clamp(20px,5vw,72px)] py-[clamp(48px,7vw,96px)]">
-      <section className="mb-12 flex items-end justify-between gap-5 max-sm:mb-9 max-sm:items-start">
-        <div>
-          <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">Catalogue</span>
-          <h1 className="mt-2 font-serif text-[clamp(2.4rem,5vw,4.5rem)]">Rechercher une annonce</h1>
-        </div>
-        <Link to="/" className="shrink-0 rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] transition hover:border-start-gold hover:text-start-gold">
-          Retour à l’accueil
-        </Link>
-      </section>
+    <ThemedPage ambiance="dark" className="px-[clamp(8px,2vw,28px)] pt-[clamp(8px,2vw,24px)] pb-[clamp(44px,7vw,96px)]">
+      <ListingsMap listings={filteredListings} />
 
-      <section className="mb-12 grid grid-cols-2 gap-7 max-lg:grid-cols-1">
-        <div className="relative overflow-hidden rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_15%_20%,rgba(199,164,93,.12),transparent_42%),#17191e] p-7 shadow-[0_20px_55px_rgba(0,0,0,.2)]">
-          <BrandPattern variant="chain" className="-right-24 -bottom-44 h-[430px] w-[330px] text-start-gold/[.055] opacity-50 max-sm:opacity-30" />
-          <p className="relative text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">Compte gratuit</p>
-          <h2 className="relative my-3 text-3xl font-bold tracking-[-.03em]">Créez votre compte pour voir les contacts privés</h2>
-          <p className="relative text-start-cream/65">
-            Découvrez les profils, les coordonnées et les annonces de votre
-            région en quelques clics.
-          </p>
-          <button type="button" className="relative mt-4 rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
-            Créer un compte
+      <section className="relative z-10 mx-auto mt-10 mb-16 w-[min(94%,1120px)] rounded-2xl border border-start-gold/25 bg-[#121418]/95 p-5 shadow-[0_22px_65px_rgba(0,0,0,.35)] backdrop-blur-xl max-md:mt-7 max-md:mb-12 max-md:w-full max-sm:p-4">
+        <div className="grid grid-cols-[1.4fr_1fr_1fr_auto] items-end gap-3 max-lg:grid-cols-2 max-sm:grid-cols-1">
+          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+            Recherche
+            <input className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none placeholder:text-start-cream/30 focus:border-start-gold" type="search" placeholder="Métier, service, annonce..." value={search} onChange={(event) => updateParam("q", event.target.value)} />
+          </label>
+          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+            Catégorie
+            <select className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none focus:border-start-gold" value={category} onChange={(event) => updateParam("category", event.target.value)}>
+              <option value="">Toutes les catégories</option>
+              {categories.map((item) => <option key={item.id} value={item.slug}>{item.name}</option>)}
+            </select>
+          </label>
+          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+            Localisation
+            <select className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none focus:border-start-gold" value={department} onChange={(event) => updateParam("department", event.target.value)}>
+              <option value="">Toute la France</option>
+              {departmentOptions.map((item) => <option key={item} value={item}>{item}</option>)}
+            </select>
+          </label>
+          <button type="button" className="min-h-12 rounded-xl border border-start-gold/60 px-5 font-semibold text-start-gold transition hover:bg-start-gold hover:text-start-ink max-sm:w-full" onClick={() => setSearchParams({})}>
+            Réinitialiser
           </button>
         </div>
-
-        <div className="rounded-2xl border border-start-cream/10 bg-[#121418] p-7 shadow-[0_20px_55px_rgba(0,0,0,.18)]">
-          <div className="grid grid-cols-[repeat(auto-fit,minmax(130px,1fr))] gap-2">
-            {departmentOptions.map((item) => (
-              <button
-                key={item}
-                type="button"
-                className={`rounded-xl px-3 py-3 text-sm font-semibold [border-style:solid] [border-width:.5px] transition focus-visible:outline-2 focus-visible:outline-start-gold ${department === item ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/10 bg-start-cream/5 text-start-cream/75 hover:border-start-gold hover:text-start-gold"}`}
-                onClick={() =>
-                  updateParam("department", department === item ? "" : item)
-                }
-              >
-                {item}
-              </button>
-            ))}
-          </div>
-        </div>
       </section>
 
-      <div className="grid grid-cols-[280px_1fr] gap-8 max-lg:grid-cols-1">
-        <aside className="h-fit rounded-2xl border border-start-cream/10 bg-[#121418] p-6 shadow-[0_18px_50px_rgba(0,0,0,.18)]">
-          <h3 className="mb-5 text-xl font-bold">Filtres</h3>
-          <label className="mb-4 flex flex-col gap-2 text-sm font-semibold text-start-cream/75">
-            Recherche
-            <input className="rounded-xl border border-start-cream/15 bg-[#080c12]/70 px-3 py-3 text-start-cream outline-none focus:border-start-gold"
-              type="text"
-              placeholder="Mot-clé"
-              value={search}
-              onChange={(event) => updateParam("q", event.target.value)}
-            />
-          </label>
-
-          <label className="mb-4 flex flex-col gap-2 text-sm font-semibold text-start-cream/75">
-            Département
-            <select className="rounded-xl border border-start-cream/15 bg-[#080c12] px-3 py-3 text-start-cream outline-none focus:border-start-gold"
-              value={department}
-              onChange={(event) =>
-                updateParam("department", event.target.value)
-              }
-            >
-              <option value="">Tous</option>
-              {departmentOptions.map((item) => (
-                <option key={item} value={item}>
-                  {item}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="flex flex-col gap-2 text-sm font-semibold text-start-cream/75">
-            Catégorie
-            <select className="rounded-xl border border-start-cream/15 bg-[#080c12] px-3 py-3 text-start-cream outline-none focus:border-start-gold"
-              value={category}
-              onChange={(event) => updateParam("category", event.target.value)}
-            >
-              <option value="">Toutes</option>
-              {categories.map((item) => (
-                <option key={item.id} value={item.slug}>
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
-        </aside>
-
-        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5">
+      <section>
+        <div className="mb-7 flex items-center justify-between gap-4">
+          <div>
+            <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">Résultats</span>
+            <h2 className="mt-2 text-2xl font-semibold">{filteredListings.length} annonce{filteredListings.length > 1 ? "s" : ""} disponible{filteredListings.length > 1 ? "s" : ""}</h2>
+          </div>
+        </div>
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-x-5 gap-y-12 max-md:gap-y-9 max-sm:gap-y-7">
           {filteredListings.length > 0 ? (
             filteredListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)
           ) : (
@@ -151,7 +98,7 @@ export default function ListingsPage() {
             </div>
           )}
         </div>
-      </div>
+      </section>
     </ThemedPage>
   );
 }

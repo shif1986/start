@@ -7,7 +7,7 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
   const detailUrl = `/annonce/${listing.id}`;
 
   return (
-    <article className="group relative overflow-hidden rounded-xl border border-start-cream/10 bg-[#15181d] text-start-cream shadow-[0_16px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-1 hover:border-start-gold/55">
+    <article className={`group relative overflow-hidden rounded-xl border bg-[#15181d] text-start-cream shadow-[0_16px_40px_rgba(0,0,0,.22)] transition hover:-translate-y-1 hover:border-start-gold/70 ${compact ? "border-start-gold/40 shadow-[0_16px_42px_rgba(199,164,93,.09)]" : "border-start-cream/10"}`}>
       <Link to={detailUrl} className="absolute inset-0 z-0" aria-label={`Voir l'annonce ${listing.title}`} />
       <div className="overflow-hidden">
         <img src={listing.image} alt="" className={`pointer-events-none w-full object-cover transition duration-500 group-hover:scale-105 ${compact ? "h-40" : "h-52"}`} />
