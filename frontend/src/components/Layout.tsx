@@ -1,6 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { homeCategories } from "../data/categories";
+import BrandPattern from "./BrandPattern";
 
 type LayoutProps = {
   children: ReactNode;
@@ -184,8 +185,9 @@ export default function Layout({ children }: LayoutProps) {
 
       <main className="pt-3.5">{children}</main>
 
-      <footer className="mt-8 rounded-3xl border border-start-cream/10 bg-[#080c12]/90 p-8 max-sm:p-5">
-        <div className="grid grid-cols-[1.5fr_repeat(3,1fr)] gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
+      <footer className="relative isolate mt-8 overflow-hidden rounded-3xl border border-start-cream/10 bg-[radial-gradient(circle_at_12%_18%,rgba(199,164,93,.08),transparent_28%),linear-gradient(135deg,#11140f_0%,#080c12_58%,#101319_100%)] p-8 shadow-[0_24px_70px_rgba(0,0,0,.2)] max-sm:p-5">
+        <BrandPattern variant="landscape" className="right-0 bottom-0 -z-10 h-[78%] w-full text-start-cream/[.045] opacity-45 max-sm:opacity-30" />
+        <div className="relative grid grid-cols-[1.5fr_repeat(3,1fr)] gap-8 max-lg:grid-cols-2 max-sm:grid-cols-1">
           <div className="max-w-sm">
             <StartLogo />
             <p>
