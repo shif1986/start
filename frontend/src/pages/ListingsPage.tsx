@@ -65,7 +65,7 @@ export default function ListingsPage() {
             Catégorie
             <select className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none focus:border-start-gold" value={category} onChange={(event) => updateParam("category", event.target.value)}>
               <option value="">Toutes les catégories</option>
-              {categories.map((item) => <option key={item.id} value={item.slug}>{item.name}</option>)}
+              {categories.map((item) => <option key={item.id} value={item.slug}>{item.label}</option>)}
             </select>
           </label>
           <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">

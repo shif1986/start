@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import { homeCategories } from "../data/categories";
+import { navigationCategories, type Category } from "../data/categories";
 
 type LayoutProps = {
   children: ReactNode;
@@ -13,8 +13,38 @@ const navItems = [
   { id: "contact", to: "/contact", label: "Contact" },
 ];
 
-const categoryLinksLeft = homeCategories.slice(0, 3);
-const categoryLinksRight = homeCategories.slice(3, 6);
+const categoryLinksLeft = navigationCategories.slice(0, 5);
+const categoryLinksRight = navigationCategories.slice(5);
+
+function CategoryDropdown({ category, align = "left" }: { category: Category; align?: "left" | "right" }) {
+  return (
+    <div className="group/category relative py-1.5">
+      <NavLink
+        to={`/annonces?category=${encodeURIComponent(category.slug)}`}
+        className="whitespace-nowrap text-[.68rem] font-semibold text-start-cream/75 transition hover:text-start-gold group-focus-within/category:text-start-gold"
+      >
+        {category.shortLabel ?? category.label}
+      </NavLink>
+      <div className={`invisible absolute top-full z-50 w-64 translate-y-2 pt-3 opacity-0 transition duration-200 group-hover/category:visible group-hover/category:translate-y-0 group-hover/category:opacity-100 group-focus-within/category:visible group-focus-within/category:translate-y-0 group-focus-within/category:opacity-100 ${align === "right" ? "right-0" : "left-0"}`}>
+        <div className="overflow-hidden rounded-xl border border-start-cream/12 bg-[#111419]/98 p-2 shadow-[0_22px_55px_rgba(0,0,0,.5),inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl">
+          <span className="block px-3 pt-2 pb-1 text-[.6rem] font-bold tracking-[.16em] text-start-gold uppercase">{category.label}</span>
+          <ul className="m-0 grid list-none gap-0.5 p-0">
+            {category.subcategories.map((subcategory) => (
+              <li key={subcategory}>
+                <NavLink
+                  to={`/annonces?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`}
+                  className="block rounded-lg px-3 py-2 text-xs leading-5 text-start-cream/65 transition hover:bg-start-cream/[.06] hover:text-start-cream focus-visible:bg-start-cream/[.06] focus-visible:text-start-gold focus-visible:outline-none"
+                >
+                  {subcategory}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function StartLogo() {
   return (
@@ -32,12 +62,15 @@ export default function Layout({ children }: LayoutProps) {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+  const categoryNavRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const main = mainRef.current;
     if (!main) return;
 
-    const elements = Array.from(main.querySelectorAll<HTMLElement>("h1, h2, h3, p"));
+    const elements = Array.from(main.querySelectorAll<HTMLElement>("h1, h2, h3, p")).filter(
+      (element) => !element.closest("[data-no-scroll-reveal]"),
+    );
 
     elements.forEach((element, index) => {
       element.dataset.scrollReveal = "";
@@ -75,6 +108,13 @@ export default function Layout({ children }: LayoutProps) {
     navigate(query ? `/annonces?q=${encodeURIComponent(query)}` : "/annonces");
   }
 
+  function scrollCategories(direction: -1 | 1) {
+    categoryNavRef.current?.scrollBy({
+      left: direction * categoryNavRef.current.clientWidth,
+      behavior: "smooth",
+    });
+  }
+
   return (
     <div className="mx-auto min-h-screen max-w-[1600px] px-[30px] pt-3 pb-6 max-sm:px-3">
       <header className="sticky top-2 z-50 flex min-h-13 flex-wrap items-center justify-between gap-x-3 rounded-3xl bg-white/[.055] px-4 py-1 shadow-[inset_0_.5px_0_rgba(255,255,255,.1),0_8px_28px_rgba(0,0,0,.08)] backdrop-blur-2xl backdrop-saturate-150 max-md:rounded-2xl">
@@ -84,7 +124,7 @@ export default function Layout({ children }: LayoutProps) {
 
         <nav
           id="main-navigation"
-          className={`${isMenuOpen ? "flex" : "hidden"} absolute top-[calc(100%+10px)] right-0 left-0 flex-col gap-1 bg-transparent p-3 lg:static lg:mx-3 lg:flex lg:flex-[1.6] lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-2.5 lg:p-0`}
+          className={`${isMenuOpen ? "flex" : "hidden"} absolute top-[calc(100%+10px)] right-0 left-0 z-50 flex-col gap-1 rounded-2xl border border-start-cream/12 bg-[#111419]/98 p-3.5 shadow-[0_24px_60px_rgba(0,0,0,.55),inset_0_1px_0_rgba(255,255,255,.04)] backdrop-blur-xl lg:static lg:mx-3 lg:flex lg:flex-[1.6] lg:flex-row lg:flex-wrap lg:items-center lg:justify-center lg:gap-2.5 lg:rounded-none lg:border-0 lg:bg-transparent lg:p-0 lg:shadow-none lg:backdrop-blur-none`}
           aria-label="Navigation principale"
         >
           {navItems.map((item) => (
@@ -93,7 +133,7 @@ export default function Layout({ children }: LayoutProps) {
               to={item.to}
               onClick={closeMenu}
               className={({ isActive }) =>
-                `rounded-lg px-3 py-2 text-[clamp(1rem,1.15vw,1.18rem)] font-semibold tracking-[-.02em] text-start-cream/90 transition hover:bg-start-cream/5 hover:text-start-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-start-gold lg:py-1.5 ${isActive ? "text-start-gold" : ""}`
+                `rounded-xl px-4 py-3 text-[clamp(1rem,1.15vw,1.18rem)] font-semibold tracking-[-.02em] text-start-cream/90 transition hover:bg-start-cream/[.06] hover:text-start-gold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-start-gold lg:rounded-lg lg:px-3 lg:py-1.5 ${isActive ? "bg-start-gold/[.08] text-start-gold lg:bg-transparent" : ""}`
               }
             >
               {item.label}
@@ -102,14 +142,14 @@ export default function Layout({ children }: LayoutProps) {
           <NavLink
             to="/publier"
             onClick={closeMenu}
-            className="mt-2 rounded-lg bg-start-gold px-3 py-2.5 text-center text-sm font-bold text-start-ink lg:hidden"
+            className="mt-2 rounded-xl bg-start-gold px-4 py-3 text-center text-sm font-bold text-start-ink shadow-[0_10px_26px_rgba(199,164,93,.16)] lg:hidden"
           >
             Publier une annonce
           </NavLink>
           <NavLink
             to="/connexion"
             onClick={closeMenu}
-            className="rounded-lg px-3 py-2.5 text-left text-sm font-bold text-start-gold lg:hidden"
+            className="rounded-xl border border-start-gold/25 px-4 py-3 text-center text-sm font-bold text-start-gold lg:hidden"
           >
             Se connecter
           </NavLink>
@@ -151,13 +191,7 @@ export default function Layout({ children }: LayoutProps) {
         <div className="order-4 grid w-full grid-cols-[1fr_minmax(280px,440px)_1fr] items-center gap-9 border-t border-start-cream/5 py-1.5 max-xl:grid-cols-1">
           <nav className="hidden items-center justify-end gap-6 xl:flex" aria-label="Catégories principales, première partie">
             {categoryLinksLeft.map((category) => (
-              <NavLink
-                key={category.id}
-                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-                className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
-              >
-                {category.name}
-              </NavLink>
+              <CategoryDropdown key={category.id} category={category} />
             ))}
           </nav>
 
@@ -190,30 +224,29 @@ export default function Layout({ children }: LayoutProps) {
 
           <nav className="hidden items-center justify-start gap-6 xl:flex" aria-label="Catégories principales, seconde partie">
             {categoryLinksRight.map((category) => (
-              <NavLink
-                key={category.id}
-                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-                className="text-xs font-semibold text-start-cream/75 transition hover:text-start-gold"
-              >
-                {category.name}
-              </NavLink>
+              <CategoryDropdown key={category.id} category={category} align="right" />
             ))}
           </nav>
 
-          <nav
-            className="flex w-full items-center gap-5 overflow-x-auto px-1 pt-1 pb-0.5 [scrollbar-width:none] xl:hidden"
-            aria-label="Catégories d'annonces"
-          >
-            {[...categoryLinksLeft, ...categoryLinksRight].map((category) => (
-              <NavLink
-                key={category.id}
-                to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-                className="shrink-0 text-xs font-semibold text-start-cream/70 transition hover:text-start-gold"
-              >
-                {category.name}
-              </NavLink>
-            ))}
-          </nav>
+          <div className="grid w-full grid-cols-[32px_minmax(0,1fr)_32px] items-center gap-2 pt-1 xl:hidden">
+            <button type="button" onClick={() => scrollCategories(-1)} className="inline-flex size-8 items-center justify-center rounded-full border border-start-gold/25 text-sm text-start-gold transition hover:bg-start-gold/10" aria-label="Voir les catégories précédentes">←</button>
+            <nav
+              ref={categoryNavRef}
+              className="flex w-full snap-x snap-mandatory gap-2 overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+              aria-label="Catégories d'annonces"
+            >
+              {[...categoryLinksLeft, ...categoryLinksRight].map((category) => (
+                <NavLink
+                  key={category.id}
+                  to={`/annonces?category=${encodeURIComponent(category.slug)}`}
+                  className="flex min-h-10 w-[calc(50%_-_4px)] shrink-0 snap-start items-center justify-center rounded-lg border border-start-cream/[.07] bg-black/[.08] px-2 py-2 text-center text-[.68rem] leading-[1.2] font-semibold text-start-cream/70 transition hover:border-start-gold/25 hover:bg-start-gold/[.05] hover:text-start-gold max-sm:text-[.62rem]"
+                >
+                  {category.shortLabel ?? category.label}
+                </NavLink>
+              ))}
+            </nav>
+            <button type="button" onClick={() => scrollCategories(1)} className="inline-flex size-8 items-center justify-center rounded-full border border-start-gold/25 text-sm text-start-gold transition hover:bg-start-gold/10" aria-label="Voir les catégories suivantes">→</button>
+          </div>
         </div>
       </header>
 

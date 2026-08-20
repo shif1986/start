@@ -16,7 +16,7 @@ Ce document est la référence unique pour construire l'interface React. Le code
 - Une annonce professionnelle ne peut être publiée qu’après souscription à un abonnement actif et validation du compte / statut pro.
 - Carte de France avec recherche par département sur l'accueil et dans le catalogue.
 - Paiement prévu avec Stripe, avec un mode de paiement Google Pay et un mode classique lorsque disponible.
-- Identité visuelle : Sora, #22221E, #F4EFE5, #C7A45D.
+- Identité visuelle : Manrope, #22221E, #F4EFE5, #C7A45D.
 
 ## 1. Objectif du front-end
 
@@ -80,8 +80,10 @@ Tailwind CSS 4 est installé avec son plugin Vite officiel dans `frontend/`.
 L'import global et les tokens de l'identité START se trouvent dans
 `frontend/src/index.css` :
 
-- `font-sans` : Sora ;
-- `font-script` : MonteCarlo ;
+font-sans Montserrat
+font-hero Montserrat
+font-script MonteCarlo
+
 - `start-ink` : `#22221E` ;
 - `start-cream` : `#F4EFE5` ;
 - `start-gold` : `#C7A45D`.
@@ -200,8 +202,23 @@ Réserver Zustand à l'état d'interface non persistant : ouverture d'une sideba
 | `/dashboard/favoris`  | authentifié      | favoris                         |
 | `/dashboard/profil`   | authentifié      | édition du profil               |
 | `/admin`              | modérateur/admin | modération                      |
+| `/abonnement`         | professionnel    | choix de l'abonnement pro       |
 
 Les routes non encore implémentées affichent actuellement une page neutre. Ce comportement est volontaire : il évite les liens morts tout en signalant clairement la tranche suivante.
+
+État de la maquette : `/connexion` contient un lien discret « Accès administration » qui ouvre `/admin`. Il facilite la revue du frontend uniquement et ne constitue pas une authentification. À terme, la connexion commune redirigera automatiquement selon le rôle retourné par le backend.
+
+La page `/abonnement` est également une maquette frontend : les sélecteurs mensuel/annuel, carte et Google Pay sont visuels et aucun paiement n'est débité. La clé secrète Stripe, la création des sessions Checkout, les webhooks et le contrôle de l'abonnement actif devront rester côté serveur.
+
+### Catégories V1
+
+`frontend/src/data/categories.ts` est la source unique des quatorze catégories. Chaque entrée possède au minimum `id`, `slug`, `label` et `subcategories`. Les composants de navigation, recherche, filtre, dépôt et pages de catégories doivent importer cette configuration au lieu de reconstruire leurs propres listes.
+
+Slugs principaux : `vehicules`, `immobilier`, `emploi`, `services`, `maison-jardin`, `mode-accessoires`, `multimedia`, `loisirs`, `animaux`, `materiel-professionnel`, `commerce-entreprise`, `agriculture`, `btp-industrie` et `autres-annonces`.
+
+La navigation courte privilégie : Véhicules, Immobilier, Emploi, Services, Maison & Jardin, Multimédia, Loisirs, Matériel Pro et Commerce, avec un accès distinct à « Toutes les catégories ». Les catégories professionnelles prioritaires sont Services, Matériel professionnel, Commerce & Entreprise, Agriculture et BTP & Industrie.
+
+Les URLs de filtre utilisent `/annonces?category=<slug>`. Les futures pages SEO pourront reprendre les mêmes slugs, par exemple `/vehicules`, `/services`, `/materiel-professionnel`, `/commerce-entreprise` et `/btp-industrie`.
 
 ## 9. Ordre de réalisation TDD
 
@@ -274,3 +291,51 @@ Une tranche front-end est terminée uniquement quand :
 
 - souhaité : une carte géographique sur la page d'accueil pour que les clients puissent rechercher des annonces ;
 - les clients doivent pouvoir cliquer sur la carte, département par département, pour lancer une recherche.
+
+## 14. Système d'animation actuel
+
+La révélation des titres et paragraphes au scroll est gérée globalement dans `src/components/Layout.tsx`. Le layout sélectionne les éléments `h1`, `h2`, `h3` et `p`, puis un `IntersectionObserver` ajoute `is-visible` lors de leur entrée dans le viewport.
+
+```text
+durée principale       950ms
+délai progressif       70ms, limité à cinq niveaux
+déplacement desktop    22px
+déplacement mobile     14px
+durée mobile           720ms
+seuil d'observation    8%
+marge basse            -8%
+```
+
+Les styles sont centralisés dans `src/index.css`. Sur mobile, le flou est supprimé et le déplacement est raccourci. Avec `prefers-reduced-motion: reduce`, les contenus sont immédiatement visibles sans animation.
+
+Règles opérationnelles :
+
+- ne pas dupliquer l'observateur dans chaque page ;
+- ne pas appliquer ce système aux boutons, champs ou contrôles indispensables ;
+- conserver une seule exécution par élément ;
+- garantir l'affichage si `IntersectionObserver` est indisponible ;
+- tester à 320 px, 390 px, 768 px et sur grand écran.
+
+## 15. Responsive du catalogue et des fiches
+
+- `ListingsMap.tsx` utilise une hauteur fluide jusqu'à `620px` et passe à `340px` sous `640px` ;
+- la barre de recherche passe de quatre à deux puis une colonne ;
+- les filtres restent synchronisés avec l'URL à toutes les tailles ;
+- la fiche annonce empile le contenu et le profil sous `1024px` ;
+- les CTA d'inscription, de contact et d'évaluation prennent toute la largeur sur mobile ;
+- `ListingReviews.tsx` autorise le retour à la ligne des étoiles et réduit leur taille sur mobile ;
+- contrôler en priorité 320px, 390px, 768px, 1024px et 1440px.
+
+## 16. Espaces de comptes — maquettes frontend
+
+Routes disponibles :
+
+- `/connexion` et `/inscription` : accès et choix particulier/professionnel ;
+- `/espace/particulier` : favoris, contacts et avis ;
+- `/espace/professionnel` : profil, annonces et abonnement ;
+- `/abonnement` : choix mensuel à 7 € ou annuel à 84 €, récapitulatif et moyens de paiement ;
+- `/admin` : supervision des utilisateurs, annonces, commentaires, signalements et abonnements.
+
+Ces routes utilisent uniquement des données locales et ne sont pas protégées. Elles servent à valider l'interface et le responsive. Ne jamais considérer leur affichage conditionnel comme une autorisation réelle. Authentification, rôles, abonnement actif et permissions administrateur devront être contrôlés ultérieurement côté backend et base de données.
+
+La page `/abonnement` est une maquette frontend : aucun débit, renouvellement ou changement de statut n'est effectué. Les boutons Carte bancaire et Google Pay préparent uniquement l'intégration future de Stripe.

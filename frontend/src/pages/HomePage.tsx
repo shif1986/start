@@ -26,22 +26,29 @@ function SearchByLocation({
   onDepartmentSelect: (department: string) => void;
 }) {
   return (
-    <section className="relative grid min-h-[calc(100svh-150px)] grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] items-center gap-[clamp(20px,2vw,40px)] overflow-hidden rounded-3xl bg-[#171a21] px-[clamp(20px,3.5vw,52px)] py-[clamp(32px,4.5vh,54px)] max-lg:min-h-0 max-lg:grid-cols-1 max-lg:justify-items-center max-lg:gap-8 max-lg:py-10 max-sm:rounded-2xl max-sm:py-8">
+    <section className="relative grid min-h-[calc(100svh-150px)] grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] items-center gap-[clamp(20px,2vw,40px)] overflow-hidden rounded-3xl bg-[#171a21] px-[clamp(20px,3.5vw,52px)] py-[clamp(32px,4.5vh,54px)] max-lg:min-h-0 max-lg:grid-cols-1 max-lg:justify-items-center max-lg:gap-10 max-lg:py-10 max-sm:gap-9 max-sm:rounded-2xl max-sm:px-4 max-sm:pt-5 max-sm:pb-10">
       <HeroGradientBackdrop />
 
-      <div className="relative z-10 flex w-full max-w-[520px] min-w-0 flex-col items-center justify-self-center text-center max-lg:max-w-[560px]">
-        <div className="flex w-full items-center gap-4 font-hero text-[clamp(.62rem,.8vw,.84rem)] font-medium tracking-[.08em] text-start-gold uppercase max-sm:gap-2 max-sm:text-[.58rem] max-sm:tracking-[.035em]">
-          <span className="h-px min-w-4 flex-1 bg-gradient-to-r from-transparent to-start-gold/75" aria-hidden="true" />
+      <div
+        data-no-scroll-reveal
+        className="relative z-10 flex w-full max-w-[520px] min-w-0 flex-col items-center justify-self-center text-center max-lg:order-2 max-lg:max-w-[560px]"
+      >
+        <div className="flex w-full items-center gap-4 font-hero text-[clamp(.62rem,.8vw,.84rem)] font-medium tracking-[.08em] text-start-gold uppercase max-sm:gap-3 max-sm:text-[.58rem] max-sm:tracking-[.07em]">
+          <span
+            className="h-px min-w-4 flex-1 bg-gradient-to-r from-transparent to-start-gold/75"
+            aria-hidden="true"
+          />
           <span className="shrink-0">Site d’annonce professionnel</span>
-          <span className="h-px min-w-4 flex-1 bg-gradient-to-l from-transparent to-start-gold/75" aria-hidden="true" />
+          <span
+            className="h-px min-w-4 flex-1 bg-gradient-to-l from-transparent to-start-gold/75"
+            aria-hidden="true"
+          />
         </div>
 
-        <h1 className="mt-9 flex w-[min(100%,370px)] flex-col items-stretch font-hero leading-none max-lg:mt-7 max-lg:w-[min(100%,400px)] max-sm:mt-6 max-sm:w-[min(100%,310px)]">
-          <span className="sr-only">
-            START Réseau Chrétien Professionnel
-          </span>
+        <h1 className="mt-9 flex w-[min(100%,370px)] flex-col items-stretch font-hero leading-none max-lg:mt-7 max-lg:w-[min(100%,400px)] max-sm:mt-6 max-sm:w-[min(100%,290px)]">
+          <span className="sr-only">START Réseau Chrétien Professionnel</span>
           <span
-            className="flex w-full items-center justify-between text-[clamp(3.25rem,4.7vw,4.8rem)] font-medium tracking-[.025em] text-[#f5f5f3] max-lg:text-[clamp(3.45rem,9vw,5rem)] max-sm:text-[clamp(2.8rem,14vw,4rem)] max-sm:tracking-0"
+            className="flex w-full items-center justify-between text-[clamp(3.25rem,4.7vw,4.8rem)] font-medium tracking-[.025em] text-[#f5f5f3] max-lg:text-[clamp(3.45rem,9vw,5rem)] max-sm:text-[clamp(2.65rem,13.5vw,3.7rem)] max-sm:tracking-0"
             aria-hidden="true"
           >
             <span>S</span>
@@ -58,38 +65,73 @@ function SearchByLocation({
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
-              <circle cx="50" cy="19" r="17" fill="#D4AF37" stroke="#F5F5F3" strokeWidth="8" />
-              <circle cx="19" cy="94" r="17" fill="#D4AF37" stroke="#F5F5F3" strokeWidth="8" />
-              <circle cx="81" cy="94" r="17" fill="#D4AF37" stroke="#F5F5F3" strokeWidth="8" />
+              <circle
+                cx="50"
+                cy="19"
+                r="17"
+                fill="#D4AF37"
+                stroke="#F5F5F3"
+                strokeWidth="8"
+              />
+              <circle
+                cx="19"
+                cy="94"
+                r="17"
+                fill="#D4AF37"
+                stroke="#F5F5F3"
+                strokeWidth="8"
+              />
+              <circle
+                cx="81"
+                cy="94"
+                r="17"
+                fill="#D4AF37"
+                stroke="#F5F5F3"
+                strokeWidth="8"
+              />
             </svg>
             <span>R</span>
             <span>T</span>
           </span>
           <span
-            className="mt-3 flex w-full items-center justify-between whitespace-nowrap text-[clamp(.65rem,.88vw,.88rem)] font-normal tracking-[.3em] text-[#f5f5f3]/90 max-lg:text-[.88rem] max-lg:tracking-[.27em] max-sm:text-[.6rem] max-sm:tracking-[.12em]"
+            className="mt-3 flex w-full items-center justify-between whitespace-nowrap text-[clamp(.65rem,.88vw,.88rem)] font-normal tracking-[.3em] text-[#f5f5f3]/90 max-lg:text-[.88rem] max-lg:tracking-[.27em] max-sm:mt-5 max-sm:text-[.6rem] max-sm:tracking-[.16em]"
             aria-hidden="true"
           >
             <span>RÉSEAU</span>
             <span>CHRÉTIEN</span>
           </span>
-          <span className="mt-7 flex w-full items-center gap-2.5 max-sm:mt-5 max-sm:gap-1.5" aria-hidden="true">
-            <span className="h-px min-w-3 flex-1 bg-start-gold/75" />
+          <span
+            className="mt-7 flex w-full items-center gap-2.5 max-sm:mt-6 max-sm:gap-2"
+            aria-hidden="true"
+          >
+            <span className="h-[.5px] min-w-3 flex-1 bg-start-gold/55" />
             <span className="relative flex min-h-12 w-[82%] items-center justify-center px-[clamp(16px,3vw,34px)] text-[clamp(.72rem,1.15vw,1.05rem)] font-semibold tracking-[.3em] text-start-gold max-sm:min-h-10 max-sm:w-[90%] max-sm:px-3 max-sm:text-[.64rem] max-sm:tracking-[.14em]">
-              <svg className="absolute inset-0 size-full" viewBox="0 0 620 64" fill="none" preserveAspectRatio="none">
-                <path d="M18 1h584l17 31-17 31H18L1 32 18 1Z" stroke="currentColor" strokeWidth="1.5" vectorEffect="non-scaling-stroke" />
+              <svg
+                className="absolute inset-0 size-full"
+                viewBox="0 0 620 64"
+                fill="none"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M18 1h584l17 31-17 31H18L1 32 18 1Z"
+                  stroke="currentColor"
+                  strokeWidth="0.75"
+                  vectorEffect="non-scaling-stroke"
+                />
               </svg>
               <span className="relative">PROFESSIONNEL</span>
             </span>
-            <span className="h-px min-w-3 flex-1 bg-start-gold/75" />
+            <span className="h-[.5px] min-w-3 flex-1 bg-start-gold/55" />
           </span>
         </h1>
 
-        <p className="mt-10 max-w-[470px] font-hero text-[clamp(.86rem,1.05vw,1.02rem)] leading-[1.65] font-normal text-start-cream/78 max-lg:mt-9 max-lg:text-base max-sm:mt-7 max-sm:text-sm">
-          Valoriser votre entreprise et <span className="text-start-gold">soutenir l’économie</span>
+        <p className="mt-12 max-w-[470px] font-hero text-[clamp(.86rem,1.05vw,1.02rem)] leading-[1.65] font-normal text-start-cream/78 max-lg:mt-11 max-lg:text-base max-sm:mt-10 max-sm:max-w-[330px] max-sm:text-sm max-sm:leading-7">
+          Valoriser votre entreprise et{" "}
+          <span className="text-start-gold">soutenir l’économie</span>
           <br className="max-sm:hidden" /> qui porte nos valeurs.
         </p>
 
-        <div className="mt-11 flex items-center justify-center gap-4 max-lg:mt-10 max-sm:mt-8 max-sm:flex-col">
+        <div className="mt-11 flex items-center justify-center gap-4 max-lg:mt-10 max-sm:mt-8 max-sm:w-full max-sm:flex-col">
           <Link
             to="/publier"
             className="inline-flex min-h-12 items-center justify-center rounded-xl border-start-gold bg-transparent px-5 font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10"
@@ -108,8 +150,8 @@ function SearchByLocation({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:max-w-[620px]">
-        <div className="mx-auto w-[98%] max-sm:w-full">
+      <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:order-1 max-lg:max-w-[620px] max-sm:max-w-[430px]">
+        <div className="mx-auto w-[98%] max-sm:w-full max-sm:rounded-2xl max-sm:border max-sm:border-start-gold/15 max-sm:bg-[#111419]/55 max-sm:p-2 max-sm:shadow-[0_20px_50px_rgba(0,0,0,.24)]">
           <FranceListingsMap
             listings={mockListings}
             selectedDepartment={selectedDepartment}
@@ -123,7 +165,9 @@ function SearchByLocation({
         aria-label="Découvrir la suite"
       >
         <span>DÉCOUVRIR</span>
-        <span className="animate-bounce text-2xl leading-none text-start-gold">↓</span>
+        <span className="animate-bounce text-2xl leading-none text-start-gold">
+          ↓
+        </span>
       </div>
     </section>
   );
@@ -145,10 +189,19 @@ export default function HomePage() {
         onDepartmentSelect={handleDepartmentSelect}
       />
 
-      <section className="relative overflow-hidden border-y border-start-cream/10 bg-[radial-gradient(circle_at_14%_18%,rgba(199,164,93,.13),transparent_32%),linear-gradient(125deg,#171712_0%,#101217_48%,#090c12_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream max-sm:py-16">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.018),transparent_55%)]" aria-hidden="true" />
-        <BrandPattern variant="chain" className="-right-4 -bottom-20 h-[800px] w-[min(86vw,1160px)] text-start-cream/[.06] opacity-55 max-sm:-right-28 max-sm:-bottom-20 max-sm:opacity-35" />
-        <span className="pointer-events-none absolute right-[13%] bottom-[18%] size-3 rounded-full bg-[#2da9df]/70 shadow-[0_0_0_7px_rgba(45,169,223,.08)] max-sm:hidden" aria-hidden="true" />
+      <section className="relative overflow-hidden border-y border-start-cream/10 bg-[radial-gradient(circle_at_14%_18%,rgba(199,164,93,.14),transparent_34%),linear-gradient(125deg,#24231f_0%,#1b1e23_48%,#12161c_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream max-sm:py-16">
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.018),transparent_55%)]"
+          aria-hidden="true"
+        />
+        <BrandPattern
+          variant="chain"
+          className="-right-4 -bottom-20 h-[800px] w-[min(86vw,1160px)] text-start-cream/[.05] opacity-35 max-sm:-right-28 max-sm:-bottom-20 max-sm:opacity-20"
+        />
+        <span
+          className="pointer-events-none absolute right-[13%] bottom-[18%] size-3 rounded-full bg-[#2da9df]/70 shadow-[0_0_0_7px_rgba(45,169,223,.08)] max-sm:hidden"
+          aria-hidden="true"
+        />
         <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">
@@ -157,35 +210,74 @@ export default function HomePage() {
             <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
               Les dernières annonces
             </h2>
-            <p className="mt-2 max-w-xl text-start-cream/65">Découvrez les nouvelles opportunités et services proposés par le réseau.</p>
+            <p className="mt-2 max-w-xl text-start-cream/65">
+              Découvrez les nouvelles opportunités et services proposés par le
+              réseau.
+            </p>
           </div>
           <Link
             to="/annonces"
             className="shrink-0 rounded-lg border border-start-cream/20 px-5 py-3 font-semibold text-start-cream transition hover:border-start-gold hover:text-start-gold"
           >
-            Voir toutes les annonces <span className="ml-3 text-start-gold" aria-hidden="true">→</span>
+            Voir toutes les annonces{" "}
+            <span className="ml-3 text-start-gold" aria-hidden="true">
+              →
+            </span>
           </Link>
         </div>
 
         <div className="relative z-10 grid grid-cols-4 gap-x-6 gap-y-12 max-lg:grid-cols-2 max-lg:gap-y-10 max-sm:grid-cols-1 max-sm:gap-y-8">
-          {featuredListings.map((listing) => <ListingCard key={listing.id} listing={listing} compact />)}
+          {featuredListings.map((listing) => (
+            <ListingCard key={listing.id} listing={listing} compact />
+          ))}
         </div>
       </section>
 
       <section className="relative overflow-hidden border-t border-start-cream/10 bg-[radial-gradient(circle_at_82%_12%,rgba(77,163,255,.09),transparent_30%),radial-gradient(circle_at_12%_90%,rgba(199,164,93,.065),transparent_34%),linear-gradient(145deg,#242b31_0%,#1b2026_48%,#14181d_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
-        <div className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.03),transparent_48%)]" aria-hidden="true" />
-        <BrandPattern variant="landscape" className="right-0 bottom-0 h-[62%] w-full text-start-cream/[.055] opacity-55 max-sm:h-[45%] max-sm:opacity-40" />
+        <div
+          className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.03),transparent_48%)]"
+          aria-hidden="true"
+        />
+        <BrandPattern
+          variant="landscape"
+          className="right-0 bottom-0 h-[62%] w-full text-start-cream/[.045] opacity-35 max-sm:h-[45%] max-sm:opacity-22"
+        />
         <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
-            <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Explorez le réseau</span>
-            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">Parcourez les catégories</h2>
-            <p className="mt-2 max-w-xl text-start-cream/65">Trouvez facilement les services, opportunités et ressources dont vous avez besoin.</p>
+            <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">
+              Explorez le réseau
+            </span>
+            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
+              Parcourez les catégories
+            </h2>
+            <p className="mt-2 max-w-xl text-start-cream/65">
+              Trouvez facilement les services, opportunités et ressources dont
+              vous avez besoin.
+            </p>
           </div>
-          <Link to="/categories" className="shrink-0 rounded-lg border border-start-cream/20 px-5 py-3 text-sm font-semibold text-start-cream transition hover:border-start-gold hover:text-start-gold">Voir toutes les catégories <span className="ml-3 text-start-gold" aria-hidden="true">→</span></Link>
+          <Link
+            to="/categories"
+            className="shrink-0 rounded-lg border border-start-cream/20 px-5 py-3 text-sm font-semibold text-start-cream transition hover:border-start-gold hover:text-start-gold"
+          >
+            Voir toutes les catégories{" "}
+            <span className="ml-3 text-start-gold" aria-hidden="true">
+              →
+            </span>
+          </Link>
         </div>
         <div className="relative z-10 grid grid-cols-[1.4fr_repeat(3,1fr)] gap-x-6 gap-y-12 max-lg:grid-cols-2 max-lg:gap-y-10 max-sm:grid-cols-1 max-sm:gap-y-8">
           {homeCategories.map((category, index) => (
-            <CategoryCard key={category.id} category={category} compact featured={index === 0} count={mockListings.filter((listing) => listing.categorySlug === category.slug).length} />
+            <CategoryCard
+              key={category.id}
+              category={category}
+              compact
+              featured={index === 0}
+              count={
+                mockListings.filter(
+                  (listing) => listing.categorySlug === category.slug,
+                ).length
+              }
+            />
           ))}
         </div>
       </section>

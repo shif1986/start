@@ -22,19 +22,32 @@ export default function ListingDetailPage() {
   }
 
   return (
-    <ThemedPage ambiance="network" className="px-[clamp(12px,5vw,72px)] py-[clamp(28px,7vw,96px)]">
+    <ThemedPage ambiance="network" className="px-[clamp(12px,5vw,72px)] py-[clamp(20px,3.5vw,52px)]">
       <Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">
         ← Retour à la recherche
       </Link>
 
-      <div className="mt-10 rounded-2xl border border-start-cream/10 bg-[#121418]/95 p-[clamp(18px,5vw,56px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-7">
+      <div className="mt-6 rounded-2xl border border-start-cream/10 bg-[#121418]/95 px-[clamp(18px,5vw,56px)] py-[clamp(22px,3.5vw,40px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-5">
         <div className="border-b border-start-cream/10 pb-7">
           <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">{listing.category}</span>
-          <h1 className="my-3 font-serif text-[clamp(2.2rem,5vw,4.5rem)]">{listing.title}</h1>
+          <h1 className="my-3 max-w-5xl font-serif text-[clamp(1.75rem,3.4vw,3.35rem)] leading-[1.12] tracking-[-.025em]">{listing.title}</h1>
           <p className="text-start-cream/60">
             {listing.city} • {listing.department}
           </p>
         </div>
+
+        <figure className="relative mt-8 aspect-[16/7] min-h-56 overflow-hidden rounded-2xl border border-start-cream/10 bg-[#080c12] shadow-[0_20px_55px_rgba(0,0,0,.24)] max-md:aspect-[4/3] max-sm:min-h-52">
+          <img
+            src={listing.image}
+            alt={`Illustration de l’annonce : ${listing.title}`}
+            className="size-full object-cover brightness-[.9] transition duration-700 hover:scale-[1.015] hover:brightness-100"
+          />
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080c12]/75 via-transparent to-transparent" aria-hidden="true" />
+          <figcaption className="absolute right-5 bottom-5 left-5 flex items-end justify-between gap-4 text-sm max-sm:right-4 max-sm:bottom-4 max-sm:left-4 max-sm:flex-col max-sm:items-start max-sm:gap-2">
+            <span className="rounded-full border border-white/20 bg-[#0b0d10]/70 px-3 py-1.5 font-semibold text-start-cream backdrop-blur-md">Photo de l’annonce</span>
+            <span className="rounded-full bg-[#0b0d10]/55 px-3 py-1 text-start-cream/75 backdrop-blur-sm">{listing.city} · {listing.department}</span>
+          </figcaption>
+        </figure>
 
         <div className="grid grid-cols-[1fr_310px] gap-10 pt-10 max-lg:grid-cols-1">
           <div className="min-w-0">
@@ -58,8 +71,6 @@ export default function ListingDetailPage() {
             </div>
 
             <ListingLocationMap listing={listing} />
-
-            <div className="mt-6 grid min-h-56 place-content-center rounded-2xl border border-dashed border-start-cream/20 bg-[#080c12]/50 text-start-cream/45">Vidéo / galerie annonce</div>
 
             <ListingReviews listing={listing} canReview={false} />
           </div>
