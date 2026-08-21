@@ -95,6 +95,12 @@ maquette précédente, mais il n'est plus chargé par l'application.
 
 ## 4. Commandes depuis la racine
 
+### Composant d’accueil — START Network Cycle
+
+La page d’accueil affiche `StartNetworkCycle` immédiatement après les catégories. Ce composant interactif présente successivement : Réduction d’impôt 60 %, Professionnels, Particuliers, Développement & maintenance, Humanitaire & Mission et Formation & Conférences. Les contenus sont centralisés dans `networkSteps` afin de pouvoir les modifier sans dupliquer le rendu.
+
+La définition apparaît seulement à l’entrée dans le viewport. L’animation présente les six étapes une seule fois puis s’arrête ; elle s’interrompt également lorsque l’onglet est caché et respecte `prefers-reduced-motion`. Le diagramme est centré, les six titres utilisent une taille uniforme et la définition active apparaît près de son icône sur desktop/tablette. Sur mobile, le diagramme reste compact et la définition passe sous celui-ci. La connexion active est signalée par une flèche pleine plus visible. Les boutons permettent un accès direct au clavier, au clic ou au tap. « L’argent du Royaume » reste la conclusion du composant et ne compte pas parmi les six étapes.
+
 ```bash
 npm run setup
 npm run install:all

@@ -115,3 +115,153 @@ button {
 #root {
   min-height: 100vh;
 }
+
+.start-network-cycle {
+  position: relative;
+  overflow: hidden;
+  border-top: 1px solid rgb(244 239 229 / 10%);
+  background:
+    radial-gradient(circle at 50% 48%, rgb(199 164 93 / 10%), transparent 32%),
+    radial-gradient(circle at 12% 72%, rgb(77 163 255 / 5%), transparent 26%),
+    linear-gradient(150deg, #090c11 0%, #0e1218 52%, #080a0e 100%);
+}
+
+.start-network-cycle::before {
+  position: absolute;
+  inset: 0;
+  content: "";
+  opacity: 0.24;
+  background-image: radial-gradient(circle, rgb(199 164 93 / 45%) 0 1px, transparent 1.5px);
+  background-size: 54px 54px;
+  mask-image: radial-gradient(circle at center, black, transparent 72%);
+}
+
+.network-cycle-logo,
+.network-node,
+.network-line,
+.network-cycle-copy,
+.start-network-cycle footer {
+  opacity: 0;
+  transition: opacity 700ms ease, transform 700ms cubic-bezier(.16, 1, .3, 1);
+}
+
+.start-network-cycle.is-entered .network-cycle-logo,
+.start-network-cycle.is-entered .network-node,
+.start-network-cycle.is-entered .network-line,
+.start-network-cycle.is-entered footer {
+  opacity: 1;
+}
+
+.start-network-cycle.is-entered .network-cycle-copy.is-started { opacity: 1; }
+.start-network-cycle.is-entered .network-node:not(.is-active) { opacity: .62; }
+
+.network-line {
+  stroke: rgb(199 164 93 / 16%);
+  stroke-width: .22;
+  vector-effect: non-scaling-stroke;
+}
+
+.network-line.is-active {
+  stroke: var(--step-color);
+  stroke-width: .62;
+  filter: drop-shadow(0 0 2.5px var(--step-color));
+}
+
+.network-node {
+  border-color: color-mix(in srgb, var(--step-color) 45%, transparent);
+  box-shadow: 0 0 16px color-mix(in srgb, var(--step-color) 12%, transparent);
+}
+
+.network-node.is-active {
+  opacity: 1;
+  border-color: var(--step-color);
+  box-shadow: 0 0 10px var(--step-color), 0 0 32px color-mix(in srgb, var(--step-color) 38%, transparent);
+  transform: translate(-50%, -50%) scale(1.05);
+  animation: network-pulse 2.8s ease-in-out infinite;
+}
+
+.network-node-label {
+  position: absolute;
+  width: max-content;
+  max-width: 170px;
+  color: rgb(244 239 229 / 66%);
+  font-size: .66rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  pointer-events: none;
+  transition: color 350ms ease, opacity 350ms ease;
+}
+
+.network-node.is-active .network-node-label {
+  color: var(--step-color);
+  text-shadow: 0 0 14px color-mix(in srgb, var(--step-color) 42%, transparent);
+}
+
+.network-node[data-node="tax"] .network-node-label { bottom: calc(100% + 10px); left: 50%; transform: translateX(-50%); }
+.network-node[data-node="development"] .network-node-label { top: calc(100% + 10px); left: 50%; transform: translateX(-50%); }
+.network-node[data-node="professionals"] .network-node-label,
+.network-node[data-node="individuals"] .network-node-label { left: calc(100% + 12px); text-align: left; }
+.network-node[data-node="mission"] .network-node-label,
+.network-node[data-node="training"] .network-node-label { right: calc(100% + 12px); text-align: right; }
+
+.network-step-copy { animation: network-copy-in 520ms cubic-bezier(.16, 1, .3, 1); }
+
+.network-cycle-copy[data-active="tax"] { bottom: 91%; left: 63%; }
+.network-cycle-copy[data-active="professionals"] { top: 17%; left: 98%; }
+.network-cycle-copy[data-active="individuals"] { top: 63%; left: 98%; }
+.network-cycle-copy[data-active="development"] { top: 88%; left: 63%; }
+.network-cycle-copy[data-active="mission"] { top: 63%; right: 98%; }
+.network-cycle-copy[data-active="training"] { top: 17%; right: 98%; }
+
+@keyframes network-pulse { 50% { box-shadow: 0 0 14px var(--step-color), 0 0 46px color-mix(in srgb, var(--step-color) 48%, transparent); } }
+@keyframes network-copy-in { from { opacity: 0; transform: translateX(14px); } }
+
+@media (min-width: 641px) and (max-width: 1100px) {
+  .network-cycle-diagram { max-width: 480px; }
+  .network-cycle-copy { width: 220px; }
+  .network-cycle-copy[data-active="professionals"],
+  .network-cycle-copy[data-active="individuals"] { left: 86%; }
+  .network-cycle-copy[data-active="mission"],
+  .network-cycle-copy[data-active="training"] { right: 86%; }
+  .network-cycle-copy[data-active="tax"],
+  .network-cycle-copy[data-active="development"] { left: 58%; }
+}
+
+@media (max-width: 640px) {
+  .network-cycle-diagram { margin-bottom: 245px; }
+  .network-node { width: 46px; height: 46px; }
+  .network-node-label { max-width: 86px; font-size: .47rem; letter-spacing: .035em; }
+  .network-node[data-node="professionals"] .network-node-label,
+  .network-node[data-node="individuals"] .network-node-label,
+  .network-node[data-node="mission"] .network-node-label,
+  .network-node[data-node="training"] .network-node-label { top: calc(100% + 6px); right: auto; left: 50%; transform: translateX(-50%); text-align: center; }
+  .network-node[data-node="tax"] .network-node-label { bottom: calc(100% + 7px); }
+  .network-node[data-node="development"] .network-node-label { top: calc(100% + 7px); }
+  .network-cycle-copy,
+  .network-cycle-copy[data-active] {
+    top: calc(100% + 58px);
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: min(100%, 330px);
+    min-height: 180px;
+    transform: translateX(-50%);
+  }
+  .start-network-cycle::before { background-size: 38px 38px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .network-cycle-logo,
+  .network-node,
+  .network-line,
+  .network-cycle-copy,
+  .start-network-cycle footer,
+  .network-line.is-active,
+  .network-node.is-active,
+  .network-step-copy {
+    animation: none;
+    transition-duration: 80ms;
+  }
+}

@@ -6,6 +6,7 @@ import { homeCategories } from "../data/categories";
 import CategoryCard from "../components/CategoryCard";
 import ListingCard from "../components/ListingCard";
 import BrandPattern from "../components/BrandPattern";
+import StartNetworkCycle from "../components/StartNetworkCycle";
 
 const featuredListings = mockListings.slice(0, 8);
 
@@ -281,6 +282,8 @@ export default function HomePage() {
           ))}
         </div>
       </section>
+
+      <StartNetworkCycle />
     </div>
   );
 }

@@ -173,6 +173,18 @@ Sous 640 px : titre limité à 260 px et 3 rem, libellé supérieur compact, CTA
 
 `ListingLocationMap.tsx` utilise OpenStreetMap via React Leaflet.
 
+### 7.1 START Network Cycle
+
+`StartNetworkCycle.tsx` présente la raison d’être du réseau sur la page d’accueil, immédiatement sous la section des catégories. Il affiche le logo officiel au centre et construit le diagramme à partir d’une structure de données unique contenant textes, couleurs, icônes et positions.
+
+L’ordre horaire et automatique est : Réduction d’impôt 60 %, Professionnels, Particuliers, Développement & maintenance, Humanitaire & Mission, puis Formation & Conférences. Une seule description est active à la fois. « Développement & maintenance » occupe l’emplacement inférieur du diagramme ; « L’argent du Royaume » est une conclusion distincte sous le cycle.
+
+Le cycle démarre seulement lorsque la section entre dans le viewport via `IntersectionObserver` : la définition active reste masquée avant cette entrée. Il présente chaque étape une fois dans l’ordre, puis s’arrête sur la sixième étape au lieu de boucler. Il se suspend hors écran et lorsque l’onglet est masqué. Un clic ou un tap sélectionne immédiatement une étape et laisse sept secondes de lecture avant une éventuelle reprise du tour encore inachevé. Les timers sont nettoyés au démontage.
+
+Sur desktop et tablette, le diagramme est centré et la définition active apparaît à proximité immédiate de l’icône concernée. Le logo central est visuellement prioritaire, tandis que l’orbite et les icônes restent compactes. Les six titres ont la même taille et restent visibles près de leur icône. Sur mobile, les libellés se repositionnent pour éviter les débordements et la définition active passe sous le diagramme. La connexion active utilise une flèche pleine, plus visible, sans animation de tirets. Contrôler en priorité 320, 390, 768, 1024 et 1440 px.
+
+Chaque icône est un vrai bouton avec nom accessible et `aria-pressed`; la sélection combine couleur, luminosité, épaisseur et texte. `aria-live` annonce le contenu actif. `prefers-reduced-motion` supprime les impulsions et déplacements, sans masquer l’information. Le texte fiscal reste conditionnel et ne doit pas être reformulé comme une garantie juridique sans validation préalable.
+
 ## 8. Catalogue et URL
 
 Les annonces viennent de `mockListings.ts`. Les filtres restent dans l'URL :
