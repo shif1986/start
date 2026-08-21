@@ -20,7 +20,7 @@ export default function SubscriptionPage() {
   return (
     <ThemedPage ambiance="gold" className="p-[clamp(18px,5vw,72px)]">
       <div className="mx-auto max-w-6xl">
-        <div className="rounded-xl border border-[#4da3ff]/20 bg-[#4da3ff]/[.055] px-4 py-3 text-sm text-start-cream/65">
+        <div className="rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-3 text-sm text-start-cream/65">
           Aperçu frontend — aucun paiement ne sera débité. Stripe et Google Pay seront connectés ultérieurement.
         </div>
 
@@ -32,14 +32,14 @@ export default function SubscriptionPage() {
 
         <div className="mt-14 grid grid-cols-2 gap-6 max-md:grid-cols-1">
           <button type="button" className={`relative rounded-2xl border p-7 text-left transition ${plan === "monthly" ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={plan === "monthly"} onClick={() => setPlan("monthly")}>
-            <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Mensuel</span>
+            <span className="text-xs font-bold tracking-[.18em] text-network-blue uppercase">Mensuel</span>
             <div className="mt-4"><strong className="text-5xl">7 €</strong><span className="text-start-cream/50"> / mois</span></div>
             <p className="mt-4 text-sm leading-6 text-start-cream/55">Paiement mensuel, renouvelable jusqu’à résiliation.</p>
             <span className={`absolute top-6 right-6 inline-flex size-6 items-center justify-center rounded-full border ${plan === "monthly" ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{plan === "monthly" ? "✓" : ""}</span>
           </button>
 
           <button type="button" className={`relative rounded-2xl border p-7 text-left transition ${plan === "yearly" ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={plan === "yearly"} onClick={() => setPlan("yearly")}>
-            <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Annuel</span>
+            <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Annuel</span>
             <div className="mt-4"><strong className="text-5xl">84 €</strong><span className="text-start-cream/50"> / an</span></div>
             <p className="mt-4 text-sm leading-6 text-start-cream/55">Un seul paiement pour douze mois d’accès professionnel.</p>
             <span className={`absolute top-6 right-6 inline-flex size-6 items-center justify-center rounded-full border ${plan === "yearly" ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{plan === "yearly" ? "✓" : ""}</span>

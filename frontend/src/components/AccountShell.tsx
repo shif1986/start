@@ -13,7 +13,7 @@ type AccountShellProps = {
 export default function AccountShell({ eyebrow, title, description, navigation, children }: AccountShellProps) {
   return (
     <ThemedPage ambiance="network" className="p-[clamp(18px,4vw,56px)]">
-      <div className="rounded-xl border border-[#4da3ff]/20 bg-[#4da3ff]/[.055] px-4 py-3 text-sm text-start-cream/65">
+      <div className="rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-3 text-sm text-start-cream/65">
         Aperçu frontend — authentification, paiements et permissions non connectés.
       </div>
       <header className="mt-10 max-w-3xl">

@@ -6,8 +6,8 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
   const [isFavorite, setIsFavorite] = useState(false);
   const detailUrl = `/annonce/${listing.id}`;
   const useBlueAccent = listing.id.toString().split("").reduce((total, character) => total + character.charCodeAt(0), 0) % 2 === 0;
-  const accentText = useBlueAccent ? "text-[#55b9e5]" : "text-[#f36a6a]";
-  const accentDot = useBlueAccent ? "bg-[#2fa7dd] shadow-[0_0_0_4px_rgba(47,167,221,.1)]" : "bg-[#f04444] shadow-[0_0_0_4px_rgba(240,68,68,.1)]";
+  const accentText = useBlueAccent ? "text-network-blue" : "text-network-red";
+  const accentDot = useBlueAccent ? "bg-network-blue shadow-[0_0_0_4px_rgba(77,163,255,.1)]" : "bg-network-red shadow-[0_0_0_4px_rgba(255,77,79,.1)]";
 
   return (
     <article className={`group relative overflow-hidden rounded-xl border bg-[#1d2127] text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.035),0_18px_44px_rgba(0,0,0,.24)] transition hover:-translate-y-1 hover:border-start-gold/70 ${compact ? "border-start-gold/45 shadow-[inset_0_1px_0_rgba(255,255,255,.04),0_18px_46px_rgba(0,0,0,.28),0_0_28px_rgba(199,164,93,.06)]" : "border-start-cream/15"}`}>
@@ -17,7 +17,7 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
       </div>
       <button
         type="button"
-        className={`absolute top-3 right-3 z-20 inline-flex size-10 items-center justify-center rounded-full border bg-[#22221e]/65 text-xl backdrop-blur transition ${isFavorite ? "border-[#f04444]/70 text-[#f36a6a]" : "border-white/50 text-white"}`}
+        className={`absolute top-3 right-3 z-20 inline-flex size-10 items-center justify-center rounded-full border bg-[#22221e]/65 text-xl backdrop-blur transition ${isFavorite ? "border-network-red/70 text-network-red" : "border-white/50 text-white"}`}
         aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
         aria-pressed={isFavorite}
         onClick={() => setIsFavorite((current) => !current)}

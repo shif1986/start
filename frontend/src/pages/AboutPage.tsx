@@ -14,14 +14,16 @@ export default function AboutPage() {
 
       <div className="my-14 grid grid-cols-2 gap-7 max-md:my-10 max-md:grid-cols-1">
         <div className="rounded-2xl border border-start-cream/10 bg-[#17191e]/90 p-7 shadow-[0_20px_55px_rgba(0,0,0,.18)]">
-          <h3 className="mb-3 text-xl font-bold text-start-gold">Notre vision</h3>
+          <span className="mb-4 block size-2 rounded-full bg-network-blue shadow-[0_0_0_6px_rgba(77,163,255,.08)]" aria-hidden="true" />
+          <h3 className="mb-3 text-xl font-bold text-network-blue">Notre vision</h3>
           <p>
             Créer un espace où la foi, le service et le tissu local s’unissent
             pour renforcer les initiatives chrétiennes dans chaque région.
           </p>
         </div>
         <div className="rounded-2xl border border-start-cream/10 bg-[#17191e]/90 p-7 shadow-[0_20px_55px_rgba(0,0,0,.18)]">
-          <h3 className="mb-3 text-xl font-bold text-start-gold">Notre mission</h3>
+          <span className="mb-4 block size-2 rounded-full bg-network-yellow shadow-[0_0_0_6px_rgba(255,179,61,.08)]" aria-hidden="true" />
+          <h3 className="mb-3 text-xl font-bold text-network-yellow">Notre mission</h3>
           <p>
             Faciliter les échanges utiles entre particuliers et professionnels,
             tout en gardant une expérience simple, respectueuse et inspirante.

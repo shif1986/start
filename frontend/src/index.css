@@ -16,6 +16,9 @@
   --color-start-ink: #22221e;
   --color-start-cream: #f4efe5;
   --color-start-gold: #c7a45d;
+  --color-network-blue: #4da3ff;
+  --color-network-yellow: #ffb33d;
+  --color-network-red: #ff4d4f;
 }
 
 :root {

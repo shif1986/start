@@ -205,7 +205,7 @@ export default function HomePage() {
         />
         <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
-            <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">
+            <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[.24em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />
               À la une
             </span>
             <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
@@ -245,7 +245,7 @@ export default function HomePage() {
         />
         <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
-            <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">
+            <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.22em] text-network-yellow uppercase"><span className="size-1.5 rounded-full bg-network-yellow" aria-hidden="true" />
               Explorez le réseau
             </span>
             <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">

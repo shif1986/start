@@ -29,7 +29,7 @@ export default function ListingDetailPage() {
 
       <div className="mt-6 rounded-2xl border border-start-cream/10 bg-[#121418]/95 px-[clamp(18px,5vw,56px)] py-[clamp(22px,3.5vw,40px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-5">
         <div className="border-b border-start-cream/10 pb-7">
-          <span className="text-xs font-extrabold tracking-[.24em] text-start-gold uppercase">{listing.category}</span>
+          <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[.24em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />{listing.category}</span>
           <h1 className="my-3 max-w-5xl font-serif text-[clamp(1.75rem,3.4vw,3.35rem)] leading-[1.12] tracking-[-.025em]">{listing.title}</h1>
           <p className="text-start-cream/60">
             {listing.city} • {listing.department}
@@ -55,7 +55,7 @@ export default function ListingDetailPage() {
 
             <div className="my-7 grid grid-cols-3 gap-3 max-sm:grid-cols-1">
               <div>
-                <span className="block text-xs font-bold tracking-wider text-start-gold uppercase">Localisation</span>
+                <span className="block text-xs font-bold tracking-wider text-network-blue uppercase">Localisation</span>
                 <strong>{listing.city}</strong>
               </div>
               <div>
@@ -63,7 +63,7 @@ export default function ListingDetailPage() {
                 <strong>{listing.department}</strong>
               </div>
               <div>
-                <span className="block text-xs font-bold tracking-wider text-start-gold uppercase">Prix</span>
+                <span className="block text-xs font-bold tracking-wider text-network-yellow uppercase">Prix</span>
                 <strong>
                   {listing.price ? `${listing.price} €` : "Prix libre"}
                 </strong>
@@ -77,7 +77,7 @@ export default function ListingDetailPage() {
 
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
             <BrandPattern variant="nodes" className="-right-24 -bottom-36 -z-10 h-[380px] w-[280px] text-start-cream/[.055] opacity-50 max-sm:opacity-30" />
-            <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Profil professionnel</span>
+            <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Profil professionnel</span>
             <h3 className="mt-3">{listing.professional.name}</h3>
             <p className="text-start-cream/65">{listing.professional.role}</p>
             {hasContactAccess ? (
@@ -92,7 +92,7 @@ export default function ListingDetailPage() {
               </>
             ) : (
               <div className="mt-6 rounded-xl border border-start-gold/20 bg-start-gold/[.055] p-5">
-                <span className="inline-flex size-10 items-center justify-center rounded-full border border-start-gold/30 text-start-gold" aria-hidden="true">
+                <span className="inline-flex size-10 items-center justify-center rounded-full border border-network-red/30 text-network-red" aria-hidden="true">
                   <svg className="size-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7">
                     <rect x="5" y="10" width="14" height="10" rx="2" />
                     <path d="M8 10V7a4 4 0 0 1 8 0v3" />

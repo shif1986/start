@@ -53,7 +53,7 @@ export default function ListingReviews({ listing, canReview = false }: ListingRe
             <span className="text-xs text-start-cream/40">Votre avis sera associé à votre compte particulier.</span>
             <button type="submit" className="rounded-xl bg-start-gold px-6 py-3 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-40" disabled={rating === 0 || !comment.trim()}>Publier mon avis</button>
           </div>
-          {isSubmitted && <p className="mt-4 text-sm text-start-gold" role="status">Merci, votre avis a bien été pris en compte.</p>}
+          {isSubmitted && <p className="mt-4 text-sm text-network-blue" role="status">Merci, votre avis a bien été pris en compte.</p>}
         </form>
       ) : (
         <div className="mt-7 flex items-center justify-between gap-6 rounded-xl border border-start-cream/10 bg-[#0b0d10]/70 p-5 max-sm:flex-col max-sm:items-start">

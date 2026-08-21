@@ -8,11 +8,11 @@ const redCategories = new Set(["jobs", "home-garden", "fashion-accessories", "an
 export default function CategoryCard({ category, count = 0, compact = false, featured = false }: { category: Category; count?: number; compact?: boolean; featured?: boolean }) {
   const accent = blueCategories.has(category.id) ? "blue" : redCategories.has(category.id) ? "red" : "gold";
   const iconAccent = accent === "blue"
-    ? "border-[#2fa7dd]/70 bg-[#2fa7dd] shadow-[0_10px_28px_rgba(47,167,221,.22)]"
+    ? "border-network-blue/70 bg-network-blue shadow-[0_10px_28px_rgba(77,163,255,.22)]"
     : accent === "red"
-      ? "border-[#f04444]/70 bg-[#f04444] shadow-[0_10px_28px_rgba(240,68,68,.2)]"
+      ? "border-network-red/70 bg-network-red shadow-[0_10px_28px_rgba(255,77,79,.2)]"
       : "border-start-gold/70 bg-start-gold shadow-[0_10px_28px_rgba(199,164,93,.2)]";
-  const textAccent = accent === "blue" ? "text-[#55b9e5]" : accent === "red" ? "text-[#f36a6a]" : "text-start-gold";
+  const textAccent = accent === "blue" ? "text-network-blue" : accent === "red" ? "text-network-red" : "text-network-yellow";
 
   return (
     <Link

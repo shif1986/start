@@ -75,7 +75,7 @@ export default function ListingsPage() {
               {departmentOptions.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
-          <button type="button" className="min-h-12 rounded-xl border border-start-gold/60 px-5 font-semibold text-start-gold transition hover:bg-start-gold hover:text-start-ink max-sm:w-full" onClick={() => setSearchParams({})}>
+          <button type="button" className="min-h-12 rounded-xl border border-network-red/45 px-5 font-semibold text-network-red transition hover:bg-network-red hover:text-start-ink max-sm:w-full" onClick={() => setSearchParams({})}>
             Réinitialiser
           </button>
         </div>
@@ -84,7 +84,7 @@ export default function ListingsPage() {
       <section>
         <div className="mb-7 flex items-center justify-between gap-4">
           <div>
-            <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">Résultats</span>
+            <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.2em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />Résultats</span>
             <h2 className="mt-2 text-2xl font-semibold">{filteredListings.length} annonce{filteredListings.length > 1 ? "s" : ""} disponible{filteredListings.length > 1 ? "s" : ""}</h2>
           </div>
         </div>

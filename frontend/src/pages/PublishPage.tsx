@@ -14,12 +14,12 @@ export default function PublishPage() {
         <BrandPattern variant="chain" className="-right-24 -bottom-44 -z-10 h-[440px] w-[340px] text-start-gold/[.055] opacity-50 max-sm:opacity-30" />
         <ol className="relative grid grid-cols-3 gap-5 max-md:grid-cols-1">
           {[
-            ["01", "Créer un compte professionnel", "Renseignez votre identité et les informations de votre activité."],
-            ["02", "Choisir votre abonnement", "Sélectionnez la formule mensuelle à 7 € ou annuelle à 84 €."],
-            ["03", "Publier votre annonce", "Après validation du profil et de l’abonnement, déposez votre annonce."],
-          ].map(([number, title, description]) => (
+            ["01", "Créer un compte professionnel", "Renseignez votre identité et les informations de votre activité.", "text-network-blue", "bg-network-blue"],
+            ["02", "Choisir votre abonnement", "Sélectionnez la formule mensuelle à 7 € ou annuelle à 84 €.", "text-network-yellow", "bg-network-yellow"],
+            ["03", "Publier votre annonce", "Après validation du profil et de l’abonnement, déposez votre annonce.", "text-network-red", "bg-network-red"],
+          ].map(([number, title, description, textAccent, dotAccent]) => (
             <li key={number} className="rounded-2xl border border-start-cream/10 bg-[#0b0d10]/70 p-6">
-              <span className="text-xs font-bold tracking-[.18em] text-start-gold">ÉTAPE {number}</span>
+              <span className={`inline-flex items-center gap-2 text-xs font-bold tracking-[.18em] ${textAccent}`}><span className={`size-1.5 rounded-full ${dotAccent}`} aria-hidden="true" />ÉTAPE {number}</span>
               <h2 className="mt-4 text-xl font-semibold">{title}</h2>
               <p className="mt-3 text-sm leading-6 text-start-cream/55">{description}</p>
             </li>

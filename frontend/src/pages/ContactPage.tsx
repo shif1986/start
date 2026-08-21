@@ -3,7 +3,7 @@ import ThemedPage from "../components/ThemedPage";
 export default function ContactPage() {
   return (
     <ThemedPage ambiance="network" className="p-[clamp(32px,7vw,104px)]">
-      <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Mise en relation</span>
+      <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.22em] text-network-blue uppercase"><span className="size-2 rounded-full bg-network-blue" aria-hidden="true" />Mise en relation</span>
       <h1 className="mt-3 text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-.04em]">Contact</h1>
       <p className="text-lg text-start-cream/70">Nous sommes ravis de vous répondre.</p>
       <form className="mt-14 grid max-w-2xl gap-6 rounded-2xl border border-start-cream/10 bg-[#17191e]/90 p-[clamp(24px,4vw,44px)] shadow-[0_24px_70px_rgba(0,0,0,.22)] max-sm:mt-10">
