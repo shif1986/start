@@ -59,6 +59,9 @@ Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, 
 4. Page À propos : laisser créer un style moderne, puis ajouter le texte et une vidéo YouTube pour expliquer la vision.
 
 5. Page de dons : créer une page dédiée pour recevoir des dons, avec un bouton conservé dans le header.
+   - interface actuelle : don ponctuel ou mensuel, montant suggéré ou personnalisé, coordonnées du donateur, carte bancaire ou Google Pay et récapitulatif ;
+   - aucun débit réel tant que Stripe et les webhooks serveur ne sont pas connectés ;
+   - sur tablette et mobile, le formulaire passe en une colonne et les champs conservent des zones tactiles accessibles.
 
 6. Page de contact : classique.
 
@@ -87,6 +90,13 @@ font-script MonteCarlo
 - `start-ink` : `#22221E` ;
 - `start-cream` : `#F4EFE5` ;
 - `start-gold` : `#C7A45D`.
+- `network-blue` : `#4DA3FF`, information et découverte ;
+- `network-yellow` : `#FFB33D`, opportunité et professionnel ;
+- `network-red` : `#FF4D4F`, événement et attention.
+
+Les accents réseau sont utilisés régulièrement sur de petits éléments fonctionnels, jamais comme grands fonds ni à la place du doré principal.
+
+Le thème global accepte `dark` et `light`. Le sombre est le défaut, tandis que le choix utilisateur est stocké avec la clé `start-theme`. `src/lib/theme.ts` initialise `html[data-theme]` avant le montage de React. Le bouton de bascule se trouve en haut à droite de la Hero : texte et icône sur desktop/tablette, icône accessible de 44 px minimum sous 640 px. Le mode clair adapte les pages, cartes, champs, navigation et footer ; sa Hero utilise un anthracite plus clair, tandis que `START Network Cycle` conserve son fond sombre identitaire. Les signatures `BrandPattern` sont fortement atténuées, particulièrement sur mobile.
 
 Exemples : `bg-start-ink`, `text-start-cream`, `border-start-gold` et
 `font-script`. Les composants de l'interface utilisent directement les classes

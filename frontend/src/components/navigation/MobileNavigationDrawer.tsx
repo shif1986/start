@@ -134,19 +134,17 @@ export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: 
             ))}
           </nav>
 
-          <div className="mobile-drawer-categories">
-            <div className="mobile-drawer-section-heading">
-              <span>Explorer</span>
-              <NavLink to="/categories" onClick={onClose}>Toutes</NavLink>
-            </div>
-            <nav aria-label="Catégories d’annonces">
-              {navigationCategories.map((category) => (
-                <NavLink key={category.id} to={`/annonces?category=${encodeURIComponent(category.slug)}`} onClick={onClose}>
-                  {category.shortLabel ?? category.label}
-                </NavLink>
-              ))}
-            </nav>
-          </div>
+          <nav className="mobile-drawer-submenu" aria-label="Catégories d’annonces">
+            {navigationCategories.slice(0, 4).map((category) => (
+              <NavLink key={category.id} to={`/annonces?category=${encodeURIComponent(category.slug)}`} onClick={onClose}>
+                {category.shortLabel ?? category.label}
+              </NavLink>
+            ))}
+            <NavLink className="mobile-drawer-submenu-all" to="/categories" onClick={onClose}>
+              Toutes
+            </NavLink>
+          </nav>
+
         </div>
 
         <div className="mobile-drawer-footer">

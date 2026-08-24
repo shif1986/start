@@ -16,7 +16,7 @@ const ambianceClasses = {
 
 export default function ThemedPage({ children, ambiance = "dark", className = "", showPattern = true }: ThemedPageProps) {
   return (
-    <div className={`relative isolate min-h-[calc(100svh-170px)] overflow-hidden rounded-3xl border border-start-cream/10 shadow-[inset_0_1px_0_rgba(255,255,255,.025),0_32px_90px_rgba(0,0,0,.18)] ${ambianceClasses[ambiance]} ${className}`}>
+    <div className={`themed-page relative isolate min-h-[calc(100svh-170px)] overflow-hidden rounded-3xl border border-start-cream/10 shadow-[inset_0_1px_0_rgba(255,255,255,.025),0_32px_90px_rgba(0,0,0,.18)] max-sm:rounded-none max-sm:border-0 max-sm:shadow-none ${ambianceClasses[ambiance]} ${className}`}>
       <span className="pointer-events-none absolute inset-x-[8%] top-0 -z-10 h-px bg-gradient-to-r from-transparent via-start-gold/30 to-transparent" aria-hidden="true" />
       <span className="pointer-events-none absolute top-[8%] left-[7%] -z-10 size-56 rounded-full bg-start-gold/[.025] blur-3xl" aria-hidden="true" />
       {showPattern && ambiance !== "dark" && (

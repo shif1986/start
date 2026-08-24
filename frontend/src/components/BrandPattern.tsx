@@ -12,6 +12,7 @@ export default function BrandPattern({ className = "", variant = "nodes" }: Bran
     return (
       <svg
         aria-hidden="true"
+        data-brand-pattern
         className={`pointer-events-none absolute select-none ${className}`}
         viewBox="0 0 840 420"
         fill="none"
@@ -72,6 +73,7 @@ export default function BrandPattern({ className = "", variant = "nodes" }: Bran
   return (
     <svg
       aria-hidden="true"
+      data-brand-pattern
       className={`pointer-events-none absolute select-none ${className}`}
       viewBox="0 0 420 640"
       fill="none"

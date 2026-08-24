@@ -61,7 +61,7 @@ start-gold      #C7A45D
 
 Ces tokens décrivent l'implémentation actuelle et restent utilisables tant qu'une migration dédiée n'a pas été validée. La direction cible du doré principal est `#D4AF37`. Son remplacement dans le code devra être étudié séparément afin de ne pas modifier involontairement la Hero validée.
 
-Accents fonctionnels cibles :
+Accents fonctionnels implémentés :
 
 ```text
 network-blue    #4DA3FF   information, nouveauté, découverte
@@ -70,6 +70,8 @@ network-red     #FF4D4F   événement, urgence, expiration, attention
 ```
 
 Ces couleurs sont réservées aux petits badges, points, traits, icônes, états et détails du motif. Elles ne remplacent jamais le doré comme couleur principale d'interaction et ne doivent pas colorer de grandes surfaces.
+
+Utilisation sémantique : `network-blue` signale l'information, les résultats, la découverte et les confirmations neutres ; `network-yellow` met en avant les opportunités, formules et éléments professionnels ; `network-red` attire l'attention sur les événements, états sensibles, favoris actifs et actions de réinitialisation. Leur présence doit être régulière mais sélective : une section peut n'en utiliser qu'une, et les grandes surfaces restent anthracite, crème ou dorées.
 
 ### 3.2 Familles de fonds
 
@@ -107,6 +109,16 @@ Principes conservés : lueur dorée subtile, header sans contour coloré et bord
 ### 3.5 Hero protégée
 
 La Hero actuelle est réalisée et validée. Ne pas la redessiner dans la migration du Design System. Toute harmonisation future de variables communes doit être isolée, vérifiée à chaque breakpoint et ne pas altérer son rendu.
+
+### 3.6 Modes sombre et clair
+
+Le site propose deux modes globaux. Le mode sombre historique reste le mode par défaut. Le choix est conservé dans `localStorage` sous la clé `start-theme` et appliqué sur `html[data-theme]` avant le rendu React afin d’éviter un flash de couleur pendant le chargement.
+
+Le bouton `ThemeToggle` est placé en haut à droite de la Hero de l’accueil. Il utilise un vrai bouton, un nom accessible qui décrit l’action suivante et une zone tactile minimale de 44 px. Sur desktop et tablette, il affiche l’icône et le libellé « Clair » ou « Sombre ». Sous 640 px, seul le pictogramme reste visible afin de ne pas recouvrir le contenu ; le nom accessible est conservé.
+
+Le mode clair repose sur des fonds ivoire, des surfaces blanc cassé, du texte anthracite et les accents dorés START. Les cartes, formulaires, pages thématiques, navigation et footer suivent le mode sélectionné. Dans ce mode, la Hero utilise une surface anthracite plus claire et chaleureuse tout en conservant le contraste du logo officiel. La carte de France et son cartouche de synthèse n’ajoutent aucun fond, cadre ou ombre : ils laissent apparaître directement le fond de la Hero, y compris sur mobile. Le diagramme START Network Cycle reste une ancre sombre. Les motifs `BrandPattern` deviennent presque imperceptibles afin de signer les sections sans concurrencer leur contenu, avec une opacité encore réduite sous 640 px. Les cartes de catégories doivent toujours révéler leur image sous un voile ivoire progressif, jamais sous une surface claire opaque.
+
+Toute nouvelle surface doit fonctionner dans les deux modes et conserver au minimum un contraste AA. Ne jamais dépendre uniquement du changement de couleur pour communiquer un état. Les transitions de thème sont supprimées avec `prefers-reduced-motion`.
 
 ## 4. Architecture actuelle
 
@@ -181,7 +193,7 @@ L’ordre horaire et automatique est : Réduction d’impôt 60 %, Professionnel
 
 Le cycle démarre seulement lorsque la section entre dans le viewport via `IntersectionObserver` : la définition active reste masquée avant cette entrée. Il présente chaque étape une fois dans l’ordre, puis s’arrête sur la sixième étape au lieu de boucler. Il se suspend hors écran et lorsque l’onglet est masqué. Un clic ou un tap sélectionne immédiatement une étape et laisse sept secondes de lecture avant une éventuelle reprise du tour encore inachevé. Les timers sont nettoyés au démontage.
 
-Sur desktop et tablette, le diagramme est centré et la définition active apparaît à proximité immédiate de l’icône concernée. Le logo central est visuellement prioritaire, tandis que l’orbite et les icônes restent compactes. Les six titres ont la même taille et restent visibles près de leur icône. Sur mobile, les libellés se repositionnent pour éviter les débordements et la définition active passe sous le diagramme. La connexion active utilise une flèche pleine, plus visible, sans animation de tirets. Contrôler en priorité 320, 390, 768, 1024 et 1440 px.
+Sur desktop et tablette, le diagramme est centré et la définition active apparaît à proximité immédiate de l’icône concernée. Le logo central est visuellement prioritaire, tandis que l’orbite et les icônes restent compactes. Les six titres ont la même taille et restent visibles près de leur icône. Sur mobile, les libellés se repositionnent pour éviter les débordements et la définition active passe sous le diagramme. Toutes les connexions rejoignent directement le contour des icônes ; la connexion active se distingue par sa couleur, son épaisseur et sa lueur, sans pointe flottante ni animation de tirets. Contrôler en priorité 320, 390, 768, 1024 et 1440 px.
 
 Chaque icône est un vrai bouton avec nom accessible et `aria-pressed`; la sélection combine couleur, luminosité, épaisseur et texte. `aria-live` annonce le contenu actif. `prefers-reduced-motion` supprime les impulsions et déplacements, sans masquer l’information. Le texte fiscal reste conditionnel et ne doit pas être reformulé comme une garantie juridique sans validation préalable.
 
@@ -259,6 +271,14 @@ Le CTA « Publier une annonce » ouvre `/publier`. Cette page présente le parco
 La connexion Stripe nécessitera un service serveur pour créer une Checkout Session, conserver la clé secrète, vérifier les webhooks et enregistrer l'état de l'abonnement. Le frontend ne devra recevoir que les identifiants publiables nécessaires. Le droit de publier devra toujours être contrôlé côté serveur à partir d'un abonnement réellement actif, jamais à partir de l'état React ou d'une redirection de succès.
 
 Le tableau de bord interne `/admin` servira à superviser les comptes, annonces, commentaires, signalements et états d'abonnement. Les paiements, factures, remboursements et litiges resteront administrés dans Stripe Dashboard.
+
+### 11.3 Dons — état actuel
+
+`/don` contient un parcours frontend complet : don ponctuel ou mensuel, montants suggérés, montant personnalisé, informations du donateur, choix Carte bancaire ou Google Pay, consentement et récapitulatif. Le formulaire utilise uniquement un état React local et ne débite aucun moyen de paiement.
+
+La future intégration devra créer une session de paiement côté serveur, vérifier le montant et la fréquence, conserver les secrets Stripe hors du frontend et confirmer le paiement par webhook. Le message de succès définitif et toute émission de reçu ne devront apparaître qu'après confirmation serveur.
+
+Responsive : la présentation Impact/Formulaire passe en une colonne sous 1024 px ; les montants restent sur deux colonnes sous 640 px ; identité et moyens de paiement passent sur une colonne ; les champs et CTA conservent une hauteur tactile minimale de 48 px.
 
 ## 12. Avant livraison
 

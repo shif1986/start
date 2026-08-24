@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { Link } from "react-router-dom";
 
 type NetworkStep = {
   id: string;
@@ -67,6 +68,19 @@ const networkSteps: NetworkStep[] = [
     icon: <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="m2 9 10-5 10 5-10 5zM6 11.5V17c3 2 9 2 12 0v-5.5M22 9v7" /></svg>,
   },
 ];
+
+const getConnectionEnd = (position: NetworkStep["position"]) => {
+  const dx = position.x - 50;
+  const dy = position.y - 50;
+  const distance = Math.hypot(dx, dy);
+  // The endpoint sits just under the node border, never at its centre.
+  const nodeRadius = 6.2;
+
+  return {
+    x: position.x - (dx / distance) * nodeRadius,
+    y: position.y - (dy / distance) * nodeRadius,
+  };
+};
 
 export default function StartNetworkCycle() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -152,21 +166,18 @@ export default function StartNetworkCycle() {
     <section ref={sectionRef} className={`start-network-cycle ${hasEntered ? "is-entered" : ""}`} aria-labelledby="network-cycle-title">
       <div className="relative z-10 mx-auto max-w-[1240px] px-[clamp(18px,5vw,72px)] py-[clamp(64px,7vw,96px)]">
         <header className="mx-auto max-w-4xl text-center">
-          <p className="flex items-center justify-center gap-3 text-[.66rem] font-bold tracking-[.24em] text-start-gold uppercase sm:text-xs"><span className="h-px w-10 bg-gradient-to-r from-transparent to-start-gold" />Pourquoi rejoindre START Réseau Chrétien ?<span className="h-px w-10 bg-gradient-to-l from-transparent to-start-gold" /></p>
-          <h2 id="network-cycle-title" className="mt-5 text-[clamp(2rem,4.3vw,4rem)] leading-[1.08] font-bold tracking-[-.045em] text-start-cream">Ensemble, faisons grandir un réseau <span className="text-start-gold">qui a du sens.</span></h2>
-          <p className="mx-auto mt-5 max-w-3xl text-sm leading-7 text-start-cream/68 sm:text-base">Connecter les professionnels et les particuliers chrétiens pour développer leurs activités, se soutenir mutuellement et faire tourner l’économie du Royaume.</p>
+          <p className="flex items-center justify-center gap-3 text-[.66rem] font-bold tracking-[.24em] text-start-gold uppercase sm:text-xs"><span className="h-px w-10 bg-gradient-to-r from-transparent to-start-gold" />Le fonctionnement du réseau<span className="h-px w-10 bg-gradient-to-l from-transparent to-start-gold" /></p>
+          <h2 id="network-cycle-title" className="mx-auto mt-4 max-w-3xl text-[clamp(1.8rem,3.6vw,3.25rem)] leading-[1.1] font-bold tracking-[-.04em] text-start-cream">Pourquoi rejoindre <span className="text-start-gold">START Réseau Chrétien&nbsp;?</span></h2>
         </header>
 
-        <div className="mx-auto mt-28 flex max-w-[1120px] justify-center max-sm:mt-20">
-          <div className="network-cycle-diagram relative mx-auto aspect-square w-full max-w-[560px]" role="group" aria-label="Les six bénéfices du réseau START">
+        <div className="mx-auto mt-20 flex max-w-[1040px] justify-center sm:mt-64 lg:mt-72">
+          <div className="network-cycle-diagram relative mx-auto aspect-square w-full max-w-[480px]" role="group" aria-label="Les six bénéfices du réseau START">
             <div className="absolute inset-[16%] rounded-full border border-start-gold/20 shadow-[inset_0_0_40px_rgba(199,164,93,.04)]" aria-hidden="true" />
-            <svg className="absolute inset-0 size-full overflow-visible" viewBox="0 0 100 100" aria-hidden="true">
-              <defs>
-                <marker id="network-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
-                  <path d="M 0 0 L 10 5 L 0 10 z" fill="context-stroke" />
-                </marker>
-              </defs>
-              {networkSteps.map((step, index) => <line key={step.id} x1="50" y1="50" x2={step.position.x} y2={step.position.y} markerEnd={index === activeIndex ? "url(#network-arrow)" : undefined} className={index === activeIndex ? "network-line is-active" : "network-line"} style={{ "--step-color": step.color } as CSSProperties} />)}
+            <svg className="network-cycle-lines absolute inset-0 size-full overflow-visible" viewBox="0 0 100 100" aria-hidden="true">
+              {networkSteps.map((step, index) => {
+                const end = getConnectionEnd(step.position);
+                return <line key={step.id} x1="50" y1="50" x2={end.x} y2={end.y} className={index === activeIndex ? "network-line is-active" : "network-line"} style={{ "--step-color": step.color } as CSSProperties} />;
+              })}
             </svg>
 
             <div className="network-cycle-logo absolute top-1/2 left-1/2 flex size-[38%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-start-gold/65 bg-[#090c11] p-[5.5%] shadow-[0_0_42px_rgba(199,164,93,.2)]">
@@ -178,12 +189,12 @@ export default function StartNetworkCycle() {
               return <button key={step.id} data-node={step.id} type="button" aria-pressed={active} aria-label={`Afficher : ${step.title}`} onClick={() => selectStep(index)} className={`network-node absolute flex size-[clamp(48px,7vw,66px)] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border bg-[#0b0e13] transition duration-500 ${active ? "is-active" : "opacity-65 hover:opacity-100"}`} style={{ left: `${step.position.x}%`, top: `${step.position.y}%`, color: step.color, "--step-color": step.color } as CSSProperties}>{step.icon}<span className="network-node-label">{step.title}</span></button>;
             })}
 
-            <div data-active={activeStep.id} className={`network-cycle-copy absolute z-20 w-[min(280px,42vw)] rounded-xl border border-start-cream/10 bg-[#0d1117]/95 p-5 shadow-[0_20px_60px_rgba(0,0,0,.42)] backdrop-blur-md ${hasSequenceStarted ? "is-started" : ""}`} aria-live="polite">
+            <div data-active={activeStep.id} className={`network-cycle-copy absolute z-20 w-[min(260px,42vw)] rounded-xl border border-start-cream/10 bg-[#0d1117]/95 p-4 shadow-[0_20px_60px_rgba(0,0,0,.42)] backdrop-blur-md ${hasSequenceStarted ? "is-started" : ""}`} aria-live="polite">
             <span className="text-[.62rem] font-bold tracking-[.18em] text-start-cream/35">{String(activeIndex + 1).padStart(2, "0")} / 06</span>
             <div key={activeStep.id} className="network-step-copy" style={{ "--step-color": activeStep.color } as CSSProperties}>
               <span className="mt-3 block h-px w-10 bg-[var(--step-color)] shadow-[0_0_10px_var(--step-color)]" />
               <h3 className="mt-3 text-[.72rem] font-extrabold leading-[1.4] tracking-[.07em] uppercase" style={{ color: activeStep.color }}>{activeStep.title}</h3>
-              <p className="mt-2 text-xs leading-5 text-start-cream/72">{activeStep.description}</p>
+              <p className="mt-2 text-sm leading-6 text-start-cream/75">{activeStep.description}</p>
             </div>
           </div>
           </div>
@@ -193,6 +204,9 @@ export default function StartNetworkCycle() {
           <svg className="mx-auto size-9 text-start-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="m3 7 4 5 5-8 5 8 4-5-2 12H5z" /></svg>
           <h3 className="mt-3 text-lg font-bold tracking-[.2em] text-start-gold uppercase sm:text-xl">L’argent du Royaume</h3>
           <p className="mt-4 text-sm leading-7 text-start-cream/65 sm:text-base">Faire circuler les ressources au sein du corps du Christ, soutenir son développement et les missions, permettre aux enfants de Dieu de grandir et de prospérer, afin de porter davantage de lumière dans le monde.</p>
+          <Link to="/a-propos" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full border border-start-gold/60 px-6 py-3 text-xs font-bold tracking-[.1em] text-start-gold uppercase transition duration-300 hover:border-start-gold hover:bg-start-gold hover:text-[#090c11] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-start-gold sm:text-sm">
+            Découvrir notre vision
+          </Link>
         </footer>
       </div>
     </section>

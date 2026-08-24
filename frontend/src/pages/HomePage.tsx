@@ -7,13 +7,14 @@ import CategoryCard from "../components/CategoryCard";
 import ListingCard from "../components/ListingCard";
 import BrandPattern from "../components/BrandPattern";
 import StartNetworkCycle from "../components/StartNetworkCycle";
+import ThemeToggle from "../components/ThemeToggle";
 
 const featuredListings = mockListings.slice(0, 8);
 
 function HeroGradientBackdrop() {
   return (
     <div
-      className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(199,164,93,.28)_0%,rgba(199,164,93,.11)_30%,transparent_60%),linear-gradient(145deg,rgba(31,34,41,.18)_0%,rgba(12,15,21,.66)_72%)]"
+      className="hero-gradient-backdrop pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,rgba(199,164,93,.28)_0%,rgba(199,164,93,.11)_30%,transparent_60%),linear-gradient(145deg,rgba(31,34,41,.18)_0%,rgba(12,15,21,.66)_72%)]"
       aria-hidden="true"
     ></div>
   );
@@ -27,8 +28,9 @@ function SearchByLocation({
   onDepartmentSelect: (department: string) => void;
 }) {
   return (
-    <section className="relative grid min-h-[calc(100svh-150px)] grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] items-center gap-[clamp(20px,2vw,40px)] overflow-hidden rounded-3xl bg-[#171a21] px-[clamp(20px,3.5vw,52px)] py-[clamp(32px,4.5vh,54px)] max-lg:min-h-0 max-lg:grid-cols-1 max-lg:justify-items-center max-lg:gap-10 max-lg:py-10 max-sm:gap-9 max-sm:rounded-2xl max-sm:px-4 max-sm:pt-5 max-sm:pb-10">
+    <section className="home-hero relative grid min-h-[calc(100svh-150px)] grid-cols-[minmax(0,.88fr)_minmax(0,1.12fr)] items-center gap-[clamp(20px,2vw,40px)] overflow-hidden rounded-3xl bg-[#171a21] px-[clamp(20px,3.5vw,52px)] py-[clamp(32px,4.5vh,54px)] max-lg:min-h-0 max-lg:grid-cols-1 max-lg:justify-items-center max-lg:gap-10 max-lg:py-10 max-sm:gap-9 max-sm:rounded-2xl max-sm:px-4 max-sm:pt-20 max-sm:pb-10">
       <HeroGradientBackdrop />
+      <ThemeToggle />
 
       <div
         data-no-scroll-reveal
@@ -152,7 +154,7 @@ function SearchByLocation({
       </div>
 
       <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:order-1 max-lg:max-w-[620px] max-sm:max-w-[430px]">
-        <div className="mx-auto w-[98%] max-sm:w-full max-sm:rounded-2xl max-sm:border max-sm:border-start-gold/15 max-sm:bg-[#111419]/55 max-sm:p-2 max-sm:shadow-[0_20px_50px_rgba(0,0,0,.24)]">
+        <div className="france-map-shell mx-auto w-[98%] max-sm:w-full">
           <FranceListingsMap
             listings={mockListings}
             selectedDepartment={selectedDepartment}
@@ -184,13 +186,13 @@ export default function HomePage() {
   }
 
   return (
-    <div className="overflow-hidden rounded-3xl bg-[#171a21]">
+    <div className="home-page overflow-hidden rounded-3xl bg-[#171a21]">
       <SearchByLocation
         selectedDepartment={selectedDepartment}
         onDepartmentSelect={handleDepartmentSelect}
       />
 
-      <section className="relative overflow-hidden border-y border-start-cream/10 bg-[radial-gradient(circle_at_14%_18%,rgba(199,164,93,.14),transparent_34%),linear-gradient(125deg,#24231f_0%,#1b1e23_48%,#12161c_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream max-sm:py-16">
+      <section className="home-listings-section relative overflow-hidden border-y border-start-cream/10 bg-[radial-gradient(circle_at_14%_18%,rgba(199,164,93,.14),transparent_34%),linear-gradient(125deg,#24231f_0%,#1b1e23_48%,#12161c_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream max-sm:py-16">
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.018),transparent_55%)]"
           aria-hidden="true"
@@ -234,7 +236,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="relative overflow-hidden border-t border-start-cream/10 bg-[radial-gradient(circle_at_82%_12%,rgba(77,163,255,.09),transparent_30%),radial-gradient(circle_at_12%_90%,rgba(199,164,93,.065),transparent_34%),linear-gradient(145deg,#242b31_0%,#1b2026_48%,#14181d_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
+      <section className="home-categories-section relative overflow-hidden border-t border-start-cream/10 bg-[radial-gradient(circle_at_82%_12%,rgba(77,163,255,.09),transparent_30%),radial-gradient(circle_at_12%_90%,rgba(199,164,93,.065),transparent_34%),linear-gradient(145deg,#242b31_0%,#1b2026_48%,#14181d_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
         <div
           className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.03),transparent_48%)]"
           aria-hidden="true"

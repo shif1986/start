@@ -6,6 +6,9 @@ import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
 import ListingsMap from "../components/ListingsMap";
 
+const filterControlClass =
+  "h-12 w-full box-border rounded-xl border border-start-cream/15 bg-[#080c12] px-4 py-0 text-start-cream outline-none transition focus:border-start-gold max-sm:h-14";
+
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
 
@@ -59,23 +62,23 @@ export default function ListingsPage() {
         <div className="grid grid-cols-[1.4fr_1fr_1fr_auto] items-end gap-3 max-lg:grid-cols-2 max-sm:grid-cols-1">
           <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
             Recherche
-            <input className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none placeholder:text-start-cream/30 focus:border-start-gold" type="search" placeholder="Métier, service, annonce..." value={search} onChange={(event) => updateParam("q", event.target.value)} />
+            <input className={`${filterControlClass} placeholder:text-start-cream/30`} type="search" placeholder="Métier, service, annonce..." value={search} onChange={(event) => updateParam("q", event.target.value)} />
           </label>
           <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
             Catégorie
-            <select className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none focus:border-start-gold" value={category} onChange={(event) => updateParam("category", event.target.value)}>
+            <select className={filterControlClass} value={category} onChange={(event) => updateParam("category", event.target.value)}>
               <option value="">Toutes les catégories</option>
               {categories.map((item) => <option key={item.id} value={item.slug}>{item.label}</option>)}
             </select>
           </label>
           <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
             Localisation
-            <select className="min-h-12 rounded-xl border border-start-cream/15 bg-[#080c12] px-4 text-start-cream outline-none focus:border-start-gold" value={department} onChange={(event) => updateParam("department", event.target.value)}>
+            <select className={filterControlClass} value={department} onChange={(event) => updateParam("department", event.target.value)}>
               <option value="">Toute la France</option>
               {departmentOptions.map((item) => <option key={item} value={item}>{item}</option>)}
             </select>
           </label>
-          <button type="button" className="min-h-12 rounded-xl border border-network-red/45 px-5 font-semibold text-network-red transition hover:bg-network-red hover:text-start-ink max-sm:w-full" onClick={() => setSearchParams({})}>
+          <button type="button" className="h-12 rounded-xl border border-network-red/45 px-5 py-0 font-semibold text-network-red transition hover:bg-network-red hover:text-start-ink max-sm:h-14 max-sm:w-full" onClick={() => setSearchParams({})}>
             Réinitialiser
           </button>
         </div>

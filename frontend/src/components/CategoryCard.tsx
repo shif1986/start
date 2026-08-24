@@ -17,10 +17,10 @@ export default function CategoryCard({ category, count = 0, compact = false, fea
   return (
     <Link
       to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-      className={`group relative isolate overflow-hidden rounded-2xl border-start-cream/25 bg-[#14171d] shadow-[0_14px_35px_rgba(34,34,30,.12)] transition duration-300 [border-style:solid] [border-width:.5px] hover:-translate-y-1 hover:border-start-gold/65 ${compact ? "min-h-52" : "min-h-72"} ${featured ? "row-span-2 min-h-[432px] max-lg:row-span-1 max-lg:min-h-64" : ""}`}
+      className={`category-card group relative isolate overflow-hidden rounded-2xl border-start-cream/25 bg-[#14171d] shadow-[0_14px_35px_rgba(34,34,30,.12)] transition duration-300 [border-style:solid] [border-width:.5px] hover:-translate-y-1 hover:border-start-gold/65 ${compact ? "min-h-52" : "min-h-72"} ${featured ? "row-span-2 min-h-[432px] max-lg:row-span-1 max-lg:min-h-64" : ""}`}
     >
-      {category.image && <img src={category.image} alt="" className="absolute inset-0 size-full object-cover brightness-[.92] saturate-[.9] transition duration-500 group-hover:scale-105 group-hover:brightness-100" />}
-      <span className="absolute inset-0 bg-[linear-gradient(to_top,rgba(11,14,19,.94)_0%,rgba(11,14,19,.68)_24%,rgba(11,14,19,.16)_58%,rgba(11,14,19,.04)_100%)]" />
+      {category.image && <img src={category.image} alt="" className="category-card-image absolute inset-0 size-full object-cover brightness-[.92] saturate-[.9] transition duration-500 group-hover:scale-105 group-hover:brightness-100" />}
+      <span className="category-card-overlay absolute inset-0 bg-[linear-gradient(to_top,rgba(11,14,19,.94)_0%,rgba(11,14,19,.68)_24%,rgba(11,14,19,.16)_58%,rgba(11,14,19,.04)_100%)]" />
       <div className={`absolute inset-0 flex flex-col justify-end ${featured ? "p-7 max-sm:p-5" : compact ? "p-5" : "p-6"}`}>
         <span className={`mb-auto inline-flex items-center justify-center rounded-full border text-white ${iconAccent} ${compact ? "size-11" : "size-12"}`}><CategoryIcon name={category.icon} /></span>
         <h3 className={`${featured ? "max-w-xs text-[1.65rem]" : compact ? "text-lg" : "text-xl"} font-extrabold text-start-cream uppercase`}>{category.label}</h3>

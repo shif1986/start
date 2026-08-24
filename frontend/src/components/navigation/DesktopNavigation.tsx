@@ -1,4 +1,4 @@
-import { useRef, useState, type FormEvent } from "react";
+import { useState, type FormEvent } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { navigationCategories, type Category } from "../../data/categories";
 import NavigationLink from "./NavigationLink";
@@ -29,7 +29,7 @@ function CategoryDropdown({
       <div
         className={`invisible absolute top-full z-50 w-64 translate-y-2 pt-3 opacity-0 transition duration-200 group-hover/category:visible group-hover/category:translate-y-0 group-hover/category:opacity-100 group-focus-within/category:visible group-focus-within/category:translate-y-0 group-focus-within/category:opacity-100 ${align === "right" ? "right-0" : "left-0"}`}
       >
-        <div className="overflow-hidden rounded-xl border border-start-cream/12 bg-[#111419]/98 p-2 shadow-[0_22px_55px_rgba(0,0,0,.5)] backdrop-blur-xl">
+        <div className="overflow-hidden rounded-xl border border-start-cream/12 bg-[#080b10]/72 p-2 shadow-[0_22px_55px_rgba(0,0,0,.38)] backdrop-blur-2xl">
           <span className="block px-3 pt-2 pb-1 text-[.6rem] font-bold tracking-[.16em] text-start-gold uppercase">
             {category.label}
           </span>
@@ -54,19 +54,11 @@ function CategoryDropdown({
 export default function DesktopNavigation() {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
-  const categoryNavRef = useRef<HTMLElement>(null);
 
   function handleSearch(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const query = searchQuery.trim();
     navigate(query ? `/annonces?q=${encodeURIComponent(query)}` : "/annonces");
-  }
-
-  function scrollCategories(direction: -1 | 1) {
-    categoryNavRef.current?.scrollBy({
-      left: direction * categoryNavRef.current.clientWidth,
-      behavior: "smooth",
-    });
   }
 
   return (
@@ -94,7 +86,7 @@ export default function DesktopNavigation() {
       </div>
 
       <div className="desktop-navigation-discovery">
-        <nav className="hidden items-center justify-end gap-6 xl:flex" aria-label="Catégories principales, première partie">
+        <nav className="desktop-category-links desktop-category-links-left" aria-label="Catégories principales, première partie">
           {categoryLinksLeft.map((category) => (
             <CategoryDropdown key={category.id} category={category} />
           ))}
@@ -116,23 +108,12 @@ export default function DesktopNavigation() {
           </button>
         </form>
 
-        <nav className="hidden items-center justify-start gap-6 xl:flex" aria-label="Catégories principales, seconde partie">
+        <nav className="desktop-category-links desktop-category-links-right" aria-label="Catégories principales, seconde partie">
           {categoryLinksRight.map((category) => (
             <CategoryDropdown key={category.id} category={category} align="right" />
           ))}
         </nav>
 
-        <div className="desktop-category-carousel xl:hidden">
-          <button type="button" onClick={() => scrollCategories(-1)} aria-label="Voir les catégories précédentes">←</button>
-          <nav ref={categoryNavRef} aria-label="Catégories d’annonces">
-            {navigationCategories.map((category) => (
-              <NavLink key={category.id} to={`/annonces?category=${encodeURIComponent(category.slug)}`}>
-                {category.shortLabel ?? category.label}
-              </NavLink>
-            ))}
-          </nav>
-          <button type="button" onClick={() => scrollCategories(1)} aria-label="Voir les catégories suivantes">→</button>
-        </div>
       </div>
     </div>
   );
