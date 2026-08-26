@@ -4,6 +4,7 @@ export type Listing = {
   category: string;
   categorySlug: string;
   image: string;
+  country?: "France" | "Suisse";
   department: string;
   city: string;
   coordinates: [number, number];

@@ -10,7 +10,7 @@ export default function CategoriesPage() {
       <BrandPattern variant="chain" className="-right-20 -bottom-28 -z-10 h-[720px] w-[520px] text-start-gold/[.04] opacity-25 max-sm:hidden" />
       <header className="relative mx-auto mb-16 max-w-3xl text-center max-sm:mb-10">
         <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Explorez le réseau</span>
-        <h1 className="mt-3 text-[clamp(2.4rem,5vw,4.5rem)] font-bold tracking-[-.04em] text-start-cream">Toutes les catégories</h1>
+        <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em] text-start-cream">Toutes les catégories</h1>
         <p className="mt-4 text-start-cream/60">Découvrez les activités, opportunités et initiatives proposées au sein de START Réseau Chrétien.</p>
       </header>
       <div className="relative grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-x-7 gap-y-12 max-sm:gap-y-8">

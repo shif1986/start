@@ -4,6 +4,7 @@ export const primaryNavigationItems: NavigationItem[] = [
   { id: "home", to: "/", label: "Accueil", end: true },
   { id: "listings", to: "/annonces", label: "Annonce" },
   { id: "vision", to: "/a-propos", label: "Vision" },
+  { id: "subscription", to: "/abonnement", label: "Abonnement" },
   { id: "contact", to: "/contact", label: "Contact" },
 ];
 

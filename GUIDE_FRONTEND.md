@@ -78,7 +78,8 @@ Utilisation sémantique : `network-blue` signale l'information, les résultats, 
 - **Dark Base** — fond standard des pages fonctionnelles, de `#0B0D10` à `#121418` : résultats, recherche, profils, formulaires, listes et contenu principal.
 - **Surface Card** — surface légèrement plus claire, généralement `#121418` ou `#17191E`, avec bordure discrète : cartes, filtres, panneaux et informations secondaires.
 - **Gold Glow** — lumière dorée diffuse sur fond sombre, limitée aux sections stratégiques : vision, mission, présentation, mise en avant, rejoindre le réseau et CTA institutionnels. Ne jamais employer une grande surface dorée pleine.
-- **Network Pattern** — fond identitaire utilisant le motif START : présentation du réseau, statistiques, transitions, CTA, sections institutionnelles et footer.
+- **Discreet Network Signature** — fond identitaire principal utilisant l’image de réseau sombre et dorée START, toujours fortement voilée : pages institutionnelles, présentation du réseau, abonnement et contact.
+- **Network Pattern vectoriel** — variante secondaire avec `BrandPattern`, réservée aux petits encarts, statistiques, transitions, CTA et footer lorsqu’un fond bitmap complet serait excessif.
 
 Alterner subtilement ces familles pour rythmer une page sans créer plusieurs univers graphiques. Éviter une succession de sections ayant exactement le même noir.
 
@@ -92,13 +93,18 @@ background:
 
 ### 3.3 Signature réseau START
 
-Le symbole de nœuds connectés exprime la connexion, la collaboration et la communauté. Il fait partie du Design System et peut être répété en arrière-plan.
+Le symbole de nœuds connectés exprime la connexion, la collaboration et la communauté. Le fond de référence est `public/images/backgrounds/contact-network.png`, appliqué avec la classe partagée `discreet-network-background`. Malgré son nom de fichier historique, cet asset constitue désormais la signature générale du site et ne doit pas être considéré comme spécifique à la page Contact.
 
-- opacité habituelle comprise entre 3 % et 8 % ;
-- motif sombre, discret et souvent partiellement coupé par les limites de la section ;
+- le motif reste sombre et très discret sous un voile de 72 % à 82 % en mode sombre, et de 66 % à 78 % en mode clair ;
+- les connexions sont principalement visibles sur les bords, tandis que le centre reste calme pour accueillir le contenu ;
 - lisibilité du contenu toujours prioritaire ;
-- un ou quelques nœuds seulement peuvent recevoir un accent bleu, jaune ou rouge ;
+- les points lumineux dorés ne doivent jamais concurrencer un titre, un champ ou un CTA ;
+- les cartes de contenu conservent une surface opaque ou semi-opaque suffisamment contrastée ;
+- le fond peut rester fixe sur grand écran afin d’éviter son étirement sur les pages longues ; il repasse en défilement normal sous 640 px ;
+- ne pas superposer un grand `BrandPattern` vectoriel au fond bitmap ;
 - ne jamais colorer tout le réseau ni en faire la décoration dominante.
+
+La classe est actuellement utilisée sur Contact, Abonnement, Vision et sur la section Catégories de l’accueil. Les autres sections de l’accueil n’emploient plus de motif décoratif en arrière-plan. Les nouvelles pages institutionnelles peuvent réutiliser la signature, mais les pages fonctionnelles denses — catalogue, tableaux de bord, authentification et formulaires métier — conservent par défaut `Dark Base`. Toute généralisation supplémentaire doit être évaluée page par page. L’image source doit être optimisée avant la mise en production sans dégrader ses dégradés sombres.
 
 ### 3.4 Typographie, interactions et surfaces
 
@@ -116,7 +122,7 @@ Le site propose deux modes globaux. Le mode sombre historique reste le mode par 
 
 Le bouton `ThemeToggle` est placé en haut à droite de la Hero de l’accueil. Il utilise un vrai bouton, un nom accessible qui décrit l’action suivante et une zone tactile minimale de 44 px. Sur desktop et tablette, il affiche l’icône et le libellé « Clair » ou « Sombre ». Sous 640 px, seul le pictogramme reste visible afin de ne pas recouvrir le contenu ; le nom accessible est conservé.
 
-Le mode clair repose sur des fonds ivoire, des surfaces blanc cassé, du texte anthracite et les accents dorés START. Les cartes, formulaires, pages thématiques, navigation et footer suivent le mode sélectionné. Dans ce mode, la Hero utilise une surface anthracite plus claire et chaleureuse tout en conservant le contraste du logo officiel. La carte de France et son cartouche de synthèse n’ajoutent aucun fond, cadre ou ombre : ils laissent apparaître directement le fond de la Hero, y compris sur mobile. Le diagramme START Network Cycle reste une ancre sombre. Les motifs `BrandPattern` deviennent presque imperceptibles afin de signer les sections sans concurrencer leur contenu, avec une opacité encore réduite sous 640 px. Les cartes de catégories doivent toujours révéler leur image sous un voile ivoire progressif, jamais sous une surface claire opaque.
+Le mode clair repose sur des fonds ivoire, des surfaces blanc cassé, du texte anthracite et les accents dorés START. Les cartes, formulaires, pages thématiques, navigation et footer suivent le mode sélectionné. Dans ce mode, la Hero utilise une surface anthracite plus claire et chaleureuse tout en conservant le contraste du logo officiel. La carte de France et son cartouche de synthèse n’ajoutent aucun fond, cadre ou ombre : ils laissent apparaître directement le fond de la Hero, y compris sur mobile. Le diagramme START Network Cycle reste une ancre sombre. Les pages utilisant `discreet-network-background` restent également des ancres sombres dans les deux modes ; leur voile est ajusté afin que le réseau reste presque imperceptible. Les motifs `BrandPattern` secondaires deviennent presque invisibles afin de ne pas concurrencer le contenu. Les cartes de catégories doivent toujours révéler leur image sous un voile ivoire progressif, jamais sous une surface claire opaque.
 
 Toute nouvelle surface doit fonctionner dans les deux modes et conserver au minimum un contraste AA. Ne jamais dépendre uniquement du changement de couleur pour communiquer un état. Les transitions de thème sont supprimées avec `prefers-reduced-motion`.
 
@@ -172,7 +178,7 @@ Sous 1024 px : une colonne centrée, titre limité à 300 px, paragraphe avec s�
 
 Sous 640 px : titre limité à 260 px et 3 rem, libellé supérieur compact, CTA empilés, cartouche France réduit et padding vertical resserré.
 
-## 7. Carte de France
+## 7. Cartes géographiques France–Suisse
 
 `FranceListingsMap.tsx` transforme le GeoJSON en chemins SVG, calcule les centroïdes et affiche les compteurs.
 
@@ -180,8 +186,11 @@ Sous 640 px : titre limité à 260 px et 3 rem, libellé supérieur compact, CTA
 - conserver la sélection dorée ;
 - ne pas réintroduire le contour bleu natif ;
 - conserver le fond transparent et l'absence de bordure ;
-- compléter ultérieurement les territoires ultramarins ;
 - optimiser le GeoJSON avant la production.
+
+`ListingsMap.tsx`, affiché dans le catalogue, combine les 96 départements métropolitains, les cinq départements d’outre-mer et le contour de la Suisse. La France utilise le contour doré START. La Suisse utilise l’accent bleu réseau avec un fond bleu très léger afin de rester immédiatement distincte. Une sélection de la Suisse recentre automatiquement Leaflet sur le pays.
+
+La source `data/departments.ts` contient les 101 départements français et les 26 cantons suisses. Le filtre affiche d’abord le pays, puis le niveau administratif adapté : « Département » pour la France et « Canton » pour la Suisse. Les chevrons des listes sont dessinés par l’interface, avec un retrait droit constant, plutôt que par le style natif du navigateur.
 
 `ListingLocationMap.tsx` utilise OpenStreetMap via React Leaflet.
 
@@ -202,10 +211,10 @@ Chaque icône est un vrai bouton avec nom accessible et `aria-pressed`; la séle
 Les annonces viennent de `mockListings.ts`. Les filtres restent dans l'URL :
 
 ```text
-/annonces?q=...&department=...&category=...
+/annonces?q=...&country=...&department=...&category=...
 ```
 
-Conserver cette règle lors du passage à Supabase.
+`country` accepte actuellement `France` ou `Suisse`. `department` transporte soit un département français, soit un canton suisse selon le pays choisi. Un changement de pays efface toujours l’ancienne subdivision afin d’éviter une combinaison incohérente. Conserver cette règle lors du passage à Supabase.
 
 ## 9. Responsive à vérifier
 
@@ -343,7 +352,7 @@ La refonte de ces cartes est une étape d'implémentation ultérieure et ne fait
 
 ## 15. Sections institutionnelles et éléments partagés
 
-Vision, À propos, Notre mission, Pourquoi START et Rejoindre le réseau peuvent employer davantage d'espace négatif, de grandes typographies, des chiffres clés, Gold Glow et Network Pattern. Ces pages peuvent être plus expressives que les écrans fonctionnels.
+Vision, À propos, Notre mission, Pourquoi START et Rejoindre le réseau peuvent employer davantage d’espace négatif, de grandes typographies, des chiffres clés, Gold Glow et `Discreet Network Signature`. Ces pages peuvent être plus expressives que les écrans fonctionnels.
 
 Le header et le footer appartiennent au système partagé et conservent la même identité sur toutes les pages. Le footer peut utiliser le motif réseau à très faible opacité et regrouper navigation, catégories, ressources, newsletter, informations institutionnelles et invitation à rejoindre le réseau.
 
@@ -369,9 +378,9 @@ Le système est centralisé dans `Layout.tsx` avec `IntersectionObserver`. Les s
 
 La carte du catalogue, la barre de recherche, les fiches et les avis suivent les règles suivantes :
 
-- grand écran : carte large, barre de recherche en quatre colonnes et fiche en deux colonnes ;
+- grand écran : carte large, barre de recherche en cinq colonnes et fiche en deux colonnes ;
 - tablette : barre de recherche en deux colonnes, fiche et profil professionnel empilés ;
-- mobile : carte limitée à `340px`, barre en une colonne, boutons pleine largeur et marges latérales réduites ;
+- mobile : carte portée à `430px`, barre en une colonne, boutons pleine largeur et marges latérales réduites ;
 - le cartouche de compteur de la carte ne doit jamais recouvrir les contrôles Leaflet ;
 - les étoiles peuvent revenir à la ligne et leur taille est réduite sous `640px` ;
 - les coordonnées privées et le formulaire d'avis conservent la même règle d'accès sur tous les écrans ;

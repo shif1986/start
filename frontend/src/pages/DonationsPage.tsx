@@ -35,7 +35,7 @@ export default function DonationsPage() {
           <span className="mx-auto block h-px w-16 bg-start-gold/70" aria-hidden="true" />
           <span className="mx-auto mt-5 flex w-fit items-center gap-2" aria-hidden="true"><span className="size-2 rounded-full bg-network-blue" /><span className="size-2 rounded-full bg-network-yellow" /><span className="size-2 rounded-full bg-network-red" /></span>
           <span className="mt-4 block text-xs font-bold tracking-[.22em] text-start-gold uppercase">Soutenir la mission</span>
-          <h1 className="mt-4 text-[clamp(2.2rem,5vw,4rem)] leading-[1.05] font-bold tracking-[-.045em]">Faire un don</h1>
+          <h1 className="mt-4 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">Faire un don</h1>
           <p className="mx-auto mt-5 max-w-2xl text-[clamp(.92rem,1.3vw,1.05rem)] leading-7 text-start-cream/62">
             Votre soutien aide START à accompagner les initiatives locales, développer les outils du réseau et favoriser des projets porteurs de sens.
           </p>
@@ -81,7 +81,7 @@ export default function DonationsPage() {
               <label className="mt-3 grid gap-2 text-sm text-start-cream/60">
                 Autre montant
                 <span className={`flex min-h-12 items-center rounded-xl border bg-[#080c12] transition focus-within:border-start-gold ${selectedAmount === "custom" ? "border-start-gold/60" : "border-start-cream/12"}`}>
-                  <input type="number" min="1" step="1" inputMode="decimal" value={customAmount} onFocus={() => setSelectedAmount("custom")} onChange={(event) => { setSelectedAmount("custom"); setCustomAmount(event.target.value); setPreviewMessage(""); }} className="min-w-0 flex-1 bg-transparent px-4 text-start-cream outline-none" placeholder="Saisir un montant" aria-label="Montant personnalisé" />
+                  <input type="number" min="1" step="1" inputMode="decimal" value={customAmount} onFocus={() => setSelectedAmount("custom")} onChange={(event) => { setSelectedAmount("custom"); setCustomAmount(event.target.value); setPreviewMessage(""); }} className="min-h-12 min-w-0 flex-1 bg-transparent px-4 text-start-cream outline-none" placeholder="Saisir un montant" aria-label="Montant personnalisé" />
                   <span className="pr-4 font-semibold text-start-gold">€</span>
                 </span>
               </label>

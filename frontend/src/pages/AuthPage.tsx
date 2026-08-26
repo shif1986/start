@@ -18,7 +18,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     <ThemedPage ambiance="gold" className="grid min-h-[680px] place-items-center p-[clamp(18px,5vw,64px)]">
       <div className="w-full max-w-xl rounded-2xl border border-start-cream/10 bg-[#121418]/95 p-[clamp(22px,5vw,44px)] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
         <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">{isRegister ? "Rejoindre START" : "Bienvenue"}</span>
-        <h1 className="mt-3 text-[clamp(2rem,5vw,3.5rem)] font-semibold tracking-[-.04em]">{isRegister ? "Créer un compte" : "Se connecter"}</h1>
+        <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-semibold tracking-[-.035em]">{isRegister ? "Créer un compte" : "Se connecter"}</h1>
         <p className="mt-3 text-start-cream/55">Interface frontend uniquement. La création de session sera reliée au backend ultérieurement.</p>
 
         {requestedProfessional && <p className="mt-5 rounded-xl border border-start-gold/25 bg-start-gold/[.06] px-4 py-3 text-sm text-start-cream/65">Créez votre compte professionnel, puis choisissez votre abonnement pour continuer vers la publication.</p>}

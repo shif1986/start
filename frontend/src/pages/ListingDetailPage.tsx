@@ -13,7 +13,7 @@ export default function ListingDetailPage() {
   if (!listing) {
     return (
       <div className="grid min-h-[50vh] place-content-center gap-5 text-center">
-        <h1>Annonce introuvable</h1>
+        <h1 className="text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">Annonce introuvable</h1>
         <Link to="/annonces" className="rounded-xl border-start-gold px-4 py-2.5 font-bold text-start-gold [border-style:solid] [border-width:.5px]">
           Retour au catalogue
         </Link>
@@ -30,7 +30,7 @@ export default function ListingDetailPage() {
       <div className="mt-6 rounded-2xl border border-start-cream/10 bg-[#121418]/95 px-[clamp(18px,5vw,56px)] py-[clamp(22px,3.5vw,40px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-5 max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:shadow-none">
         <div className="border-b border-start-cream/10 pb-7">
           <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[.24em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />{listing.category}</span>
-          <h1 className="my-3 max-w-5xl font-serif text-[clamp(1.75rem,3.4vw,3.35rem)] leading-[1.12] tracking-[-.025em]">{listing.title}</h1>
+          <h1 className="my-3 max-w-5xl font-serif text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.12] tracking-[-.025em]">{listing.title}</h1>
           <p className="text-start-cream/60">
             {listing.city} • {listing.department}
           </p>

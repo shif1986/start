@@ -5,7 +5,6 @@ import { mockListings } from "../data/mockListings";
 import { homeCategories } from "../data/categories";
 import CategoryCard from "../components/CategoryCard";
 import ListingCard from "../components/ListingCard";
-import BrandPattern from "../components/BrandPattern";
 import StartNetworkCycle from "../components/StartNetworkCycle";
 import ThemeToggle from "../components/ThemeToggle";
 
@@ -51,7 +50,7 @@ function SearchByLocation({
         <h1 className="mt-9 flex w-[min(100%,370px)] flex-col items-stretch font-hero leading-none max-lg:mt-7 max-lg:w-[min(100%,400px)] max-sm:mt-6 max-sm:w-[min(100%,290px)]">
           <span className="sr-only">START Réseau Chrétien Professionnel</span>
           <span
-            className="flex w-full items-center justify-between text-[clamp(3.25rem,4.7vw,4.8rem)] font-medium tracking-[.025em] text-[#f5f5f3] max-lg:text-[clamp(3.45rem,9vw,5rem)] max-sm:text-[clamp(2.65rem,13.5vw,3.7rem)] max-sm:tracking-0"
+            className="flex w-full items-center justify-between text-[clamp(2.25rem,4vw,3.6rem)] font-medium tracking-[.025em] text-[#f5f5f3] max-sm:tracking-0"
             aria-hidden="true"
           >
             <span>S</span>
@@ -97,7 +96,7 @@ function SearchByLocation({
             <span>T</span>
           </span>
           <span
-            className="mt-3 flex w-full items-center justify-between whitespace-nowrap text-[clamp(.65rem,.88vw,.88rem)] font-normal tracking-[.3em] text-[#f5f5f3]/90 max-lg:text-[.88rem] max-lg:tracking-[.27em] max-sm:mt-5 max-sm:text-[.6rem] max-sm:tracking-[.16em]"
+            className="mt-3 flex w-full items-center justify-center gap-[clamp(18px,4vw,34px)] whitespace-nowrap text-[clamp(.65rem,.88vw,.88rem)] font-normal tracking-[.26em] text-[#f5f5f3]/90 max-lg:text-[.88rem] max-lg:tracking-[.23em] max-sm:mt-4 max-sm:gap-4 max-sm:text-[.6rem] max-sm:tracking-[.14em]"
             aria-hidden="true"
           >
             <span>RÉSEAU</span>
@@ -193,24 +192,12 @@ export default function HomePage() {
       />
 
       <section className="home-listings-section relative overflow-hidden border-y border-start-cream/10 bg-[radial-gradient(circle_at_14%_18%,rgba(199,164,93,.14),transparent_34%),linear-gradient(125deg,#24231f_0%,#1b1e23_48%,#12161c_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream max-sm:py-16">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(135deg,rgba(255,255,255,.018),transparent_55%)]"
-          aria-hidden="true"
-        />
-        <BrandPattern
-          variant="chain"
-          className="-right-4 -bottom-20 h-[800px] w-[min(86vw,1160px)] text-start-cream/[.05] opacity-35 max-sm:-right-28 max-sm:-bottom-20 max-sm:opacity-20"
-        />
-        <span
-          className="pointer-events-none absolute right-[13%] bottom-[18%] size-3 rounded-full bg-[#2da9df]/70 shadow-[0_0_0_7px_rgba(45,169,223,.08)] max-sm:hidden"
-          aria-hidden="true"
-        />
         <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-extrabold tracking-[.24em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />
               À la une
             </span>
-            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
+            <h2 className="mt-2 text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">
               Les dernières annonces
             </h2>
             <p className="mt-2 max-w-xl text-start-cream/65">
@@ -236,21 +223,13 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-categories-section relative overflow-hidden border-t border-start-cream/10 bg-[radial-gradient(circle_at_82%_12%,rgba(77,163,255,.09),transparent_30%),radial-gradient(circle_at_12%_90%,rgba(199,164,93,.065),transparent_34%),linear-gradient(145deg,#242b31_0%,#1b2026_48%,#14181d_100%)] px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
-        <div
-          className="pointer-events-none absolute inset-0 bg-[linear-gradient(160deg,rgba(255,255,255,.03),transparent_48%)]"
-          aria-hidden="true"
-        />
-        <BrandPattern
-          variant="landscape"
-          className="right-0 bottom-0 h-[62%] w-full text-start-cream/[.045] opacity-35 max-sm:h-[45%] max-sm:opacity-22"
-        />
-        <div className="relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
+      <section className="home-categories-section discreet-network-background relative overflow-hidden border-t border-start-cream/10 px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
+        <div className="home-categories-header relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.22em] text-network-yellow uppercase"><span className="size-1.5 rounded-full bg-network-yellow" aria-hidden="true" />
               Explorez le réseau
             </span>
-            <h2 className="mt-2 text-[clamp(2rem,4vw,3.5rem)] font-bold tracking-[-.035em]">
+            <h2 className="mt-2 text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">
               Parcourez les catégories
             </h2>
             <p className="mt-2 max-w-xl text-start-cream/65">

@@ -67,6 +67,14 @@ img {
   display: block;
 }
 
+.about-header-pattern {
+  opacity: 0.025 !important;
+}
+
+html[data-theme="light"] .about-header-pattern {
+  opacity: 0.035 !important;
+}
+
 button {
   cursor: pointer;
 }
@@ -107,7 +115,7 @@ button {
 }
 
 .site-navigation[data-navigation-state="compact"] {
-  min-height: var(--navigation-height-mobile-compact);
+  min-height: var(--navigation-height-mobile);
 }
 
 .mobile-drawer-submenu {
@@ -280,13 +288,13 @@ button {
   right: 0;
   display: flex;
   flex-direction: column;
-  width: 100%;
-  height: auto;
+  width: var(--drawer-width);
+  height: 100%;
   max-height: 100vh;
   max-height: 100dvh;
   overflow: hidden;
-  border-bottom: 1px solid rgb(199 164 93 / 22%);
-  border-radius: 0 0 20px 20px;
+  border-left: 1px solid rgb(199 164 93 / 22%);
+  border-radius: 20px 0 0 20px;
   background:
     radial-gradient(circle at 90% 0%, rgb(199 164 93 / 12%), transparent 34%),
     rgb(7 10 14 / 74%);
@@ -649,7 +657,7 @@ footer {
   background: rgb(7 10 14 / 58%);
   box-shadow: 0 12px 34px rgb(0 0 0 / 20%);
   color: #f4efe5;
-  font-size: .72rem;
+  font-size: .8rem;
   font-weight: 700;
   backdrop-filter: blur(18px);
   transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease;
@@ -822,12 +830,11 @@ html[data-theme="light"] footer {
 html[data-theme="light"] footer input { background: rgb(255 255 255 / 72%) !important; }
 
 html[data-theme="light"] .listings-map {
-  border-color: rgb(155 119 54 / 28%) !important;
-  background: #e8e6df !important;
+  border-color: rgb(199 164 93 / 28%) !important;
 }
 
 html[data-theme="light"] .listings-map .leaflet-tile-pane {
-  filter: invert(.88) hue-rotate(180deg) brightness(1.06) saturate(.62) contrast(.88);
+  filter: brightness(1.18) saturate(.58) contrast(.94);
 }
 
 /* Restore the two intentional dark brand anchors after normalization. */
@@ -954,7 +961,8 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
   box-shadow: none;
   color: #22221e;
   font-family: "Montserrat", sans-serif;
-  font-weight: 800;
+  font-size: .72rem;
+  font-weight: 700;
   line-height: 1;
   padding: 0;
 }
@@ -964,7 +972,18 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
 }
 
 .listings-map .leaflet-tile-pane {
-  filter: brightness(1.24) saturate(0.82) contrast(0.92);
+  filter: brightness(1.06) saturate(.72) contrast(1.02);
+  opacity: .94;
+}
+
+.listings-map .leaflet-container {
+  background: #061525;
+}
+
+.listings-map {
+  background:
+    radial-gradient(ellipse at top left, rgb(199 164 93 / 28%) 0%, rgb(199 164 93 / 11%) 30%, transparent 60%),
+    linear-gradient(145deg, #171a21 0%, #0c0f15 100%) !important;
 }
 
 .leaflet-popup-content-wrapper,
@@ -976,6 +995,57 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
   min-height: 100vh;
 }
 
+.discreet-network-background {
+  background-color: #080d14 !important;
+  background-image:
+    linear-gradient(rgb(5 10 16 / 72%), rgb(5 10 16 / 82%)),
+    url("/images/backgrounds/contact-network.png") !important;
+  background-attachment: fixed !important;
+  background-position: center top !important;
+  background-repeat: no-repeat !important;
+  background-size: cover !important;
+}
+
+@media (max-width: 640px) {
+  .discreet-network-background {
+    background-attachment: scroll !important;
+    background-size: auto 1000px !important;
+  }
+}
+
+html[data-theme="light"] .discreet-network-background {
+  background-color: #10151c !important;
+  background-image:
+    linear-gradient(rgb(8 13 20 / 66%), rgb(8 13 20 / 78%)),
+    url("/images/backgrounds/contact-network.png") !important;
+  color: #f4efe5;
+}
+
+html[data-theme="light"] .home-categories-section,
+html[data-theme="light"] .home-categories-section .home-categories-header [class*="text-start-cream"] {
+  color: rgb(244 239 229 / 78%) !important;
+}
+
+html[data-theme="light"] .home-categories-section .home-categories-header [class*="border-start-cream"] {
+  border-color: rgb(244 239 229 / 22%) !important;
+}
+
+html[data-theme="light"] .contact-network-test [class*="text-start-cream"] {
+  color: rgb(244 239 229 / 72%) !important;
+}
+
+html[data-theme="light"] .contact-network-test :is(aside, form) {
+  border-color: rgb(244 239 229 / 12%) !important;
+  background-color: rgb(15 19 25 / 92%) !important;
+  color: #f4efe5;
+}
+
+html[data-theme="light"] .contact-network-test :is(input, textarea) {
+  border-color: rgb(244 239 229 / 15%) !important;
+  background-color: rgb(8 12 18 / 78%) !important;
+  color: #f4efe5 !important;
+}
+
 .start-network-cycle {
   position: relative;
   overflow: hidden;
@@ -984,16 +1054,6 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
     radial-gradient(circle at 50% 48%, rgb(199 164 93 / 10%), transparent 32%),
     radial-gradient(circle at 12% 72%, rgb(77 163 255 / 5%), transparent 26%),
     linear-gradient(150deg, #090c11 0%, #0e1218 52%, #080a0e 100%);
-}
-
-.start-network-cycle::before {
-  position: absolute;
-  inset: 0;
-  content: "";
-  opacity: 0.24;
-  background-image: radial-gradient(circle, rgb(199 164 93 / 45%) 0 1px, transparent 1.5px);
-  background-size: 54px 54px;
-  mask-image: radial-gradient(circle at center, black, transparent 72%);
 }
 
 .network-cycle-logo,
@@ -1118,7 +1178,6 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
     min-height: 180px;
     transform: translateX(-50%);
   }
-  .start-network-cycle::before { background-size: 38px 38px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

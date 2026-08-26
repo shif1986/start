@@ -167,7 +167,7 @@ export default function StartNetworkCycle() {
       <div className="relative z-10 mx-auto max-w-[1240px] px-[clamp(18px,5vw,72px)] py-[clamp(64px,7vw,96px)]">
         <header className="mx-auto max-w-4xl text-center">
           <p className="flex items-center justify-center gap-3 text-[.66rem] font-bold tracking-[.24em] text-start-gold uppercase sm:text-xs"><span className="h-px w-10 bg-gradient-to-r from-transparent to-start-gold" />Le fonctionnement du réseau<span className="h-px w-10 bg-gradient-to-l from-transparent to-start-gold" /></p>
-          <h2 id="network-cycle-title" className="mx-auto mt-4 max-w-3xl text-[clamp(1.8rem,3.6vw,3.25rem)] leading-[1.1] font-bold tracking-[-.04em] text-start-cream">Pourquoi rejoindre <span className="text-start-gold">START Réseau Chrétien&nbsp;?</span></h2>
+          <h2 id="network-cycle-title" className="mx-auto mt-4 max-w-3xl text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.1] font-bold tracking-[-.04em] text-start-cream">Pourquoi rejoindre <span className="text-start-gold">START Réseau Chrétien&nbsp;?</span></h2>
         </header>
 
         <div className="mx-auto mt-20 flex max-w-[1040px] justify-center sm:mt-64 lg:mt-72">

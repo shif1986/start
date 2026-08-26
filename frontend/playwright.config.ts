@@ -12,7 +12,7 @@ export default defineConfig({
     trace: "retain-on-failure",
   },
   webServer: {
-    command: "bun run dev -- --host 127.0.0.1 --port 4176",
+    command: "npm run dev -- --host 127.0.0.1 --port 4176",
     url: "http://127.0.0.1:4176",
     reuseExistingServer: false,
     timeout: 30_000,

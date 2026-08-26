@@ -1,6 +1,20 @@
 import { expect, test, type Page } from "@playwright/test";
 
 const responsiveWidths = [320, 375, 390, 768, 1024, 1440];
+const publicRoutes = [
+  "/",
+  "/annonces",
+  "/annonce/conseil-strategique-pour-entrepreneurs",
+  "/a-propos",
+  "/don",
+  "/contact",
+  "/publier",
+  "/categories",
+  "/connexion",
+  "/inscription",
+  "/abonnement",
+  "/espace/particulier",
+];
 const desktopBreakpoint = 1120;
 const browserErrors = new WeakMap<Page, string[]>();
 
@@ -68,7 +82,7 @@ test("le drawer gère focus, Escape, overlay et verrouillage du scroll", async (
   await expect.poll(() => page.evaluate(() => document.body.style.position)).toBe("");
 
   await trigger.click();
-  await page.getByTestId("navigation-overlay").click({ position: { x: 10, y: 10 } });
+  await page.getByTestId("navigation-overlay").click({ position: { x: 10, y: 400 } });
   await expect(dialog).toBeHidden();
 });
 
@@ -122,4 +136,31 @@ test("prefers-reduced-motion conserve les états sans animation longue", async (
 
   await page.getByRole("button", { name: "Ouvrir le menu" }).click();
   await expect(page.getByRole("dialog", { name: "Menu principal" })).toBeVisible();
+});
+
+test("toutes les pages restent dans le viewport sur mobile et tablette", async ({ page }) => {
+  test.setTimeout(120_000);
+  for (const width of [320, 768, 1024]) {
+    await page.setViewportSize({ width, height: width < 500 ? 780 : 900 });
+
+    for (const route of publicRoutes) {
+      await page.goto(route, { waitUntil: "domcontentloaded" });
+      await expect.poll(
+        () => page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+        { message: `${route} déborde à ${width}px` },
+      ).toBe(true);
+
+      const interactiveElements = page.locator("main button:visible, main input:visible:not([type='radio']):not([type='checkbox']):not([type='hidden']), main select:visible, main textarea:visible");
+      const count = await interactiveElements.count();
+      for (let index = 0; index < count; index += 1) {
+        const box = await interactiveElements.nth(index).boundingBox();
+        if (!box) continue;
+        const controlName = await interactiveElements.nth(index).evaluate((element) =>
+          `${element.tagName.toLowerCase()}[type="${element.getAttribute("type") ?? ""}"][name="${element.getAttribute("name") ?? ""}"]`,
+        );
+        expect(box.width, `${route}: ${controlName} trop étroit à ${width}px`).toBeGreaterThanOrEqual(40);
+        expect(box.height, `${route}: ${controlName} trop bas à ${width}px`).toBeGreaterThanOrEqual(40);
+      }
+    }
+  }
 });

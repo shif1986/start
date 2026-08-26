@@ -14,6 +14,8 @@ function renderNavigation(path = "/") {
   const result = render(
     <MemoryRouter initialEntries={[path]}>
       <Navigation />
+      <main>Contenu de test</main>
+      <footer>Pied de page de test</footer>
     </MemoryRouter>,
     { container: appContent },
   );
@@ -121,12 +123,15 @@ describe("Navigation", () => {
 
     await user.click(screen.getByRole("button", { name: "Ouvrir le menu" }));
     expect(document.body.style.position).toBe("fixed");
-    expect(document.querySelector("[data-app-content]")).toHaveAttribute("inert");
+    expect(document.querySelector("[data-app-content] > main")).toHaveAttribute("inert");
+    expect(document.querySelector("[data-app-content] > footer")).toHaveAttribute("inert");
+    expect(screen.getByRole("dialog", { name: "Menu principal" })).not.toHaveAttribute("inert");
 
     const dialog = screen.getByRole("dialog", { name: "Menu principal" });
     await user.click(within(dialog).getByRole("button", { name: "Fermer le menu" }));
     expect(document.body.style.position).toBe("");
-    expect(document.querySelector("[data-app-content]")).not.toHaveAttribute("inert");
+    expect(document.querySelector("[data-app-content] > main")).not.toHaveAttribute("inert");
+    expect(document.querySelector("[data-app-content] > footer")).not.toHaveAttribute("inert");
     expect(window.scrollTo).toHaveBeenCalledWith(0, 180);
   });
 

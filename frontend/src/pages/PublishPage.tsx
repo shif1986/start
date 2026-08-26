@@ -7,7 +7,7 @@ export default function PublishPage() {
     <ThemedPage ambiance="gold" className="p-[clamp(32px,7vw,104px)]">
       <div className="mx-auto max-w-6xl">
       <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Rejoindre le réseau</span>
-      <h1 className="mt-3 max-w-4xl text-[clamp(2.5rem,6vw,5rem)] font-bold tracking-[-.04em]">Publier une annonce</h1>
+      <h1 className="mt-3 max-w-4xl text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">Publier une annonce</h1>
       <p className="mt-5 max-w-2xl text-lg leading-8 text-start-cream/65">La publication est réservée aux professionnels disposant d’un abonnement START actif.</p>
 
       <div className="relative isolate mt-12 overflow-hidden rounded-2xl border border-start-gold/20 bg-[#17191e]/90 p-[clamp(24px,4vw,44px)] shadow-[0_24px_70px_rgba(0,0,0,.2)]">

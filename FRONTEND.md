@@ -14,7 +14,7 @@ Ce document est la référence unique pour construire l'interface React. Le code
 - Un particulier connecté peut consulter les annonces, commenter, signaler un contenu, enregistrer des favoris et prendre contact selon le parcours défini par le site, sans pouvoir publier d’annonce.
 - Un professionnel connecté peut consulter les annonces et les profils publics, et peut voir les coordonnées d’un autre professionnel.
 - Une annonce professionnelle ne peut être publiée qu’après souscription à un abonnement actif et validation du compte / statut pro.
-- Carte de France avec recherche par département sur l'accueil et dans le catalogue.
+- Carte France–Suisse dans le catalogue : recherche par pays, puis par département français ou canton suisse. Les cinq départements français d’outre-mer sont inclus.
 - Paiement prévu avec Stripe, avec un mode de paiement Google Pay et un mode classique lorsque disponible.
 - Identité visuelle : Manrope, #22221E, #F4EFE5, #C7A45D.
 
@@ -43,14 +43,14 @@ Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, 
 1. Accueil :
    - titre : Start Réseau Chrétien ;
    - description : mettre une proposition correspondant à un site d'association chrétienne qui accueille des professionnels chrétiens et des particuliers chrétiens pour travailler pour le Royaume de Dieu ;
-   - carte des départements de France et des DOM-TOM avec une barre de recherche ; les utilisateurs peuvent cliquer sur les départements pour lancer une recherche ; cela redirige vers la page d'annonces, avec la recherche et le département transmis dans l'URL ;
+   - carte interactive des départements métropolitains avec une barre de recherche ; les utilisateurs peuvent cliquer sur un département pour lancer une recherche ; cela redirige vers la page d'annonces avec la recherche et le département transmis dans l'URL ; le catalogue Leaflet prend ensuite en charge les cinq DROM et la Suisse ;
    - section secondaire avec une galerie de 5 cartes d'annonces, avec un bouton "Voir plus" ; ces annonces doivent être triées du plus récent au plus ancien.
 
 2. Page de recherche d'annonces :
    - si l'utilisateur n'est pas authentifié, proposer un bouton pour l'inviter à créer un compte ;
-   - en haut, une carte géographique affichant la présence des annonces selon le département choisi par le client ;
+   - en haut, une carte géographique France–Suisse affichant la présence des annonces selon le pays et la subdivision choisis par le client ;
    - une barre de recherche d'annonces ;
-   - filtres et tri des annonces ;
+   - filtres et tri des annonces, avec choix France/Suisse puis département/canton ;
    - cliquer sur une annonce ouvre le profil du professionnel ;
    - sous-page d'abonnement pour expliquer les deux options professionnelles : 7 € par mois et 84 € par an. Les options classiques permettent de créer des annonces, etc.
 
@@ -96,6 +96,14 @@ font-script MonteCarlo
 
 Les accents réseau sont utilisés régulièrement sur de petits éléments fonctionnels, jamais comme grands fonds ni à la place du doré principal.
 
+### Signature de fond officielle
+
+La signature principale du site est le réseau sombre aux connexions dorées fourni par `public/images/backgrounds/contact-network.png`. La classe globale `discreet-network-background` applique cet asset avec un voile très dense : le motif doit être ressenti comme une texture et non lu comme une illustration. Le centre reste visuellement calme, les connexions apparaissent surtout sur les bords et les contenus reposent sur des surfaces suffisamment contrastées.
+
+Le voile varie de 72 % à 82 % en mode sombre et de 66 % à 78 % en mode clair. Le fond reste fixe sur les grands écrans pour les pages longues et repasse en défilement normal sous `640px`. Ne pas ajouter simultanément un grand motif `BrandPattern` sur une page utilisant cette signature.
+
+Cette signature est actuellement active sur Contact, Abonnement, Vision et sur la section Catégories de l’accueil. Les autres sections de l’accueil n’utilisent plus d’ancien motif décoratif. Elle devient le principe recommandé pour les futures pages institutionnelles. Les pages fonctionnelles denses conservent leur fond anthracite simple, sauf validation visuelle spécifique. L’asset bitmap devra être optimisé avant la production.
+
 Le thème global accepte `dark` et `light`. Le sombre est le défaut, tandis que le choix utilisateur est stocké avec la clé `start-theme`. `src/lib/theme.ts` initialise `html[data-theme]` avant le montage de React. Le bouton de bascule se trouve en haut à droite de la Hero : texte et icône sur desktop/tablette, icône accessible de 44 px minimum sous 640 px. Le mode clair adapte les pages, cartes, champs, navigation et footer ; sa Hero utilise un anthracite plus clair, tandis que `START Network Cycle` conserve son fond sombre identitaire. Les signatures `BrandPattern` sont fortement atténuées, particulièrement sur mobile.
 
 Exemples : `bg-start-ink`, `text-start-cream`, `border-start-gold` et
@@ -134,9 +142,16 @@ Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les v
 VITE_SUPABASE_URL=https://ybfjjuznkfaftudtysge.supabase.co
 VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliZmpqdXpua2ZhZnR1ZHR5c2dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MzUwMjIsImV4cCI6MjEwMjExMTAyMn0.pXs6udT7zoAe0ceUGA1NVmD3lVTgIBasYvKSoVjBaPc
 VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_pcCWg0bAE4p0A4VNOuPUUg_CMLwdOTf
+VITE_CONTACT_ENDPOINT=https://formspree.io/f/votre-identifiant
 ```
 
 La clé `service_role` ne doit jamais être mise dans le front-end.
+
+`VITE_CONTACT_ENDPOINT` doit pointer vers une fonction serveur ou un service de
+formulaire acceptant les requêtes JSON. Le formulaire envoie `name`, `email`,
+`phone`, `message`, `website` (champ anti-spam) et `source`. Sans cette variable,
+aucune donnée n'est perdue silencieusement : la page affiche que le service
+d'envoi n'est pas encore configuré.
 
 ## 6. Organisation des fichiers
 
@@ -236,6 +251,8 @@ La navigation courte privilégie : Véhicules, Immobilier, Emploi, Services, Mai
 
 Les URLs de filtre utilisent `/annonces?category=<slug>`. Les futures pages SEO pourront reprendre les mêmes slugs, par exemple `/vehicules`, `/services`, `/materiel-professionnel`, `/commerce-entreprise` et `/btp-industrie`.
 
+Les filtres géographiques utilisent `/annonces?country=<pays>&department=<subdivision>`. Les pays disponibles sont actuellement `France` et `Suisse`. La France propose ses 101 départements, dont les cinq DROM ; la Suisse propose ses 26 cantons. Changer de pays réinitialise la subdivision sélectionnée. Les annonces existantes sans valeur `country` explicite sont considérées françaises pendant la phase de maquette.
+
 ## 9. Ordre de réalisation TDD
 
 Chaque tranche suit strictement : test rouge → code minimal correct → test vert → nettoyage → build.
@@ -303,10 +320,14 @@ Une tranche front-end est terminée uniquement quand :
 - mettre en place le fonctionnement par Stripe ;
 - proposer un mode de paiement Google Pay comme option.
 
-## 13. Carte de localisation du plan de la France
+## 13. Cartes de localisation France–Suisse
 
 - souhaité : une carte géographique sur la page d'accueil pour que les clients puissent rechercher des annonces ;
 - les clients doivent pouvoir cliquer sur la carte, département par département, pour lancer une recherche.
+- dans le catalogue, le calque français couvre les 96 départements métropolitains et les cinq DROM avec le contour doré START ;
+- le contour suisse utilise le bleu réseau et un remplissage bleu discret ;
+- sélectionner la Suisse recentre la carte sur son territoire ;
+- les données de localisation sont centralisées dans `src/data/departments.ts`, `franceDepartments.geojson`, `overseasDepartments.geojson` et `switzerland.geojson`.
 
 ## 14. Système d'animation actuel
 
@@ -334,8 +355,8 @@ Règles opérationnelles :
 
 ## 15. Responsive du catalogue et des fiches
 
-- `ListingsMap.tsx` utilise une hauteur fluide jusqu'à `620px` et passe à `340px` sous `640px` ;
-- la barre de recherche passe de quatre à deux puis une colonne ;
+- `ListingsMap.tsx` utilise une hauteur fluide de `520px` à `720px` et passe à `430px` sous `640px` ;
+- la barre de recherche passe de cinq à deux puis une colonne ;
 - les filtres restent synchronisés avec l'URL à toutes les tailles ;
 - la fiche annonce empile le contenu et le profil sous `1024px` ;
 - les CTA d'inscription, de contact et d'évaluation prennent toute la largeur sur mobile ;

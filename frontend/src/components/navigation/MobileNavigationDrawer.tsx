@@ -28,7 +28,9 @@ export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: 
     if (!isOpen) return;
 
     const scrollPosition = window.scrollY;
-    const appContent = document.querySelector<HTMLElement>("[data-app-content]");
+    const backgroundRegions = Array.from(
+      document.querySelectorAll<HTMLElement>("[data-app-content] > main, [data-app-content] > footer"),
+    );
     const triggerButton = triggerRef.current;
     const previousBodyStyles = {
       position: document.body.style.position,
@@ -39,7 +41,7 @@ export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: 
       overflow: document.body.style.overflow,
     };
 
-    appContent?.setAttribute("inert", "");
+    backgroundRegions.forEach((region) => region.setAttribute("inert", ""));
     document.body.style.position = "fixed";
     document.body.style.top = `-${scrollPosition}px`;
     document.body.style.right = "0";
@@ -84,7 +86,7 @@ export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: 
       window.cancelAnimationFrame(focusFrame);
       document.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("resize", handleResize);
-      appContent?.removeAttribute("inert");
+      backgroundRegions.forEach((region) => region.removeAttribute("inert"));
       Object.assign(document.body.style, previousBodyStyles);
       window.scrollTo(0, scrollPosition);
       triggerButton?.focus();
