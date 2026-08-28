@@ -363,7 +363,7 @@ Règles opérationnelles :
 - `ListingReviews.tsx` autorise le retour à la ligne des étoiles et réduit leur taille sur mobile ;
 - contrôler en priorité 320px, 390px, 768px, 1024px et 1440px.
 
-## 16. Espaces de comptes — maquettes frontend
+## 16. Espaces de comptes et authentification
 
 Routes disponibles :
 
@@ -373,6 +373,8 @@ Routes disponibles :
 - `/abonnement` : choix mensuel à 7 € ou annuel à 84 €, récapitulatif et moyens de paiement ;
 - `/admin` : supervision des utilisateurs, annonces, commentaires, signalements et abonnements.
 
-Ces routes utilisent uniquement des données locales et ne sont pas protégées. Elles servent à valider l'interface et le responsive. Ne jamais considérer leur affichage conditionnel comme une autorisation réelle. Authentification, rôles, abonnement actif et permissions administrateur devront être contrôlés ultérieurement côté backend et base de données.
+En mode `supabase`, la session Supabase est l'unique source de vérité. Le profil courant est chargé par React Query, les espaces particulier/professionnel vérifient le type de compte et `/admin` exige le rôle `moderator` ou `admin`. `/publier` et `/abonnement` exigent un compte professionnel. Les politiques RLS restent la protection définitive des données.
+
+En mode `static`, les gardes laissent volontairement passer les maquettes pour conserver les parcours de démonstration. Ce mode ne doit jamais être utilisé comme preuve d'autorisation en production.
 
 La page `/abonnement` est une maquette frontend : aucun débit, renouvellement ou changement de statut n'est effectué. Les boutons Carte bancaire et Google Pay préparent uniquement l'intégration future de Stripe.

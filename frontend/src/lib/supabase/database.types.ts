@@ -3,6 +3,47 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      profiles: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"];
+          avatar_url: string | null;
+          bio: string | null;
+          city: string | null;
+          created_at: string;
+          display_name: string;
+          id: string;
+          is_verified: boolean;
+          role: Database["public"]["Enums"]["user_role"];
+          updated_at: string;
+          username: string;
+        };
+        Insert: {
+          account_type?: Database["public"]["Enums"]["account_type"];
+          avatar_url?: string | null;
+          bio?: string | null;
+          city?: string | null;
+          created_at?: string;
+          display_name: string;
+          id: string;
+          is_verified?: boolean;
+          role?: Database["public"]["Enums"]["user_role"];
+          updated_at?: string;
+          username: string;
+        };
+        Update: {
+          account_type?: Database["public"]["Enums"]["account_type"];
+          avatar_url?: string | null;
+          bio?: string | null;
+          city?: string | null;
+          display_name?: string;
+          id?: string;
+          is_verified?: boolean;
+          role?: Database["public"]["Enums"]["user_role"];
+          updated_at?: string;
+          username?: string;
+        };
+        Relationships: [];
+      };
       categories: {
         Row: {
           created_at: string;
