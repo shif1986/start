@@ -9,6 +9,17 @@ values
 insert into public.profile_contacts (profile_id, phone, public_email)
 values ('20000000-0000-4000-8000-000000000001', '+33 6 00 00 00 00', 'owner@example.test');
 
+insert into public.subscriptions (user_id, plan_id, status, provider, current_period_start, current_period_end)
+select
+  '20000000-0000-4000-8000-000000000001',
+  id,
+  'active',
+  'stripe',
+  now() - interval '1 day',
+  now() + interval '29 days'
+from public.subscription_plans
+where code = 'pro_monthly';
+
 insert into public.listings (
   id, owner_id, category_id, title, slug, description, city, subdivision_code, subdivision_name
 )

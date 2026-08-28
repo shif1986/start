@@ -64,4 +64,15 @@ describe("AuthPage Supabase", () => {
     await userEvent.click(screen.getByRole("button", { name: "Continuer avec Google" }));
     expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces");
   });
+
+  it("lie clairement inscription et connexion en conservant la redirection", async () => {
+    renderAuth("/inscription?redirect=%2Fannonces");
+
+    const loginLinks = screen.getAllByRole("link", { name: "Se connecter" });
+    expect(loginLinks[0]).toHaveAttribute("href", "/connexion?redirect=%2Fannonces");
+    await userEvent.click(loginLinks[0]);
+
+    expect(screen.getByRole("heading", { name: "Se connecter" })).toBeInTheDocument();
+    expect(screen.getAllByRole("link", { name: /Créer un compte/ })[0]).toHaveAttribute("href", "/inscription?redirect=%2Fannonces");
+  });
 });

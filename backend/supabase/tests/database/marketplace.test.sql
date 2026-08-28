@@ -1,5 +1,5 @@
 begin;
-select plan(26);
+select plan(32);
 
 select has_table('public', 'profiles', 'profiles existe');
 select has_table('public', 'profile_contacts', 'profile_contacts existe');
@@ -10,6 +10,8 @@ select has_table('public', 'listing_images', 'listing_images existe');
 select has_table('public', 'listing_field_values', 'listing_field_values existe');
 select has_table('public', 'favorites', 'favorites existe');
 select has_table('public', 'reports', 'reports existe');
+select has_table('public', 'subscription_plans', 'subscription_plans existe');
+select has_table('public', 'subscriptions', 'subscriptions existe');
 select has_view('public', 'public_profiles', 'la vue publique des profils existe');
 
 select is(
@@ -27,6 +29,8 @@ select ok((select relrowsecurity from pg_class where oid = 'public.profiles'::re
 select ok((select relrowsecurity from pg_class where oid = 'public.profile_contacts'::regclass), 'RLS est activé sur profile_contacts');
 select ok((select relrowsecurity from pg_class where oid = 'public.listings'::regclass), 'RLS est activé sur listings');
 select ok((select relrowsecurity from pg_class where oid = 'public.favorites'::regclass), 'RLS est activé sur favorites');
+select ok((select relrowsecurity from pg_class where oid = 'public.subscription_plans'::regclass), 'RLS est activé sur subscription_plans');
+select ok((select relrowsecurity from pg_class where oid = 'public.subscriptions'::regclass), 'RLS est activé sur subscriptions');
 
 select has_function('public', 'is_admin', array[]::text[], 'la fonction is_admin existe');
 select has_function('public', 'set_updated_at', array[]::text[], 'le trigger updated_at existe');
@@ -38,6 +42,7 @@ select has_function(
   'la recherche paginée v2 existe'
 );
 select has_function('public', 'get_listing_detail', array['text'], 'le détail annonce relationnel existe');
+select has_function('public', 'has_active_professional_subscription', array[]::text[], 'le droit de publication est calculé côté serveur');
 
 select is(
   (select public from storage.buckets where id = 'listing-images'),
@@ -50,6 +55,8 @@ select is(
   14::bigint,
   'les quatorze catégories principales sont disponibles'
 );
+
+select is((select count(*) from public.subscription_plans where is_active), 2::bigint, 'les deux offres professionnelles sont disponibles');
 
 select * from finish();
 rollback;

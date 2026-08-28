@@ -39,3 +39,21 @@ export type ListingsPageData = {
   page: number;
   pageSize: number;
 };
+
+export type OwnerListing = {
+  id: string;
+  title: string;
+  slug: string;
+  status: DatabaseListingStatus;
+  price: number | null;
+  currency: string;
+  city: string;
+  categoryName: string;
+  coverImage: string | null;
+  createdAt: string;
+  updatedAt: string;
+  publishedAt: string | null;
+  rejectionReason: string | null;
+};
+
+export type DatabaseListingStatus = import("../../../lib/supabase/database.types").Database["public"]["Enums"]["listing_status"];

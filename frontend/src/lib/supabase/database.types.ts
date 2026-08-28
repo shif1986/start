@@ -97,9 +97,190 @@ export type Database = {
           },
         ];
       };
+      listings: {
+        Row: {
+          category_id: string;
+          city: string;
+          condition: string | null;
+          country_code: string;
+          created_at: string;
+          currency: string;
+          description: string;
+          id: string;
+          is_featured: boolean;
+          latitude: number | null;
+          longitude: number | null;
+          owner_id: string;
+          postal_code: string | null;
+          price: number | null;
+          published_at: string | null;
+          rejection_reason: string | null;
+          slug: string;
+          status: Database["public"]["Enums"]["listing_status"];
+          title: string;
+          updated_at: string;
+        };
+        Insert: {
+          category_id: string;
+          city: string;
+          condition?: string | null;
+          country_code?: string;
+          created_at?: string;
+          currency?: string;
+          description: string;
+          id?: string;
+          is_featured?: boolean;
+          latitude?: number | null;
+          longitude?: number | null;
+          owner_id: string;
+          postal_code?: string | null;
+          price?: number | null;
+          published_at?: string | null;
+          rejection_reason?: string | null;
+          slug: string;
+          status?: Database["public"]["Enums"]["listing_status"];
+          title: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["listings"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "listings_category_id_fkey";
+            columns: ["category_id"];
+            isOneToOne: false;
+            referencedRelation: "categories";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      listing_images: {
+        Row: {
+          alt_text: string | null;
+          created_at: string;
+          height: number | null;
+          id: string;
+          listing_id: string;
+          position: number;
+          storage_path: string;
+          width: number | null;
+        };
+        Insert: {
+          alt_text?: string | null;
+          created_at?: string;
+          height?: number | null;
+          id?: string;
+          listing_id: string;
+          position?: number;
+          storage_path: string;
+          width?: number | null;
+        };
+        Update: Partial<Database["public"]["Tables"]["listing_images"]["Insert"]>;
+        Relationships: [
+          {
+            foreignKeyName: "listing_images_listing_id_fkey";
+            columns: ["listing_id"];
+            isOneToOne: false;
+            referencedRelation: "listings";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
+      subscription_plans: {
+        Row: {
+          code: string;
+          created_at: string;
+          currency: string;
+          id: string;
+          interval: Database["public"]["Enums"]["subscription_interval"];
+          is_active: boolean;
+          name: string;
+          position: number;
+          price_cents: number;
+          updated_at: string;
+        };
+        Insert: {
+          code: string;
+          created_at?: string;
+          currency?: string;
+          id?: string;
+          interval: Database["public"]["Enums"]["subscription_interval"];
+          is_active?: boolean;
+          name: string;
+          position?: number;
+          price_cents: number;
+          updated_at?: string;
+        };
+        Update: {
+          code?: string;
+          currency?: string;
+          interval?: Database["public"]["Enums"]["subscription_interval"];
+          is_active?: boolean;
+          name?: string;
+          position?: number;
+          price_cents?: number;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean;
+          canceled_at: string | null;
+          created_at: string;
+          current_period_end: string | null;
+          current_period_start: string | null;
+          id: string;
+          plan_id: string;
+          provider: string;
+          provider_customer_id: string | null;
+          provider_subscription_id: string | null;
+          status: Database["public"]["Enums"]["subscription_status"];
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          cancel_at_period_end?: boolean;
+          canceled_at?: string | null;
+          created_at?: string;
+          current_period_end?: string | null;
+          current_period_start?: string | null;
+          id?: string;
+          plan_id: string;
+          provider: string;
+          provider_customer_id?: string | null;
+          provider_subscription_id?: string | null;
+          status?: Database["public"]["Enums"]["subscription_status"];
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          cancel_at_period_end?: boolean;
+          canceled_at?: string | null;
+          current_period_end?: string | null;
+          current_period_start?: string | null;
+          plan_id?: string;
+          provider_customer_id?: string | null;
+          provider_subscription_id?: string | null;
+          status?: Database["public"]["Enums"]["subscription_status"];
+          updated_at?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_plan_id_fkey";
+            columns: ["plan_id"];
+            isOneToOne: false;
+            referencedRelation: "subscription_plans";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Views: Record<string, never>;
     Functions: {
+      has_active_professional_subscription: {
+        Args: Record<PropertyKey, never>;
+        Returns: boolean;
+      };
       search_listings_v2: {
         Args: {
           category_slug?: string | null;
@@ -178,6 +359,8 @@ export type Database = {
       report_reason: "scam" | "forbidden_content" | "spam" | "wrong_category" | "counterfeit" | "already_sold" | "other";
       report_status: "open" | "reviewing" | "resolved" | "dismissed";
       user_role: "user" | "moderator" | "admin";
+      subscription_interval: "monthly" | "yearly";
+      subscription_status: "incomplete" | "trialing" | "active" | "past_due" | "canceled" | "unpaid";
     };
     CompositeTypes: Record<string, never>;
   };

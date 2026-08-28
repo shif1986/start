@@ -4,6 +4,8 @@ import AccountShell from "../components/AccountShell";
 import { mockListings } from "../data/mockListings";
 import { signOut } from "../features/auth/api/auth-actions";
 import { useCurrentProfile } from "../features/profiles/hooks/use-current-profile";
+import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
+import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
 import { getDataSource } from "../lib/data-source";
 import { queryClient } from "../lib/query-client";
 
@@ -11,7 +13,7 @@ type AccountRole = "customer" | "professional" | "admin";
 
 const roleContent = {
   customer: { eyebrow: "Compte particulier", title: "Bonjour, Marie", description: "Retrouvez vos favoris, vos contacts et les avis publiés au sein du réseau.", stats: [["5", "Favoris"], ["3", "Professionnels contactés"], ["2", "Avis publiés"]], nav: [{ label: "Vue d’ensemble", to: "/espace/particulier" }, { label: "Mes favoris", to: "/annonces" }, { label: "Mes avis", to: "/espace/particulier" }] },
-  professional: { eyebrow: "Compte professionnel", title: "Impact Conseil", description: "Gérez votre profil, vos annonces et l’état de votre abonnement professionnel.", stats: [["Actif", "Abonnement"], ["3", "Annonces publiées"], ["18", "Avis reçus"]], nav: [{ label: "Tableau de bord", to: "/espace/professionnel" }, { label: "Mes annonces", to: "/annonces" }, { label: "Mon profil", to: "/espace/professionnel" }, { label: "Abonnement", to: "/abonnement" }] },
+  professional: { eyebrow: "Compte professionnel", title: "Impact Conseil", description: "Gérez votre profil, vos annonces et l’état de votre abonnement professionnel.", stats: [["Actif", "Abonnement"], ["3", "Annonces publiées"], ["18", "Avis reçus"]], nav: [...professionalAccountNavigation] },
   admin: { eyebrow: "Administration", title: "Pilotage START", description: "Supervisez les comptes, annonces et signalements selon vos permissions.", stats: [["24", "Comptes à vérifier"], ["8", "Annonces actives"], ["4", "Signalements ouverts"]], nav: [{ label: "Vue globale", to: "/admin" }, { label: "Utilisateurs", to: "/admin" }, { label: "Annonces", to: "/admin" }, { label: "Signalements", to: "/admin" }] },
 };
 
@@ -23,7 +25,9 @@ export default function AccountDashboardPage({ role }: { role: AccountRole }) {
   const [signOutError, setSignOutError] = useState("");
   const content = roleContent[role];
   const isSupabase = dataSource === "supabase";
-  const stats = isSupabase ? content.stats.map(([, label]) => ["—", label]) : content.stats;
+  const subscriptionQuery = useCurrentSubscription(isSupabase && role === "professional");
+  const subscriptionStatus = subscriptionQuery.data?.status === "active" || subscriptionQuery.data?.status === "trialing" ? "Actif" : "Inactif";
+  const stats = isSupabase ? content.stats.map(([, label]) => [label === "Abonnement" ? subscriptionStatus : "—", label]) : content.stats;
 
   async function handleSignOut() {
     setIsSigningOut(true);

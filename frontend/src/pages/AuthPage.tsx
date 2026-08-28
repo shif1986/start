@@ -20,6 +20,9 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const [feedback, setFeedback] = useState("");
   const [isGooglePending, setIsGooglePending] = useState(false);
   const redirect = safeRedirect(searchParams.get("redirect"));
+  const redirectQuery = redirect ? `?redirect=${encodeURIComponent(redirect)}` : "";
+  const loginPath = `/connexion${redirectQuery}`;
+  const registerPath = `/inscription${redirectQuery}`;
   const dataSource = getDataSource();
   const accountHome = accountType === "professional" ? "/espace/professionnel" : "/espace/particulier";
   const form = useForm<AuthFormValues>({
@@ -82,6 +85,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   return (
     <ThemedPage ambiance="gold" className="grid min-h-[680px] place-items-center p-[clamp(18px,5vw,64px)]">
       <div className="w-full max-w-xl rounded-2xl border border-start-cream/10 bg-[#121418]/95 p-[clamp(22px,5vw,44px)] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
+        <nav className="mb-8 grid grid-cols-2 rounded-xl border border-start-cream/10 bg-[#0b0d10] p-1" aria-label="Accès au compte">
+          <Link to={loginPath} aria-current={!isRegister ? "page" : undefined} className={`flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold transition ${!isRegister ? "bg-start-gold text-start-ink" : "text-start-cream/55 hover:text-start-gold"}`}>Se connecter</Link>
+          <Link to={registerPath} aria-current={isRegister ? "page" : undefined} className={`flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold transition ${isRegister ? "bg-start-gold text-start-ink" : "text-start-cream/55 hover:text-start-gold"}`}>Créer un compte</Link>
+        </nav>
         <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">{isRegister ? "Rejoindre START" : "Bienvenue"}</span>
         <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-semibold tracking-[-.035em]">{isRegister ? "Créer un compte" : "Se connecter"}</h1>
         {dataSource === "static" && <p className="mt-3 text-start-cream/55">Mode de démonstration local. Activez Supabase pour créer une session réelle.</p>}
@@ -104,7 +111,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : "Se connecter"}</button>
         </form>
         {feedback && <p className="mt-5 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm text-start-cream/75" role="status" aria-live="polite">{feedback}</p>}
-        <p className="mt-6 text-center text-sm text-start-cream/55">{isRegister ? "Déjà membre ?" : "Pas encore de compte ?"} <Link className="font-semibold text-start-gold" to={isRegister ? "/connexion" : "/inscription"}>{isRegister ? "Se connecter" : "Créer un compte gratuit"}</Link></p>
+        <p className="mt-6 text-center text-sm text-start-cream/55">{isRegister ? "Déjà membre ?" : "Pas encore de compte ?"} <Link className="font-semibold text-start-gold" to={isRegister ? loginPath : registerPath}>{isRegister ? "Se connecter" : "Créer un compte gratuit"}</Link></p>
       </div>
     </ThemedPage>
   );
