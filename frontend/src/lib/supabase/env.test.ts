@@ -28,4 +28,14 @@ describe("parseSupabaseEnv", () => {
       VITE_SUPABASE_ANON_KEY: serviceRoleKey,
     })).toThrow("service_role");
   });
+
+  it("accepte une clé publique publishable", () => {
+    expect(parseSupabaseEnv({
+      VITE_SUPABASE_URL: "https://example.supabase.co",
+      VITE_SUPABASE_PUBLISHABLE_KEY: "sb_publishable_example",
+    })).toEqual({
+      url: "https://example.supabase.co",
+      anonKey: "sb_publishable_example",
+    });
+  });
 });

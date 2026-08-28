@@ -2,9 +2,17 @@ import { render, screen, waitFor, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import axe from "axe-core";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import Navigation from "../Navigation";
 import { primaryNavigationItems } from "../navigation.config";
+
+const accountMocks = vi.hoisted(() => ({
+  auth: vi.fn(),
+  profile: vi.fn(),
+}));
+
+vi.mock("../../../features/auth/context/use-auth", () => ({ useAuth: accountMocks.auth }));
+vi.mock("../../../features/profiles/hooks/use-current-profile", () => ({ useCurrentProfile: accountMocks.profile }));
 
 function renderNavigation(path = "/") {
   const appContent = document.createElement("div");
@@ -24,6 +32,10 @@ function renderNavigation(path = "/") {
 }
 
 describe("Navigation", () => {
+  beforeEach(() => {
+    accountMocks.auth.mockReturnValue({ session: null, user: null, isLoading: false });
+    accountMocks.profile.mockReturnValue({ data: null, isPending: false });
+  });
   it("affiche le logo et les liens issus de la configuration unique", () => {
     renderNavigation();
 
@@ -46,6 +58,18 @@ describe("Navigation", () => {
 
     expect(screen.getAllByRole("link", { name: "Se connecter" }).length).toBeGreaterThan(0);
     expect(screen.getAllByRole("link", { name: "Publier une annonce" }).length).toBeGreaterThan(0);
+  });
+
+  it("remplace la connexion par l'espace du membre connecté", () => {
+    accountMocks.auth.mockReturnValue({ session: { user: { id: "user-1" } }, user: { id: "user-1" }, isLoading: false });
+    accountMocks.profile.mockReturnValue({ data: { accountType: "professional", role: "user" }, isPending: false });
+
+    renderNavigation();
+
+    expect(screen.queryByRole("link", { name: "Se connecter" })).not.toBeInTheDocument();
+    const accountLinks = screen.getAllByRole("link", { name: "Mon espace" });
+    expect(accountLinks.length).toBeGreaterThan(0);
+    accountLinks.forEach((link) => expect(link).toHaveAttribute("href", "/espace/professionnel"));
   });
 
   it("ouvre et ferme le panneau avec les attributs ARIA attendus", async () => {

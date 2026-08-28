@@ -2,8 +2,9 @@ import { z } from "zod";
 
 const supabaseEnvSchema = z.object({
   VITE_SUPABASE_URL: z.url(),
-  VITE_SUPABASE_ANON_KEY: z.string().min(1),
-});
+  VITE_SUPABASE_ANON_KEY: z.string().min(1).optional(),
+  VITE_SUPABASE_PUBLISHABLE_KEY: z.string().min(1).optional(),
+}).refine((environment) => environment.VITE_SUPABASE_ANON_KEY || environment.VITE_SUPABASE_PUBLISHABLE_KEY);
 
 export type SupabaseEnvironment = {
   url: string;
@@ -29,13 +30,18 @@ export function parseSupabaseEnv(input: Record<string, unknown>): SupabaseEnviro
     throw new Error("Configuration Supabase invalide. Vérifiez VITE_SUPABASE_URL et VITE_SUPABASE_ANON_KEY.");
   }
 
-  if (result.data.VITE_SUPABASE_ANON_KEY.startsWith("sb_secret_") || decodeJwtRole(result.data.VITE_SUPABASE_ANON_KEY) === "service_role") {
+  const publicKey = result.data.VITE_SUPABASE_ANON_KEY ?? result.data.VITE_SUPABASE_PUBLISHABLE_KEY;
+  if (!publicKey) {
+    throw new Error("Configuration Supabase invalide. Vérifiez la clé publique Supabase.");
+  }
+
+  if (publicKey.startsWith("sb_secret_") || decodeJwtRole(publicKey) === "service_role") {
     throw new Error("Une clé service_role ne doit jamais être exposée dans le frontend.");
   }
 
   return {
     url: result.data.VITE_SUPABASE_URL,
-    anonKey: result.data.VITE_SUPABASE_ANON_KEY,
+    anonKey: publicKey,
   };
 }
 

@@ -30,15 +30,11 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     defaultValues: { email: "", password: "", displayName: "" },
   });
 
-  function completePreviewAuth() {
-    navigate(redirect && (!isRegister || accountType === "professional") ? redirect : accountHome);
-  }
-
   async function handleEmailSubmit(values: AuthFormValues) {
     setFeedback("");
 
     if (dataSource === "static") {
-      completePreviewAuth();
+      setFeedback("La connexion réelle est indisponible : configurez Supabase puis redémarrez l’application.");
       return;
     }
 
@@ -66,7 +62,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
 
   async function handleGoogle() {
     if (dataSource === "static") {
-      completePreviewAuth();
+      setFeedback("La connexion Google est indisponible tant que Supabase n’est pas configuré.");
       return;
     }
 

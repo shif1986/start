@@ -4,6 +4,7 @@ import { navigationCategories } from "../../data/categories";
 import NavigationLink from "./NavigationLink";
 import NavigationLogo from "./NavigationLogo";
 import { navigationActions, primaryNavigationItems } from "./navigation.config";
+import type { NavigationItem } from "./navigation.types";
 
 const focusableSelector = [
   "a[href]",
@@ -15,12 +16,13 @@ const focusableSelector = [
 ].join(",");
 
 type MobileNavigationDrawerProps = {
+  accountAction: NavigationItem;
   isOpen: boolean;
   onClose: () => void;
   triggerRef: RefObject<HTMLButtonElement | null>;
 };
 
-export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: MobileNavigationDrawerProps) {
+export default function MobileNavigationDrawer({ accountAction, isOpen, onClose, triggerRef }: MobileNavigationDrawerProps) {
   const drawerRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -150,7 +152,7 @@ export default function MobileNavigationDrawer({ isOpen, onClose, triggerRef }: 
         </div>
 
         <div className="mobile-drawer-footer">
-          <NavigationLink item={navigationActions.login} className="drawer-action drawer-action-secondary" onNavigate={onClose} />
+          <NavigationLink item={accountAction} className="drawer-action drawer-action-secondary" onNavigate={onClose} />
           <NavigationLink item={navigationActions.publish} className="drawer-action drawer-action-primary" onNavigate={onClose} />
         </div>
       </aside>

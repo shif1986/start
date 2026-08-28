@@ -5,12 +5,13 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import AuthPage from "./AuthPage";
 
 const authMocks = vi.hoisted(() => ({
+  getDataSource: vi.fn(),
   signInWithEmail: vi.fn(),
   signUpWithEmail: vi.fn(),
   signInWithGoogle: vi.fn(),
 }));
 
-vi.mock("../lib/data-source", () => ({ getDataSource: () => "supabase" }));
+vi.mock("../lib/data-source", () => ({ getDataSource: authMocks.getDataSource }));
 vi.mock("../features/auth/api/auth-actions", () => authMocks);
 
 function renderAuth(path = "/connexion") {
@@ -27,6 +28,7 @@ function renderAuth(path = "/connexion") {
 
 describe("AuthPage Supabase", () => {
   beforeEach(() => {
+    authMocks.getDataSource.mockReturnValue("supabase");
     authMocks.signInWithEmail.mockReset().mockResolvedValue({ session: { user: { id: "user-id" } } });
     authMocks.signUpWithEmail.mockReset().mockResolvedValue({ session: null });
     authMocks.signInWithGoogle.mockReset().mockResolvedValue({});
@@ -74,5 +76,17 @@ describe("AuthPage Supabase", () => {
 
     expect(screen.getByRole("heading", { name: "Se connecter" })).toBeInTheDocument();
     expect(screen.getAllByRole("link", { name: /Créer un compte/ })[0]).toHaveAttribute("href", "/inscription?redirect=%2Fannonces");
+  });
+
+  it("ne simule jamais une connexion lorsque Supabase est désactivé", async () => {
+    authMocks.getDataSource.mockReturnValue("static");
+    renderAuth();
+    await userEvent.type(screen.getByLabelText("Adresse e-mail"), "user@example.test");
+    await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
+    await userEvent.click(screen.getByRole("button", { name: "Se connecter" }));
+
+    expect(await screen.findByRole("status")).toHaveTextContent("connexion réelle est indisponible");
+    expect(authMocks.signInWithEmail).not.toHaveBeenCalled();
+    expect(screen.queryByText("Espace particulier")).not.toBeInTheDocument();
   });
 });
