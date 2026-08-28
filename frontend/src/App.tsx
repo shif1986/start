@@ -11,6 +11,8 @@ import CategoriesPage from "./pages/CategoriesPage";
 import AuthPage from "./pages/AuthPage";
 import AccountDashboardPage from "./pages/AccountDashboardPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
+import ProfessionalListingsPage from "./pages/ProfessionalListingsPage";
+import ProtectedRoute from "./features/auth/components/ProtectedRoute";
 
 function App() {
   return (
@@ -23,14 +25,15 @@ function App() {
           <Route path="/a-propos" element={<AboutPage />} />
           <Route path="/don" element={<DonationsPage />} />
           <Route path="/contact" element={<ContactPage />} />
-          <Route path="/publier" element={<PublishPage />} />
+          <Route path="/publier" element={<ProtectedRoute accountTypes={["professional"]}><PublishPage /></ProtectedRoute>} />
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/connexion" element={<AuthPage mode="login" />} />
           <Route path="/inscription" element={<AuthPage mode="register" />} />
-          <Route path="/espace/particulier" element={<AccountDashboardPage role="customer" />} />
-          <Route path="/espace/professionnel" element={<AccountDashboardPage role="professional" />} />
-          <Route path="/admin" element={<AccountDashboardPage role="admin" />} />
-          <Route path="/abonnement" element={<SubscriptionPage />} />
+          <Route path="/espace/particulier" element={<ProtectedRoute accountTypes={["customer"]}><AccountDashboardPage role="customer" /></ProtectedRoute>} />
+          <Route path="/espace/professionnel" element={<ProtectedRoute accountTypes={["professional"]}><AccountDashboardPage role="professional" /></ProtectedRoute>} />
+          <Route path="/espace/professionnel/annonces" element={<ProtectedRoute accountTypes={["professional"]}><ProfessionalListingsPage /></ProtectedRoute>} />
+          <Route path="/admin" element={<ProtectedRoute roles={["moderator", "admin"]}><AccountDashboardPage role="admin" /></ProtectedRoute>} />
+          <Route path="/abonnement" element={<ProtectedRoute accountTypes={["professional"]}><SubscriptionPage /></ProtectedRoute>} />
         </Routes>
       </Layout>
     </BrowserRouter>

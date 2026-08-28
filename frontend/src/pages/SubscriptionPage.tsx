@@ -2,8 +2,17 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import StartNetworkCycle from "../components/StartNetworkCycle";
 import ThemedPage from "../components/ThemedPage";
+import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
+import { useSubscriptionPlans } from "../features/subscriptions/hooks/use-subscription-plans";
+import type { SubscriptionPlan } from "../features/subscriptions/model/subscription.types";
+import { getDataSource } from "../lib/data-source";
 
 type Plan = "monthly" | "yearly";
+
+const previewPlans: SubscriptionPlan[] = [
+  { id: "preview-monthly", code: "pro_monthly", name: "Pro mensuel", interval: "monthly", priceCents: 700, currency: "EUR" },
+  { id: "preview-yearly", code: "pro_yearly", name: "Pro annuel", interval: "yearly", priceCents: 8400, currency: "EUR" },
+];
 
 const features = [
   "Créer et gérer vos annonces professionnelles",
@@ -14,9 +23,15 @@ const features = [
 ];
 
 export default function SubscriptionPage() {
+  const isSupabase = getDataSource() === "supabase";
+  const plansQuery = useSubscriptionPlans(isSupabase);
+  const subscriptionQuery = useCurrentSubscription(isSupabase);
   const [plan, setPlan] = useState<Plan>("monthly");
-  const [paymentMethod, setPaymentMethod] = useState<"card" | "google">("card");
-  const price = plan === "monthly" ? 7 : 84;
+  const plans = isSupabase ? plansQuery.data ?? [] : previewPlans;
+  const selectedPlan = plans.find((candidate) => candidate.interval === plan) ?? plans[0];
+  const currentSubscription = subscriptionQuery.data;
+  const isEntitled = currentSubscription?.status === "active" || currentSubscription?.status === "trialing";
+  const formatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: selectedPlan?.currency ?? "EUR" });
 
   return (
     <ThemedPage
@@ -46,25 +61,25 @@ export default function SubscriptionPage() {
             </p>
           </header>
 
-          <div className="mt-6 rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-2.5 text-sm leading-6 text-start-cream/65 max-sm:mt-4 max-sm:text-xs max-sm:leading-5">
-            Aperçu frontend — aucun paiement ne sera débité. Stripe et Google Pay seront connectés ultérieurement.
-          </div>
+          {isSupabase && subscriptionQuery.isPending && <p className="mt-6 rounded-xl border border-start-cream/10 px-4 py-3 text-sm text-start-cream/60" aria-live="polite">Chargement de votre abonnement…</p>}
+          {isSupabase && subscriptionQuery.isError && <p className="mt-6 rounded-xl border border-network-red/25 bg-network-red/[.06] px-4 py-3 text-sm text-red-200" role="alert">Impossible de vérifier votre abonnement pour le moment.</p>}
+          {isSupabase && currentSubscription && <div className="mt-6 rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-3 text-sm leading-6 text-start-cream/70"><strong className="text-start-cream">{isEntitled ? "Abonnement actif" : "Paiement à régulariser"}</strong> · {currentSubscription.plan.name}{currentSubscription.currentPeriodEnd ? ` jusqu’au ${new Intl.DateTimeFormat("fr-FR").format(new Date(currentSubscription.currentPeriodEnd))}` : ""}{currentSubscription.cancelAtPeriodEnd ? " · Résiliation prévue en fin de période" : ""}</div>}
+          {!isSupabase && <div className="mt-6 rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-2.5 text-sm leading-6 text-start-cream/65 max-sm:mt-4 max-sm:text-xs max-sm:leading-5">Aperçu frontend — aucun paiement ne sera débité.</div>}
 
-        <div className="mt-6 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-sm:mt-4 max-sm:gap-3">
-          <button type="button" className={`relative rounded-2xl border p-5 text-left transition max-sm:rounded-xl max-sm:p-4 ${plan === "monthly" ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={plan === "monthly"} onClick={() => setPlan("monthly")}>
-            <span className="text-xs font-bold tracking-[.18em] text-network-blue uppercase">Mensuel</span>
-            <div className="mt-3"><strong className="text-4xl">7 €</strong><span className="text-start-cream/50"> / mois</span></div>
-            <p className="mt-3 text-sm leading-5 text-start-cream/55">Paiement mensuel, renouvelable jusqu’à résiliation.</p>
-            <span className={`absolute top-5 right-5 inline-flex size-6 items-center justify-center rounded-full border max-sm:top-4 max-sm:right-4 ${plan === "monthly" ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{plan === "monthly" ? "✓" : ""}</span>
-          </button>
-
-          <button type="button" className={`relative rounded-2xl border p-5 text-left transition max-sm:rounded-xl max-sm:p-4 ${plan === "yearly" ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={plan === "yearly"} onClick={() => setPlan("yearly")}>
-            <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Annuel</span>
-            <div className="mt-3"><strong className="text-4xl">84 €</strong><span className="text-start-cream/50"> / an</span></div>
-            <p className="mt-3 text-sm leading-5 text-start-cream/55">Un seul paiement pour douze mois d’accès professionnel.</p>
-            <span className={`absolute top-5 right-5 inline-flex size-6 items-center justify-center rounded-full border max-sm:top-4 max-sm:right-4 ${plan === "yearly" ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{plan === "yearly" ? "✓" : ""}</span>
-          </button>
-        </div>
+        {isSupabase && plansQuery.isPending && <p className="mt-6 rounded-xl border border-dashed border-start-cream/15 p-6 text-sm text-start-cream/55" aria-live="polite">Chargement des formules…</p>}
+        {isSupabase && plansQuery.isError && <p className="mt-6 rounded-xl border border-network-red/25 bg-network-red/[.06] p-4 text-sm text-red-200" role="alert">Impossible de charger les formules disponibles.</p>}
+        {!plansQuery.isPending && !plansQuery.isError && plans.length === 0 && <p className="mt-6 rounded-xl border border-dashed border-start-cream/15 p-6 text-sm text-start-cream/55">Aucune formule n’est disponible actuellement.</p>}
+        {plans.length > 0 && <div className="mt-6 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-sm:mt-4 max-sm:gap-3">
+          {plans.map((candidate) => {
+            const selected = plan === candidate.interval;
+            return <button key={candidate.id} type="button" className={`relative rounded-2xl border p-5 text-left transition max-sm:rounded-xl max-sm:p-4 ${selected ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={selected} onClick={() => setPlan(candidate.interval)}>
+              <span className={`text-xs font-bold tracking-[.18em] uppercase ${candidate.interval === "monthly" ? "text-network-blue" : "text-network-yellow"}`}>{candidate.interval === "monthly" ? "Mensuel" : "Annuel"}</span>
+              <div className="mt-3"><strong className="text-4xl">{new Intl.NumberFormat("fr-FR", { style: "currency", currency: candidate.currency, maximumFractionDigits: 0 }).format(candidate.priceCents / 100)}</strong><span className="text-start-cream/50"> / {candidate.interval === "monthly" ? "mois" : "an"}</span></div>
+              <p className="mt-3 text-sm leading-5 text-start-cream/55">{candidate.interval === "monthly" ? "Paiement mensuel, renouvelable jusqu’à résiliation." : "Un seul paiement pour douze mois d’accès professionnel."}</p>
+              <span className={`absolute top-5 right-5 inline-flex size-6 items-center justify-center rounded-full border max-sm:top-4 max-sm:right-4 ${selected ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{selected ? "✓" : ""}</span>
+            </button>;
+          })}
+        </div>}
 
         <div className="mt-5 grid grid-cols-[1.15fr_.85fr] gap-5 max-lg:grid-cols-1 max-sm:mt-3 max-sm:gap-3">
           <section className="rounded-2xl border border-start-cream/10 bg-[#121418] p-[clamp(18px,3vw,28px)] max-sm:rounded-xl">
@@ -75,9 +90,9 @@ export default function SubscriptionPage() {
 
           <aside className="rounded-2xl border border-start-gold/25 bg-[#0b0d10]/90 p-[clamp(18px,3vw,28px)] max-sm:rounded-xl">
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Récapitulatif</span>
-            <div className="mt-5 flex items-end justify-between gap-4 border-b border-start-cream/10 pb-5 max-sm:items-start"><div><strong className="block">Formule {plan === "monthly" ? "mensuelle" : "annuelle"}</strong><span className="text-sm text-start-cream/45">Renouvellement automatique</span></div><strong className="shrink-0 text-2xl text-start-gold">{price} €</strong></div>
-            <fieldset className="mt-6"><legend className="text-sm font-semibold text-start-cream/70">Mode de paiement</legend><div className="mt-3 grid grid-cols-2 gap-3 max-sm:grid-cols-1"><button type="button" className={`min-h-12 rounded-xl border px-4 py-3 text-sm font-semibold ${paymentMethod === "card" ? "border-start-gold text-start-gold" : "border-start-cream/10 text-start-cream/55"}`} onClick={() => setPaymentMethod("card")}>Carte bancaire</button><button type="button" className={`min-h-12 rounded-xl border px-4 py-3 text-sm font-semibold ${paymentMethod === "google" ? "border-start-gold text-start-gold" : "border-start-cream/10 text-start-cream/55"}`} onClick={() => setPaymentMethod("google")}>Google Pay</button></div></fieldset>
-            <button type="button" className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink">Continuer vers le paiement</button>
+            {selectedPlan ? <div className="mt-5 flex items-end justify-between gap-4 border-b border-start-cream/10 pb-5 max-sm:items-start"><div><strong className="block">{selectedPlan.name}</strong><span className="text-sm text-start-cream/45">Renouvellement automatique</span></div><strong className="shrink-0 text-2xl text-start-gold">{formatter.format(selectedPlan.priceCents / 100)}</strong></div> : <p className="mt-5 text-sm text-start-cream/50">Sélectionnez une formule disponible.</p>}
+            <div className="mt-6 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Le paiement sécurisé sera ouvert uniquement après connexion du serveur Stripe et de son webhook signé.</div>
+            <button type="button" disabled className="mt-6 w-full cursor-not-allowed rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink opacity-55">{isEntitled ? "Abonnement déjà actif" : "Paiement bientôt disponible"}</button>
             <Link to="/espace/professionnel" className="mt-4 block text-center text-sm text-start-cream/45 hover:text-start-gold">Retour à mon espace professionnel</Link>
           </aside>
         </div>

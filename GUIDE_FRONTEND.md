@@ -22,7 +22,7 @@ npm run build
 npm run preview
 ```
 
-`frontend/package-lock.json` est le lockfile npm de référence.
+`frontend/bun.lock` est le lockfile Bun de référence.
 
 ## 2. Dépendances actuelles
 
@@ -35,8 +35,12 @@ npm run preview
 | Tailwind CSS 4          | styles des composants  |
 | Leaflet / React Leaflet | carte d'une annonce    |
 | Oxlint                  | lint                   |
+| Supabase JS             | Auth, PostgreSQL et Storage |
+| TanStack React Query    | état serveur, cache et pagination |
+| Zod                     | validation de configuration |
+| Vitest / Testing Library | tests unitaires et d'intégration |
 
-Supabase, TanStack Query, React Hook Form, Zod, Zustand, shadcn/ui, Vitest et Testing Library sont prévus, mais absents actuellement.
+React Hook Form, Zustand et shadcn/ui restent à introduire uniquement lorsqu'une tranche fonctionnelle le justifie.
 
 ## 3. Identité visuelle et Design System
 
@@ -255,19 +259,21 @@ Les écrans de compte suivent également ces règles :
 ## 11. Évolutions prévues
 
 1. optimiser le GeoJSON et découper le bundle par route ;
-2. installer Vitest et Testing Library ;
-3. intégrer Supabase et générer les types ;
-4. ajouter TanStack Query ;
-5. construire l'authentification et la confidentialité ;
+2. régénérer les types depuis Supabase local dès que Docker est disponible ;
+3. valider les migrations et politiques RLS avec pgTAP ;
+4. activer la source Supabase après configuration du projet ;
+5. connecter les données réelles des dashboards ;
 6. ajouter React Hook Form et Zod ;
-7. développer favoris, signalements et publication ;
+7. développer signalements et publication ;
 8. ajouter Stripe, dashboards et modération.
 
 Ne jamais exposer une clé `service_role` et ne jamais compter sur le masquage React comme seule protection.
 
 ### 11.1 Authentification et administration — état actuel
 
-Les formulaires e-mail et Google sont des interfaces frontend : ils ne créent pas encore de session réelle. La page de connexion propose un accès de démonstration à `/admin`. Cette route n'est ni authentifiée ni protégée tant que le backend et la gestion des rôles ne sont pas intégrés.
+En mode Supabase, les formulaires e-mail et Google utilisent Supabase Auth. Un provider unique restaure la session et installe un seul listener global avec nettoyage au démontage. `/admin` exige un rôle de modération, tandis que les espaces personnels, `/publier` et `/abonnement` vérifient le type de compte.
+
+Le mode statique conserve les parcours de démonstration sans créer de session. Il est explicitement séparé du mode Supabase et ne constitue jamais une autorisation.
 
 En production, tous les utilisateurs utiliseront la même connexion. Après authentification, le rôle enregistré côté serveur déterminera la redirection vers l'espace particulier, professionnel ou administrateur. Le rôle `admin` ne doit jamais être sélectionnable à l'inscription ni déduit d'une donnée modifiable dans le navigateur.
 

@@ -11,5 +11,6 @@ export const primaryNavigationItems: NavigationItem[] = [
 export const navigationActions = {
   donation: { id: "donation", to: "/don", label: "Don" },
   login: { id: "login", to: "/connexion", label: "Se connecter" },
+  account: { id: "account", to: "/espace/particulier", label: "Mon espace" },
   publish: { id: "publish", to: "/publier", label: "Publier une annonce" },
 } satisfies Record<string, NavigationItem>;

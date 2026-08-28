@@ -7,6 +7,7 @@ import {
   navigationActions,
   primaryNavigationItems,
 } from "./navigation.config";
+import type { NavigationItem } from "./navigation.types";
 
 const categoryLinksLeft = navigationCategories.slice(0, 5);
 const categoryLinksRight = navigationCategories.slice(5);
@@ -51,7 +52,7 @@ function CategoryDropdown({
   );
 }
 
-export default function DesktopNavigation() {
+export default function DesktopNavigation({ accountAction }: { accountAction: NavigationItem }) {
   const [searchQuery, setSearchQuery] = useState("");
   const navigate = useNavigate();
 
@@ -80,7 +81,7 @@ export default function DesktopNavigation() {
 
         <div className="desktop-navigation-actions">
           <NavigationLink item={navigationActions.donation} className="navigation-action navigation-action-secondary" />
-          <NavigationLink item={navigationActions.login} className="navigation-action navigation-action-secondary" />
+          <NavigationLink item={accountAction} className="navigation-action navigation-action-secondary" />
           <NavigationLink item={navigationActions.publish} className="navigation-action navigation-action-primary" />
         </div>
       </div>

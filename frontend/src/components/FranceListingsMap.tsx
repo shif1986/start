@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import type { Listing } from "../data/mockListings";
+import type { Listing } from "../features/listings/model/listing.types";
 import franceDepartmentsGeoJsonRaw from "../data/franceDepartments.geojson?raw";
 
 type GeoJsonFeature = {

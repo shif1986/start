@@ -1,4 +1,4 @@
-# Back-end — Place
+# Back-end — START
 
 Ce document est la référence unique pour le back-end Supabase. Le code se trouve dans `backend/supabase/`, mais **toutes les commandes se lancent depuis la racine du projet**. Il n'est jamais nécessaire d'exécuter `cd backend`.
 
@@ -22,10 +22,10 @@ Supabase apporte PostgreSQL, Auth, Storage et les fonctions RPC. La migration SQ
 Docker doit être démarré pour l'environnement Supabase local.
 
 ```bash
-npm run backend:start
-npm run backend:reset
-npm run backend:test
-npm run backend:stop
+bun run backend:start
+bun run backend:reset
+bun run backend:test
+bun run backend:stop
 ```
 
 - `backend:start` démarre les services locaux ;
@@ -40,11 +40,13 @@ backend/
 └── supabase/
     ├── config.toml
     ├── migrations/
-    │   └── 202608120001_marketplace_foundation.sql
+    │   ├── 202608120001_marketplace_foundation.sql
+    │   └── 202608280001_harden_marketplace_foundation.sql
     ├── seed.sql
     └── tests/
         └── database/
-            └── marketplace.test.sql
+            ├── marketplace.test.sql
+            └── security.test.sql
 ```
 
 Chaque évolution de schéma reçoit une nouvelle migration horodatée. Une migration déjà partagée ou déployée ne doit pas être réécrite.
@@ -53,7 +55,9 @@ Chaque évolution de schéma reçoit une nouvelle migration horodatée. Une migr
 
 | Table | Responsabilité |
 |---|---|
-| `profiles` | identité publique, rôle et vérification |
+| `profiles` | identité privée, rôle, type de compte et vérification |
+| `profile_contacts` | coordonnées visibles uniquement aux membres authentifiés |
+| `public_profiles` | vue publique limitée, sans coordonnées privées |
 | `categories` | catégories et sous-catégories |
 | `category_fields` | définition des champs dynamiques |
 | `category_field_options` | options des champs select/multi-select |
@@ -207,4 +211,3 @@ Une tranche back-end est terminée uniquement quand :
 5. les scénarios anonyme, propriétaire, autre utilisateur et admin sont testés ;
 6. les entrées invalides échouent avec une règle explicite ;
 7. le front-end consomme un contrat typé et documenté dans `FRONTEND.md`.
-

@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import type { Listing } from "../data/mockListings";
+import type { Listing } from "../features/listings/model/listing.types";
 
 type ListingReviewsProps = {
   listing: Listing;
@@ -27,11 +27,7 @@ export default function ListingReviews({ listing, canReview = false }: ListingRe
           <h2 className="mt-2 text-2xl font-semibold">L’expérience de la communauté</h2>
         </div>
         <div className="shrink-0 text-right max-sm:text-left">
-          <div className="flex items-center gap-3">
-            <strong className="text-3xl text-start-cream">{listing.rating.toFixed(1)}</strong>
-            <span className="tracking-[.12em] text-start-gold" aria-label={`${listing.rating} étoiles sur 5`}>★★★★★</span>
-          </div>
-          <span className="text-sm text-start-cream/50">{listing.reviewCount} évaluations</span>
+          {listing.rating !== null ? <><div className="flex items-center gap-3"><strong className="text-3xl text-start-cream">{listing.rating.toFixed(1)}</strong><span className="tracking-[.12em] text-start-gold" aria-label={`${listing.rating} étoiles sur 5`}>★★★★★</span></div><span className="text-sm text-start-cream/50">{listing.reviewCount} évaluations</span></> : <span className="text-sm text-start-cream/50">Aucun avis publié</span>}
         </div>
       </div>
 

@@ -120,32 +120,32 @@ La page d’accueil affiche `StartNetworkCycle` immédiatement après les catég
 La définition apparaît seulement à l’entrée dans le viewport. L’animation présente les six étapes une seule fois puis s’arrête ; elle s’interrompt également lorsque l’onglet est caché et respecte `prefers-reduced-motion`. Le diagramme est centré, les six titres utilisent une taille uniforme et la définition active apparaît près de son icône sur desktop/tablette. Sur mobile, le diagramme reste compact et la définition passe sous celui-ci. La connexion active est signalée par une flèche pleine plus visible. Les boutons permettent un accès direct au clavier, au clic ou au tap. « L’argent du Royaume » reste la conclusion du composant et ne compte pas parmi les six étapes.
 
 ```bash
-npm run setup
-npm run install:all
-npm run dev
-npm run test
-npm run test:coverage
-npm run typecheck
-npm run lint
-npm run format:check
-npm run build
-npm run check
+bun install
+bun run dev
+bun run test
+bun run typecheck
+bun run lint
+bun run build
+bun run check
+bun run test:e2e
 ```
 
 Le serveur front-end utilise `http://127.0.0.1:5173`.
 
 ## 5. Configuration locale
 
-Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les valeurs retournées par `npm run backend:start` :
+Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les valeurs retournées par `bun run backend:start` :
 
 ```dotenv
-VITE_SUPABASE_URL=https://ybfjjuznkfaftudtysge.supabase.co
-VITE_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InliZmpqdXpua2ZhZnR1ZHR5c2dlIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1MzUwMjIsImV4cCI6MjEwMjExMTAyMn0.pXs6udT7zoAe0ceUGA1NVmD3lVTgIBasYvKSoVjBaPc
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_pcCWg0bAE4p0A4VNOuPUUg_CMLwdOTf
+VITE_SUPABASE_URL=http://127.0.0.1:54321
+VITE_SUPABASE_ANON_KEY=replace-with-local-anon-key
+VITE_DATA_SOURCE=supabase
 VITE_CONTACT_ENDPOINT=https://formspree.io/f/votre-identifiant
 ```
 
 La clé `service_role` ne doit jamais être mise dans le front-end.
+
+`VITE_DATA_SOURCE=static` conserve les données de démonstration pendant la migration. Le mode `supabase` active les services React Query pour les catégories, le feed et le détail. Il ne faut activer ce mode qu'après avoir appliqué les migrations et régénéré `frontend/src/lib/supabase/database.types.ts`.
 
 `VITE_CONTACT_ENDPOINT` doit pointer vers une fonction serveur ou un service de
 formulaire acceptant les requêtes JSON. Le formulaire envoie `name`, `email`,
@@ -264,7 +264,7 @@ Chaque tranche suit strictement : test rouge → code minimal correct → test v
 - [x] catalogue responsive ;
 - [x] tri et recherche ;
 - [ ] pagination avec conservation des filtres ;
-- [ ] état favori relié à Supabase et retour de connexion explicite.
+- [x] état favori relié à Supabase, mise à jour optimiste ciblée, rollback et retour de connexion explicite.
 
 Critères de fin : URL partageable, aucune erreur TypeScript, navigation clavier, états chargement / vide / erreur visibles.
 
@@ -363,7 +363,7 @@ Règles opérationnelles :
 - `ListingReviews.tsx` autorise le retour à la ligne des étoiles et réduit leur taille sur mobile ;
 - contrôler en priorité 320px, 390px, 768px, 1024px et 1440px.
 
-## 16. Espaces de comptes — maquettes frontend
+## 16. Espaces de comptes et authentification
 
 Routes disponibles :
 
@@ -373,6 +373,8 @@ Routes disponibles :
 - `/abonnement` : choix mensuel à 7 € ou annuel à 84 €, récapitulatif et moyens de paiement ;
 - `/admin` : supervision des utilisateurs, annonces, commentaires, signalements et abonnements.
 
-Ces routes utilisent uniquement des données locales et ne sont pas protégées. Elles servent à valider l'interface et le responsive. Ne jamais considérer leur affichage conditionnel comme une autorisation réelle. Authentification, rôles, abonnement actif et permissions administrateur devront être contrôlés ultérieurement côté backend et base de données.
+En mode `supabase`, la session Supabase est l'unique source de vérité. Le profil courant est chargé par React Query, les espaces particulier/professionnel vérifient le type de compte et `/admin` exige le rôle `moderator` ou `admin`. `/publier` et `/abonnement` exigent un compte professionnel. Les politiques RLS restent la protection définitive des données.
+
+En mode `static`, les gardes laissent volontairement passer les maquettes pour conserver les parcours de démonstration. Ce mode ne doit jamais être utilisé comme preuve d'autorisation en production.
 
 La page `/abonnement` est une maquette frontend : aucun débit, renouvellement ou changement de statut n'est effectué. Les boutons Carte bancaire et Google Pay préparent uniquement l'intégration future de Stripe.

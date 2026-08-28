@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { CircleMarker, GeoJSON, MapContainer, Popup, TileLayer, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import type { FeatureCollection } from "geojson";
-import type { Listing } from "../data/mockListings";
+import type { Listing } from "../features/listings/model/listing.types";
 import franceDepartmentsGeoJsonRaw from "../data/franceDepartments.geojson?raw";
 import overseasDepartmentsGeoJsonRaw from "../data/overseasDepartments.geojson?raw";
 import switzerlandGeoJsonRaw from "../data/switzerland.geojson?raw";
@@ -47,6 +47,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
   const groups = useMemo(() => {
     const grouped = new Map<string, Listing[]>();
     listings.forEach((listing) => {
+      if (!listing.coordinates) return;
       const key = listing.coordinates.join(",");
       grouped.set(key, [...(grouped.get(key) ?? []), listing]);
     });
@@ -92,6 +93,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
 
         {groups.map((group, index) => {
           const first = group[0];
+          if (!first.coordinates) return null;
           const markerColor = markerColors[index % markerColors.length];
           return (
             <CircleMarker
@@ -107,7 +109,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
                 <div className="grid gap-3 text-[#22221e]">
                   <strong>{first.city} · {first.department} · {first.country ?? "France"}</strong>
                   {group.map((listing) => (
-                    <Link key={listing.id} to={`/annonce/${listing.id}`} className="border-t border-black/10 pt-2 no-underline">
+                    <Link key={listing.id} to={`/annonce/${listing.slug ?? listing.id}`} className="border-t border-black/10 pt-2 no-underline">
                       <span className="block text-xs font-semibold text-[#9b762c] uppercase">{listing.category}</span>
                       <span className="mt-1 block font-semibold text-[#22221e]">{listing.title}</span>
                     </Link>

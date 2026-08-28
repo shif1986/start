@@ -1,25 +1,6 @@
-export type Listing = {
-  id: string;
-  title: string;
-  category: string;
-  categorySlug: string;
-  image: string;
-  country?: "France" | "Suisse";
-  department: string;
-  city: string;
-  coordinates: [number, number];
-  price: number | null;
-  description: string;
-  rating: number;
-  reviewCount: number;
-  professional: {
-    name: string;
-    role: string;
-    phone: string;
-    email: string;
-  };
-  featured?: boolean;
-};
+import type { Listing } from "../features/listings/model/listing.types";
+
+export type { Listing } from "../features/listings/model/listing.types";
 
 export const mockListings: Listing[] = [
   {

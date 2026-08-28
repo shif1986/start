@@ -5,7 +5,7 @@ import CategoryIcon from "./CategoryIcon";
 const blueCategories = new Set(["services", "real-estate", "vehicles", "multimedia", "business", "agriculture"]);
 const redCategories = new Set(["jobs", "home-garden", "fashion-accessories", "animals", "construction-industry", "other-listings"]);
 
-export default function CategoryCard({ category, count = 0, compact = false, featured = false }: { category: Category; count?: number; compact?: boolean; featured?: boolean }) {
+export default function CategoryCard({ category, count, compact = false, featured = false }: { category: Category; count?: number; compact?: boolean; featured?: boolean }) {
   const accent = blueCategories.has(category.id) ? "blue" : redCategories.has(category.id) ? "red" : "gold";
   const iconAccent = accent === "blue"
     ? "border-network-blue/70 bg-network-blue shadow-[0_10px_28px_rgba(77,163,255,.22)]"
@@ -24,7 +24,7 @@ export default function CategoryCard({ category, count = 0, compact = false, fea
       <div className={`absolute inset-0 flex flex-col justify-end ${featured ? "p-7 max-sm:p-5" : compact ? "p-5" : "p-6"}`}>
         <span className={`mb-auto inline-flex items-center justify-center rounded-full border text-white ${iconAccent} ${compact ? "size-11" : "size-12"}`}><CategoryIcon name={category.icon} /></span>
         <h3 className={`${featured ? "max-w-xs text-[1.65rem]" : compact ? "text-lg" : "text-xl"} font-extrabold text-start-cream uppercase`}>{category.label}</h3>
-        <p className={`mt-2 text-sm font-semibold ${textAccent}`}>{count} annonce{count > 1 ? "s" : ""}</p>
+        {count !== undefined && <p className={`mt-2 text-sm font-semibold ${textAccent}`}>{count} annonce{count > 1 ? "s" : ""}</p>}
         {!compact && <p className="mt-2 text-sm leading-6 text-start-cream/60">{category.description}</p>}
         {featured && <span className="absolute right-6 bottom-6 inline-flex size-10 items-center justify-center rounded-full border border-start-cream/35 text-lg text-start-cream transition group-hover:border-start-gold group-hover:text-start-gold" aria-hidden="true">→</span>}
       </div>

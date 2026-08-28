@@ -1,0 +1,22 @@
+{
+  "name": "start-marketplace",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "dev": "bun run --cwd frontend dev",
+    "build": "bun run --cwd frontend build",
+    "test": "bun run --cwd frontend test:run",
+    "test:e2e": "bun run --cwd frontend test:e2e",
+    "lint": "bun run --cwd frontend lint",
+    "typecheck": "bun run --cwd frontend typecheck",
+    "check": "bun run test && bun run typecheck && bun run lint && bun run build",
+    "backend:start": "supabase start --workdir backend",
+    "backend:stop": "supabase stop --workdir backend",
+    "backend:reset": "supabase db reset --workdir backend",
+    "backend:test": "supabase test db --workdir backend",
+    "backend:types": "supabase gen types typescript --local --workdir backend > frontend/src/lib/supabase/database.types.ts"
+  },
+  "devDependencies": {
+    "supabase": "^2.113.0"
+  }
+}
