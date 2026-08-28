@@ -4,11 +4,23 @@ import { mockListings } from "../data/mockListings";
 import ThemedPage from "../components/ThemedPage";
 import BrandPattern from "../components/BrandPattern";
 import ListingReviews from "../components/ListingReviews";
+import { useListingDetail } from "../features/listings/hooks/use-listing-detail";
+import { getDataSource } from "../lib/data-source";
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
-  const listing = mockListings.find((item) => item.id === slug);
-  const hasContactAccess = false;
+  const dataSource = getDataSource();
+  const listingQuery = useListingDetail(slug, { enabled: dataSource === "supabase" });
+  const listing = dataSource === "supabase" ? listingQuery.data : mockListings.find((item) => item.id === slug || item.slug === slug);
+  const hasContactAccess = dataSource === "supabase" && Boolean(listing?.professional?.phone || listing?.professional?.email);
+
+  if (dataSource === "supabase" && listingQuery.isPending) {
+    return <div className="min-h-[680px] animate-pulse rounded-2xl border border-start-cream/10 bg-start-cream/[.035]" role="status" aria-label="Chargement de l’annonce" />;
+  }
+
+  if (dataSource === "supabase" && listingQuery.isError) {
+    return <div className="grid min-h-[50vh] place-content-center gap-4 rounded-2xl border border-network-red/30 bg-network-red/[.06] p-8 text-center" role="alert"><h1>Impossible de charger cette annonce</h1><p>Veuillez vérifier votre connexion puis réessayer.</p></div>;
+  }
 
   if (!listing) {
     return (
@@ -78,17 +90,17 @@ export default function ListingDetailPage() {
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
             <BrandPattern variant="nodes" className="-right-24 -bottom-36 -z-10 h-[380px] w-[280px] text-start-cream/[.055] opacity-50 max-sm:opacity-30" />
             <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Profil professionnel</span>
-            <h3 className="mt-3">{listing.professional.name}</h3>
-            <p className="text-start-cream/65">{listing.professional.role}</p>
-            {hasContactAccess ? (
+            <h3 className="mt-3">{listing.professional?.name ?? "Professionnel"}</h3>
+            <p className="text-start-cream/65">{listing.professional?.role ?? "Membre du réseau"}</p>
+            {hasContactAccess && listing.professional ? (
               <>
                 <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
-                  <li>Tél. : {listing.professional.phone}</li>
-                  <li>E-mail : {listing.professional.email}</li>
+                  {listing.professional.phone && <li>Tél. : {listing.professional.phone}</li>}
+                  {listing.professional.email && <li>E-mail : {listing.professional.email}</li>}
                 </ul>
-                <button type="button" className="w-full rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
+                <a href={listing.professional.email ? `mailto:${listing.professional.email}` : `tel:${listing.professional.phone}`} className="flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
                   Contacter
-                </button>
+                </a>
               </>
             ) : (
               <div className="mt-6 rounded-xl border border-start-gold/20 bg-start-gold/[.055] p-5">
@@ -102,12 +114,12 @@ export default function ListingDetailPage() {
                 <p className="mt-2 text-sm leading-6 text-start-cream/60">
                   Créez un compte gratuit pour voir le téléphone et l’e-mail de ce professionnel, puis prendre contact.
                 </p>
-                <button type="button" className="mt-5 w-full rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
+                <Link to={`/inscription?redirect=${encodeURIComponent(`/annonce/${listing.slug ?? listing.id}`)}`} className="mt-5 flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
                   Créer un compte gratuit
-                </button>
-                <button type="button" className="mt-3 w-full rounded-xl border border-start-cream/15 px-5 py-3 font-semibold text-start-cream/75 transition hover:border-start-gold hover:text-start-gold">
+                </Link>
+                <Link to={`/connexion?redirect=${encodeURIComponent(`/annonce/${listing.slug ?? listing.id}`)}`} className="mt-3 flex w-full items-center justify-center rounded-xl border border-start-cream/15 px-5 py-3 font-semibold text-start-cream/75 transition hover:border-start-gold hover:text-start-gold">
                   Se connecter
-                </button>
+                </Link>
               </div>
             )}
           </aside>

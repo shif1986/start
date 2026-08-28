@@ -22,7 +22,7 @@ npm run build
 npm run preview
 ```
 
-`frontend/package-lock.json` est le lockfile npm de référence.
+`frontend/bun.lock` est le lockfile Bun de référence.
 
 ## 2. Dépendances actuelles
 
@@ -35,8 +35,12 @@ npm run preview
 | Tailwind CSS 4          | styles des composants  |
 | Leaflet / React Leaflet | carte d'une annonce    |
 | Oxlint                  | lint                   |
+| Supabase JS             | Auth, PostgreSQL et Storage |
+| TanStack React Query    | état serveur, cache et pagination |
+| Zod                     | validation de configuration |
+| Vitest / Testing Library | tests unitaires et d'intégration |
 
-Supabase, TanStack Query, React Hook Form, Zod, Zustand, shadcn/ui, Vitest et Testing Library sont prévus, mais absents actuellement.
+React Hook Form, Zustand et shadcn/ui restent à introduire uniquement lorsqu'une tranche fonctionnelle le justifie.
 
 ## 3. Identité visuelle et Design System
 
@@ -255,10 +259,10 @@ Les écrans de compte suivent également ces règles :
 ## 11. Évolutions prévues
 
 1. optimiser le GeoJSON et découper le bundle par route ;
-2. installer Vitest et Testing Library ;
-3. intégrer Supabase et générer les types ;
-4. ajouter TanStack Query ;
-5. construire l'authentification et la confidentialité ;
+2. régénérer les types depuis Supabase local dès que Docker est disponible ;
+3. valider les migrations et politiques RLS avec pgTAP ;
+4. activer la source Supabase après configuration du projet ;
+5. construire l'authentification et les routes protégées ;
 6. ajouter React Hook Form et Zod ;
 7. développer favoris, signalements et publication ;
 8. ajouter Stripe, dashboards et modération.

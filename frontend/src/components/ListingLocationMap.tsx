@@ -6,7 +6,7 @@ import {
   Tooltip,
   ZoomControl,
 } from "react-leaflet";
-import type { Listing } from "../data/mockListings";
+import type { Listing } from "../features/listings/model/listing.types";
 
 type ListingLocationMapProps = {
   listing: Listing;
@@ -15,6 +15,16 @@ type ListingLocationMapProps = {
 export default function ListingLocationMap({
   listing,
 }: ListingLocationMapProps) {
+  if (!listing.coordinates) {
+    return (
+      <section className="my-7 rounded-2xl border border-start-cream/10 bg-[#080c12]/60 px-5 py-6" aria-label={`Localisation de l’annonce à ${listing.city}`}>
+        <span className="text-xs font-bold tracking-wider text-start-gold uppercase">Localisation</span>
+        <strong className="mt-2 block">{listing.city} · {listing.department}</strong>
+        <p className="mt-2 text-sm text-start-cream/55">La position précise n’a pas été renseignée.</p>
+      </section>
+    );
+  }
+
   return (
     <section
       className="my-7 overflow-hidden rounded-2xl border border-start-cream/10 bg-[#080c12]/60"

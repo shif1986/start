@@ -6,6 +6,9 @@ import { departments, swissCantons } from "../data/departments";
 import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
 import ListingsMap from "../components/ListingsMap";
+import { normalizeListingFilters } from "../features/listings/model/listing-filters";
+import { useListings } from "../features/listings/hooks/use-listings";
+import { getDataSource } from "../lib/data-source";
 
 const filterControlClass =
   "h-12 w-full box-border rounded-xl border border-start-cream/15 bg-[#080c12] px-4 py-0 text-start-cream outline-none transition focus:border-start-gold max-sm:h-14";
@@ -21,6 +24,7 @@ function SelectChevron() {
 
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const dataSource = getDataSource();
 
   const search = searchParams.get("q") ?? "";
   const department = searchParams.get("department") ?? "";
@@ -28,7 +32,7 @@ export default function ListingsPage() {
   const category = searchParams.get("category") ?? "";
   const requestedPage = Number.parseInt(searchParams.get("page") ?? "1", 10);
 
-  const filteredListings = useMemo(() => {
+  const staticFilteredListings = useMemo(() => {
     return mockListings.filter((listing) => {
       const matchesQuery =
         !search ||
@@ -53,16 +57,28 @@ export default function ListingsPage() {
     });
   }, [search, country, department, category]);
 
+  const listingFilters = useMemo(() => normalizeListingFilters({
+    search,
+    category,
+    country,
+    subdivision: department,
+    page: requestedPage,
+    pageSize: LISTINGS_PER_PAGE,
+  }), [category, country, department, requestedPage, search]);
+  const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
+  const filteredListings = dataSource === "supabase" ? listingsQuery.data?.items ?? [] : staticFilteredListings;
+  const totalCount = dataSource === "supabase" ? listingsQuery.data?.totalCount ?? 0 : staticFilteredListings.length;
+
   const locationOptions = country === "Suisse" ? swissCantons : departments;
 
-  const pageCount = Math.max(1, Math.ceil(filteredListings.length / LISTINGS_PER_PAGE));
+  const pageCount = Math.max(1, Math.ceil(totalCount / LISTINGS_PER_PAGE));
   const currentPage = Number.isFinite(requestedPage)
     ? Math.min(Math.max(requestedPage, 1), pageCount)
     : 1;
-  const visibleListings = filteredListings.slice(
-    (currentPage - 1) * LISTINGS_PER_PAGE,
-    currentPage * LISTINGS_PER_PAGE,
-  );
+  const visibleListings = dataSource === "supabase" ? filteredListings : filteredListings.slice(
+      (currentPage - 1) * LISTINGS_PER_PAGE,
+      currentPage * LISTINGS_PER_PAGE,
+    );
 
   useEffect(() => {
     if (requestedPage === currentPage) return;
@@ -155,11 +171,15 @@ export default function ListingsPage() {
         <div className="mb-7 flex items-center justify-between gap-4">
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.2em] text-network-blue uppercase"><span className="size-1.5 rounded-full bg-network-blue" aria-hidden="true" />Résultats</span>
-            <h2 className="mt-2 text-2xl font-semibold">{filteredListings.length} annonce{filteredListings.length > 1 ? "s" : ""} disponible{filteredListings.length > 1 ? "s" : ""}</h2>
+            <h2 className="mt-2 text-2xl font-semibold">{totalCount} annonce{totalCount > 1 ? "s" : ""} disponible{totalCount > 1 ? "s" : ""}</h2>
           </div>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-x-5 gap-y-12 max-md:gap-y-9 max-sm:gap-y-7">
-          {filteredListings.length > 0 ? (
+          {dataSource === "supabase" && listingsQuery.isPending ? (
+            Array.from({ length: LISTINGS_PER_PAGE }, (_, index) => <span key={index} className="h-[390px] animate-pulse rounded-xl border border-start-cream/10 bg-start-cream/[.04]" aria-hidden="true" />)
+          ) : dataSource === "supabase" && listingsQuery.isError ? (
+            <div className="rounded-2xl border border-network-red/30 bg-network-red/[.06] p-10 text-center text-start-cream" role="alert">Impossible de charger les annonces. Veuillez réessayer dans quelques instants.</div>
+          ) : totalCount > 0 ? (
             visibleListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)
           ) : (
             <div className="rounded-2xl border border-dashed border-start-cream/20 p-10 text-center text-start-cream/65">
@@ -169,7 +189,7 @@ export default function ListingsPage() {
           )}
         </div>
 
-        {filteredListings.length > 0 && pageCount > 1 && (
+        {totalCount > 0 && pageCount > 1 && (
           <nav className="mt-12 flex flex-col items-center gap-5" aria-label="Pagination des annonces">
             {currentPage < pageCount && (
               <button
