@@ -6,6 +6,7 @@ import BrandPattern from "../components/BrandPattern";
 import ListingReviews from "../components/ListingReviews";
 import { useListingDetail } from "../features/listings/hooks/use-listing-detail";
 import { getDataSource } from "../lib/data-source";
+import FavoriteButton from "../features/favorites/components/FavoriteButton";
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
@@ -35,9 +36,7 @@ export default function ListingDetailPage() {
 
   return (
     <ThemedPage ambiance="network" className="px-[clamp(12px,5vw,72px)] py-[clamp(20px,3.5vw,52px)]">
-      <Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">
-        ← Retour à la recherche
-      </Link>
+      <div className="flex items-center justify-between gap-4"><Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">← Retour à la recherche</Link><FavoriteButton listing={listing} placement="inline" /></div>
 
       <div className="mt-6 rounded-2xl border border-start-cream/10 bg-[#121418]/95 px-[clamp(18px,5vw,56px)] py-[clamp(22px,3.5vw,40px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-5 max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:shadow-none">
         <div className="border-b border-start-cream/10 pb-7">

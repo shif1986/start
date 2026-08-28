@@ -264,7 +264,7 @@ Chaque tranche suit strictement : test rouge → code minimal correct → test v
 - [x] catalogue responsive ;
 - [x] tri et recherche ;
 - [ ] pagination avec conservation des filtres ;
-- [ ] état favori relié à Supabase et retour de connexion explicite.
+- [x] état favori relié à Supabase, mise à jour optimiste ciblée, rollback et retour de connexion explicite.
 
 Critères de fin : URL partageable, aucune erreur TypeScript, navigation clavier, états chargement / vide / erreur visibles.
 

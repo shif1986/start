@@ -1,9 +1,8 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import type { Listing } from "../features/listings/model/listing.types";
+import FavoriteButton from "../features/favorites/components/FavoriteButton";
 
 export default function ListingCard({ listing, compact = false }: { listing: Listing; compact?: boolean }) {
-  const [isFavorite, setIsFavorite] = useState(false);
   const detailUrl = `/annonce/${listing.slug ?? listing.id}`;
   const useBlueAccent = listing.id.toString().split("").reduce((total, character) => total + character.charCodeAt(0), 0) % 2 === 0;
   const accentText = useBlueAccent ? "text-network-blue" : "text-network-red";
@@ -15,15 +14,7 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
       <div className="overflow-hidden">
         <img src={listing.image} alt="" className={`pointer-events-none w-full object-cover transition duration-500 group-hover:scale-105 ${compact ? "h-40" : "h-52"}`} />
       </div>
-      <button
-        type="button"
-        className={`absolute top-3 right-3 z-20 inline-flex size-10 items-center justify-center rounded-full border bg-[#22221e]/65 text-xl backdrop-blur transition ${isFavorite ? "border-network-red/70 text-network-red" : "border-white/50 text-white"}`}
-        aria-label={isFavorite ? "Retirer des favoris" : "Ajouter aux favoris"}
-        aria-pressed={isFavorite}
-        onClick={() => setIsFavorite((current) => !current)}
-      >
-        {isFavorite ? "♥" : "♡"}
-      </button>
+      <FavoriteButton listing={listing} />
       <div className={`pointer-events-none relative z-10 ${compact ? "p-4" : "p-5"}`}>
         <span className={`inline-flex items-center gap-2 text-xs font-bold tracking-wide uppercase ${accentText}`}><span className={`size-1.5 rounded-full ${accentDot}`} aria-hidden="true" />{listing.category}</span>
         <h3 className="mt-2 text-lg font-bold leading-6 text-start-cream transition group-hover:text-start-gold">{listing.title}</h3>

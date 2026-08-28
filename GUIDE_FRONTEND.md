@@ -262,9 +262,9 @@ Les écrans de compte suivent également ces règles :
 2. régénérer les types depuis Supabase local dès que Docker est disponible ;
 3. valider les migrations et politiques RLS avec pgTAP ;
 4. activer la source Supabase après configuration du projet ;
-5. connecter les données réelles des dashboards et les favoris ;
+5. connecter les données réelles des dashboards ;
 6. ajouter React Hook Form et Zod ;
-7. développer favoris, signalements et publication ;
+7. développer signalements et publication ;
 8. ajouter Stripe, dashboards et modération.
 
 Ne jamais exposer une clé `service_role` et ne jamais compter sur le masquage React comme seule protection.
