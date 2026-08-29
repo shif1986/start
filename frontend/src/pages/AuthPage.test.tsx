@@ -1,4 +1,4 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
@@ -9,6 +9,7 @@ const authMocks = vi.hoisted(() => ({
   signInWithEmail: vi.fn(),
   signUpWithEmail: vi.fn(),
   signInWithGoogle: vi.fn(),
+  isGoogleAuthEnabled: vi.fn(),
 }));
 
 vi.mock("../lib/data-source", () => ({ getDataSource: authMocks.getDataSource }));
@@ -20,6 +21,7 @@ function renderAuth(path = "/connexion") {
       <Routes>
         <Route path="/connexion" element={<AuthPage mode="login" />} />
         <Route path="/inscription" element={<AuthPage mode="register" />} />
+        <Route path="/auth/callback" element={<div>Finalisation du compte</div>} />
         <Route path="/espace/particulier" element={<div>Espace particulier</div>} />
       </Routes>
     </MemoryRouter>,
@@ -32,6 +34,7 @@ describe("AuthPage Supabase", () => {
     authMocks.signInWithEmail.mockReset().mockResolvedValue({ session: { user: { id: "user-id" } } });
     authMocks.signUpWithEmail.mockReset().mockResolvedValue({ session: null });
     authMocks.signInWithGoogle.mockReset().mockResolvedValue({});
+    authMocks.isGoogleAuthEnabled.mockReset().mockResolvedValue(true);
   });
 
   it("valide les identifiants avant la requête", async () => {
@@ -47,7 +50,7 @@ describe("AuthPage Supabase", () => {
     await userEvent.type(screen.getByLabelText("Adresse e-mail"), "user@example.test");
     await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Se connecter" }));
-    expect(await screen.findByText("Espace particulier")).toBeInTheDocument();
+    expect(await screen.findByText("Finalisation du compte")).toBeInTheDocument();
     expect(authMocks.signInWithEmail).toHaveBeenCalledWith({ email: "user@example.test", password: "password123" });
   });
 
@@ -57,14 +60,16 @@ describe("AuthPage Supabase", () => {
     await userEvent.type(screen.getByLabelText("Adresse e-mail"), "pro@example.test");
     await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Créer mon compte et choisir mon abonnement" }));
-    expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Impact Conseil" }));
+    expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Impact Conseil", redirectPath: "/abonnement" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Vérifiez votre adresse e-mail");
   });
 
   it("lance Google avec la redirection demandée", async () => {
     renderAuth("/connexion?redirect=%2Fannonces");
-    await userEvent.click(screen.getByRole("button", { name: "Continuer avec Google" }));
-    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces");
+    const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
+    await waitFor(() => expect(googleButton).toBeEnabled());
+    await userEvent.click(googleButton);
+    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces", "customer");
   });
 
   it("lie clairement inscription et connexion en conservant la redirection", async () => {

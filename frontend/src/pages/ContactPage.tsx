@@ -1,5 +1,6 @@
 import { useState, type FormEvent } from "react";
 import ThemedPage from "../components/ThemedPage";
+import { CONTACT_EMAIL, DEFAULT_CONTACT_ENDPOINT } from "../config/site";
 
 type SubmissionState = "idle" | "sending" | "success" | "error";
 
@@ -12,13 +13,7 @@ export default function ContactPage() {
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const form = event.currentTarget;
-    const endpoint = import.meta.env.VITE_CONTACT_ENDPOINT?.trim();
-
-    if (!endpoint) {
-      setSubmissionState("error");
-      setFeedback("Le service d’envoi n’est pas encore configuré. Veuillez réessayer plus tard.");
-      return;
-    }
+    const endpoint = import.meta.env.VITE_CONTACT_ENDPOINT?.trim() || DEFAULT_CONTACT_ENDPOINT;
 
     setSubmissionState("sending");
     setFeedback("");
@@ -28,7 +23,11 @@ export default function ContactPage() {
       const response = await fetch(endpoint, {
         method: "POST",
         headers: { Accept: "application/json", "Content-Type": "application/json" },
-        body: JSON.stringify({ ...payload, source: "Site START Réseau Chrétien" }),
+        body: JSON.stringify({
+          ...payload,
+          _subject: "Nouveau message depuis le site START",
+          source: "Site START Réseau Chrétien",
+        }),
       });
       if (!response.ok) throw new Error("Contact submission failed");
 
@@ -63,12 +62,13 @@ export default function ContactPage() {
           <p className="mx-auto mt-5 max-w-2xl text-[clamp(.9rem,1.2vw,1rem)] leading-7 text-start-cream/62">Une question sur START, votre compte ou le réseau ? Écrivez-nous : notre équipe prendra le temps de vous répondre.</p>
         </header>
 
-        <div className="mt-[clamp(36px,6vw,64px)] grid gap-7 lg:grid-cols-[.72fr_1.28fr]">
+        <div className="mt-[clamp(48px,7vw,80px)] grid gap-7 lg:grid-cols-[.72fr_1.28fr]">
           <aside className="relative overflow-hidden rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_top_left,rgba(199,164,93,.11),transparent_46%),#15171b] p-[clamp(26px,4vw,42px)] shadow-[0_24px_70px_rgba(0,0,0,.22)]">
             <span className="absolute top-0 left-0 h-full w-[2px] bg-gradient-to-b from-start-gold/80 via-start-gold/20 to-transparent" aria-hidden="true" />
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">À votre écoute</span>
             <h2 className="mt-4 text-[clamp(1.55rem,3vw,2.25rem)] leading-tight font-semibold">Chaque échange peut créer une nouvelle connexion.</h2>
             <p className="mt-5 leading-7 text-start-cream/58">Décrivez-nous votre besoin avec le plus de précision possible. Les informations transmises servent uniquement à traiter votre demande.</p>
+            <a className="mt-5 inline-flex text-sm font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>
             <div className="mt-9 space-y-5 border-t border-start-cream/10 pt-7 text-sm text-start-cream/66">
               <div className="flex gap-4"><span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-network-blue/25 bg-network-blue/[.07] text-network-blue" aria-hidden="true"><svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8"><path d="M4 6.5 12 13l8-6.5"/><rect x="3" y="5" width="18" height="14" rx="2"/></svg></span><div><strong className="block text-start-cream">Réponse personnalisée</strong><span className="mt-1 block">Votre demande arrive directement à l’équipe START.</span></div></div>
               <div className="flex gap-4"><span className="mt-0.5 flex size-9 shrink-0 items-center justify-center rounded-full border border-network-yellow/25 bg-network-yellow/[.07] text-network-yellow" aria-hidden="true"><svg viewBox="0 0 24 24" className="size-4" fill="none" stroke="currentColor" strokeWidth="1.8"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span><div><strong className="block text-start-cream">Dans les meilleurs délais</strong><span className="mt-1 block">Nous revenons vers vous dès que possible.</span></div></div>

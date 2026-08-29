@@ -29,12 +29,17 @@ describe("ContactPage", () => {
     expect(await screen.findByRole("status")).toHaveTextContent(/bien été envoyé/i);
   });
 
-  it("affiche une erreur claire si le service n’est pas configuré", () => {
+  it("utilise l’adresse START si aucun endpoint personnalisé n’est configuré", async () => {
     vi.stubEnv("VITE_CONTACT_ENDPOINT", "");
+    const fetchMock = vi.spyOn(globalThis, "fetch").mockResolvedValue(new Response(null, { status: 200 }));
     render(<ContactPage />);
     const form = screen.getByRole("button", { name: /envoyer le message/i }).closest("form");
     expect(form).not.toBeNull();
     fireEvent.submit(form!);
-    expect(screen.getByRole("alert")).toHaveTextContent(/pas encore configuré/i);
+    await waitFor(() => expect(fetchMock).toHaveBeenCalledOnce());
+    expect(fetchMock).toHaveBeenCalledWith(
+      "https://formsubmit.co/ajax/contact@startreseauchretien.com",
+      expect.objectContaining({ method: "POST" }),
+    );
   });
 });

@@ -8,17 +8,17 @@ export default function AboutPage() {
       className="discreet-network-background px-[clamp(20px,5vw,72px)] py-[clamp(32px,5vw,72px)]"
     >
       <div className="mx-auto max-w-6xl">
-        <header className="relative overflow-hidden rounded-2xl border border-start-cream/10 bg-[#121418]/72 px-[clamp(24px,5vw,56px)] py-[clamp(30px,4vw,46px)] text-center shadow-[inset_0_1px_0_rgba(255,255,255,.035),0_24px_70px_rgba(0,0,0,.2)]">
-          <span className="mx-auto block h-px w-16 bg-start-gold/70" aria-hidden="true" />
-          <span className="mx-auto mt-5 flex w-fit items-center gap-2" aria-hidden="true">
+        <header className="mx-auto max-w-3xl text-center">
+          <span className="mx-auto block h-px w-24 bg-start-gold/70" aria-hidden="true" />
+          <span className="mx-auto mt-6 flex w-fit items-center gap-3" aria-hidden="true">
             <span className="size-2 rounded-full bg-network-blue" />
             <span className="size-2 rounded-full bg-network-yellow" />
             <span className="size-2 rounded-full bg-network-red" />
           </span>
-          <span className="mt-4 block text-xs font-bold tracking-[.22em] text-start-gold uppercase">
+          <span className="mt-5 block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">
             Notre vision
           </span>
-          <h1 className="mt-4 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">
+          <h1 className="mt-6 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">
             Une foi qui rassemble.<br />
             <span className="text-start-gold">Un réseau qui agit.</span>
           </h1>
@@ -29,7 +29,7 @@ export default function AboutPage() {
           </p>
         </header>
 
-        <section className="cyril-profile relative mt-10 overflow-hidden rounded-2xl border border-start-cream/10 bg-[radial-gradient(circle_at_10%_15%,rgba(199,164,93,.08),transparent_30%),#14171d] p-[clamp(24px,4vw,52px)] shadow-[0_28px_80px_rgba(0,0,0,.28)] max-sm:mt-7">
+        <section className="cyril-profile relative mt-[clamp(48px,7vw,80px)] overflow-hidden rounded-2xl border border-start-cream/10 bg-[radial-gradient(circle_at_10%_15%,rgba(199,164,93,.08),transparent_30%),#14171d] p-[clamp(24px,4vw,52px)] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
           <span className="pointer-events-none absolute top-0 right-[9%] h-px w-48 bg-gradient-to-r from-transparent via-start-gold/70 to-transparent" aria-hidden="true" />
           <div className="grid items-center gap-[clamp(34px,5vw,72px)] min-[700px]:grid-cols-[minmax(260px,.82fr)_minmax(0,1.18fr)]">
             <figure className="relative mx-auto w-full max-w-[480px]">

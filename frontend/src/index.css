@@ -67,14 +67,6 @@ img {
   display: block;
 }
 
-.about-header-pattern {
-  opacity: 0.025 !important;
-}
-
-html[data-theme="light"] .about-header-pattern {
-  opacity: 0.035 !important;
-}
-
 button {
   cursor: pointer;
 }

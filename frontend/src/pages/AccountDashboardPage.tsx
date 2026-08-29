@@ -7,6 +7,7 @@ import { professionalAccountNavigation } from "../features/profiles/model/accoun
 import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
 import { getDataSource } from "../lib/data-source";
 import { queryClient } from "../lib/query-client";
+import { CONTACT_EMAIL } from "../config/site";
 
 type AccountRole = "customer" | "professional" | "admin";
 
@@ -57,7 +58,7 @@ export default function AccountDashboardPage({ role }: { role: AccountRole }) {
           <h2 className="text-xl font-semibold">Activité récente</h2>
           <p className="mt-5 rounded-xl border border-dashed border-start-cream/15 p-6 text-sm leading-6 text-start-cream/55">{isSupabase ? "Votre activité réelle apparaîtra ici lorsqu’elle sera disponible." : "Aucune activité personnelle fictive n’est affichée en mode démonstration."}</p>
         </section>
-        <aside className="rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.1),transparent_45%),#121418] p-6"><span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Prochaine étape</span><h2 className="mt-3 text-xl font-semibold">{role === "professional" ? "Compléter votre profil" : role === "admin" ? "Vérifier les signalements" : "Découvrir des professionnels"}</h2><p className="mt-3 text-sm leading-6 text-start-cream/55">{isSupabase ? "Les prochaines actions seront proposées à partir de vos données réelles." : "Les actions seront connectées aux données réelles lors de l’intégration du backend."}</p></aside>
+        <aside className="rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.1),transparent_45%),#121418] p-6"><span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Prochaine étape</span><h2 className="mt-3 text-xl font-semibold">{role === "professional" ? "Compléter votre profil" : role === "admin" ? "Vérifier les signalements" : "Découvrir des professionnels"}</h2><p className="mt-3 text-sm leading-6 text-start-cream/55">{isSupabase ? "Les prochaines actions seront proposées à partir de vos données réelles." : "Les actions seront connectées aux données réelles lors de l’intégration du backend."}</p>{role === "admin" && <a className="mt-4 block break-all text-sm font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</aside>
       </div>
     </AccountShell>
   );

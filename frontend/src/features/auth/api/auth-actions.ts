@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
 import { getSupabaseClient } from "../../../lib/supabase/client";
+import { getSupabaseEnv } from "../../../lib/supabase/env";
 
 type EmailCredentials = {
   email: string;
@@ -10,10 +11,21 @@ type EmailCredentials = {
 type SignUpCredentials = EmailCredentials & {
   displayName: string;
   accountType: Database["public"]["Enums"]["account_type"];
+  redirectPath: string;
 };
 
 function safeRedirectPath(path: string) {
   return path.startsWith("/") && !path.startsWith("//") ? path : "/";
+}
+
+export async function isGoogleAuthEnabled() {
+  const environment = getSupabaseEnv();
+  const response = await fetch(`${environment.url}/auth/v1/settings`, {
+    headers: { apikey: environment.anonKey },
+  });
+  if (!response.ok) return false;
+  const settings = await response.json() as { external?: { google?: boolean } };
+  return settings.external?.google === true;
 }
 
 export async function signInWithEmail(credentials: EmailCredentials, client: SupabaseClient<Database> = getSupabaseClient()) {
@@ -23,10 +35,12 @@ export async function signInWithEmail(credentials: EmailCredentials, client: Sup
 }
 
 export async function signUpWithEmail(credentials: SignUpCredentials, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const emailRedirectTo = new URL(`/auth/callback?next=${encodeURIComponent(safeRedirectPath(credentials.redirectPath))}`, window.location.origin).toString();
   const { data, error } = await client.auth.signUp({
     email: credentials.email,
     password: credentials.password,
     options: {
+      emailRedirectTo,
       data: {
         display_name: credentials.displayName,
         account_type: credentials.accountType,
@@ -37,8 +51,10 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
   return data;
 }
 
-export async function signInWithGoogle(redirectPath: string, client: SupabaseClient<Database> = getSupabaseClient()) {
-  const redirectTo = new URL(safeRedirectPath(redirectPath), window.location.origin).toString();
+export async function signInWithGoogle(redirectPath: string, accountType: Database["public"]["Enums"]["account_type"], client: SupabaseClient<Database> = getSupabaseClient()) {
+  const safePath = safeRedirectPath(redirectPath);
+  sessionStorage.setItem("start-oauth-account-type", accountType);
+  const redirectTo = new URL(`/auth/callback?next=${encodeURIComponent(safePath)}`, window.location.origin).toString();
   const { data, error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
   if (error) throw new Error("Impossible de lancer la connexion Google.", { cause: error });
   return data;

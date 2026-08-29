@@ -10,7 +10,7 @@ export default function PublishPage() {
       <h1 className="mt-3 max-w-4xl text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">Publier une annonce</h1>
       <p className="mt-5 max-w-2xl text-lg leading-8 text-start-cream/65">La publication est réservée aux professionnels disposant d’un abonnement START actif.</p>
 
-      <div className="relative isolate mt-12 overflow-hidden rounded-2xl border border-start-gold/20 bg-[#17191e]/90 p-[clamp(24px,4vw,44px)] shadow-[0_24px_70px_rgba(0,0,0,.2)]">
+      <div className="relative isolate mt-[clamp(48px,7vw,80px)] overflow-hidden rounded-2xl border border-start-gold/20 bg-[#17191e]/90 p-[clamp(24px,4vw,44px)] shadow-[0_24px_70px_rgba(0,0,0,.2)]">
         <BrandPattern variant="chain" className="-right-24 -bottom-44 -z-10 h-[440px] w-[340px] text-start-gold/[.055] opacity-50 max-sm:opacity-30" />
         <ol className="relative grid grid-cols-3 gap-5 max-md:grid-cols-1">
           {[
@@ -33,7 +33,6 @@ export default function PublishPage() {
             J’ai déjà un compte professionnel
           </Link>
         </div>
-        <p className="relative mt-5 text-xs leading-5 text-start-cream/40">Aucun paiement n’est débité dans cette maquette frontend. L’activation réelle sera sécurisée lors de la connexion du backend et de Stripe.</p>
       </div>
       </div>
     </ThemedPage>

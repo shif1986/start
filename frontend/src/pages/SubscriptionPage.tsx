@@ -39,19 +39,19 @@ export default function SubscriptionPage() {
       showPattern={false}
       className="discreet-network-background"
     >
-      <div className="px-[clamp(14px,4vw,52px)] pt-[clamp(14px,4vw,48px)] pb-[clamp(40px,5vw,72px)]">
+      <div className="px-[clamp(14px,4vw,52px)] pt-[clamp(32px,5vw,72px)] pb-[clamp(40px,5vw,72px)]">
         <div className="mx-auto max-w-5xl">
-          <header className="relative overflow-hidden rounded-2xl border border-start-cream/10 bg-[#121418]/72 px-[clamp(18px,4vw,48px)] py-[clamp(26px,4.5vw,52px)] text-center shadow-[inset_0_1px_0_rgba(255,255,255,.035),0_24px_70px_rgba(0,0,0,.2)] max-sm:rounded-xl">
-            <span className="mx-auto block h-px w-16 bg-start-gold/70" aria-hidden="true" />
-            <span className="mx-auto mt-4 flex w-fit items-center gap-2" aria-hidden="true">
+          <header className="mx-auto max-w-3xl text-center">
+            <span className="mx-auto block h-px w-24 bg-start-gold/70" aria-hidden="true" />
+            <span className="mx-auto mt-6 flex w-fit items-center gap-3" aria-hidden="true">
               <span className="size-2 rounded-full bg-network-blue" />
               <span className="size-2 rounded-full bg-network-yellow" />
               <span className="size-2 rounded-full bg-network-red" />
             </span>
-            <span className="mt-3 block text-[.7rem] font-bold tracking-[.22em] text-start-gold uppercase">
+            <span className="mt-5 block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">
               Nos abonnements
             </span>
-            <h1 className="mt-4 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">
+            <h1 className="mt-6 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">
               Développez votre présence.<br className="max-sm:hidden" />
               <span className="text-start-gold">Faites grandir votre réseau.</span>
             </h1>
@@ -69,7 +69,7 @@ export default function SubscriptionPage() {
         {isSupabase && plansQuery.isPending && <p className="mt-6 rounded-xl border border-dashed border-start-cream/15 p-6 text-sm text-start-cream/55" aria-live="polite">Chargement des formules…</p>}
         {isSupabase && plansQuery.isError && <p className="mt-6 rounded-xl border border-network-red/25 bg-network-red/[.06] p-4 text-sm text-red-200" role="alert">Impossible de charger les formules disponibles.</p>}
         {!plansQuery.isPending && !plansQuery.isError && plans.length === 0 && <p className="mt-6 rounded-xl border border-dashed border-start-cream/15 p-6 text-sm text-start-cream/55">Aucune formule n’est disponible actuellement.</p>}
-        {plans.length > 0 && <div className="mt-6 grid grid-cols-2 gap-4 max-md:grid-cols-1 max-sm:mt-4 max-sm:gap-3">
+        {plans.length > 0 && <div className="mt-[clamp(48px,7vw,80px)] grid grid-cols-2 gap-4 max-md:grid-cols-1 max-sm:gap-3">
           {plans.map((candidate) => {
             const selected = plan === candidate.interval;
             return <button key={candidate.id} type="button" className={`relative rounded-2xl border p-5 text-left transition max-sm:rounded-xl max-sm:p-4 ${selected ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={selected} onClick={() => setPlan(candidate.interval)}>
@@ -140,15 +140,15 @@ export default function SubscriptionPage() {
             <div>
               <article className="border-b border-start-cream/10 py-7 first:pt-0">
                 <h3 className="text-xl font-semibold">Comment souscrire à un abonnement ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60">Créez ou connectez votre compte professionnel, choisissez la formule mensuelle ou annuelle sur cette page, puis sélectionnez votre moyen de paiement. L’activation définitive sera disponible après l’intégration sécurisée de Stripe.</p>
+                <p className="mt-4 leading-7 text-start-cream/60">Créez ou connectez votre compte professionnel, choisissez la formule mensuelle ou annuelle, puis sélectionnez votre moyen de paiement. Votre abonnement est activé après la validation du paiement.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
                 <h3 className="text-xl font-semibold">Puis-je modifier ou annuler mon abonnement ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60">La gestion de l’abonnement sera accessible depuis votre espace professionnel. Les modalités précises de modification, de renouvellement et de résiliation seront affichées avant tout paiement réel.</p>
+                <p className="mt-4 leading-7 text-start-cream/60">Vous pouvez gérer, modifier ou résilier votre abonnement depuis votre espace professionnel. Les modalités de renouvellement et de résiliation sont récapitulées avant la validation.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
-                <h3 className="text-xl font-semibold">Quels moyens de paiement seront acceptés ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60">Le paiement sécurisé par carte bancaire et Google Pay est prévu via Stripe. Pour le moment, cette page est une maquette et aucun débit n’est effectué.</p>
+                <h3 className="text-xl font-semibold">Quels moyens de paiement sont acceptés ?</h3>
+                <p className="mt-4 leading-7 text-start-cream/60">Vous pouvez régler votre abonnement de manière sécurisée par carte bancaire ou avec Google Pay.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
                 <h3 className="text-xl font-semibold">Comment contacter le support ?</h3>
@@ -166,9 +166,8 @@ export default function SubscriptionPage() {
                 <p className="mt-4 leading-7 text-start-cream/60">Il permet de créer un profil professionnel public, de gérer vos annonces et de les soumettre à START. La publication reste conditionnée à un abonnement actif, à la validation du profil et à la modération de chaque annonce.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
-                <h3 className="text-xl font-semibold">Puis-je bénéficier d’un avantage fiscal ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60">L’article 134 de la loi de finances pour 2020 prévoit un taux de 60 % pour certains versements effectués par des entreprises au profit d’organismes sans but lucratif venant en aide aux personnes en difficulté. Ce régime ne s’applique pas automatiquement à tout abonnement : l’éligibilité dépend notamment du statut de l’organisme, de la nature du versement, des éventuelles contreparties et de l’émission d’un reçu fiscal.</p>
-                <p className="mt-3 text-xs leading-5 text-start-cream/40">Cette information est générale et ne constitue pas un conseil fiscal. Vérifiez votre situation auprès de l’administration fiscale ou de votre conseiller.</p>
+                <h3 className="text-xl font-semibold">Mon abonnement ouvre-t-il droit à une réduction d’impôt de 60 % ?</h3>
+                <p className="mt-4 leading-7 text-start-cream/60">Votre abonnement peut ouvrir droit à une réduction d’impôt de 60 % lorsqu’il remplit les conditions légales du mécénat et qu’un reçu fiscal peut être délivré.</p>
               </article>
             </div>
           </div>

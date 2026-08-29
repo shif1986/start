@@ -13,6 +13,13 @@ import AccountDashboardPage from "./pages/AccountDashboardPage";
 import SubscriptionPage from "./pages/SubscriptionPage";
 import ProfessionalListingsPage from "./pages/ProfessionalListingsPage";
 import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import LegalNoticePage from "./pages/LegalNoticePage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfUsePage from "./pages/TermsOfUsePage";
+import SubscriptionTermsPage from "./pages/SubscriptionTermsPage";
+import CookiePolicyPage from "./pages/CookiePolicyPage";
+import ReportContentPage from "./pages/ReportContentPage";
+import AuthCallbackPage from "./pages/AuthCallbackPage";
 
 function App() {
   return (
@@ -29,11 +36,18 @@ function App() {
           <Route path="/categories" element={<CategoriesPage />} />
           <Route path="/connexion" element={<AuthPage mode="login" />} />
           <Route path="/inscription" element={<AuthPage mode="register" />} />
+          <Route path="/auth/callback" element={<AuthCallbackPage />} />
           <Route path="/espace/particulier" element={<ProtectedRoute accountTypes={["customer"]}><AccountDashboardPage role="customer" /></ProtectedRoute>} />
           <Route path="/espace/professionnel" element={<ProtectedRoute accountTypes={["professional"]}><AccountDashboardPage role="professional" /></ProtectedRoute>} />
           <Route path="/espace/professionnel/annonces" element={<ProtectedRoute accountTypes={["professional"]}><ProfessionalListingsPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute roles={["moderator", "admin"]}><AccountDashboardPage role="admin" /></ProtectedRoute>} />
           <Route path="/abonnement" element={<ProtectedRoute accountTypes={["professional"]}><SubscriptionPage /></ProtectedRoute>} />
+          <Route path="/mentions-legales" element={<LegalNoticePage />} />
+          <Route path="/confidentialite" element={<PrivacyPolicyPage />} />
+          <Route path="/conditions-utilisation" element={<TermsOfUsePage />} />
+          <Route path="/conditions-abonnement" element={<SubscriptionTermsPage />} />
+          <Route path="/cookies" element={<CookiePolicyPage />} />
+          <Route path="/signaler-un-contenu" element={<ReportContentPage />} />
         </Routes>
       </Layout>
     </BrowserRouter>

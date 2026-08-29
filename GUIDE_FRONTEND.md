@@ -116,6 +116,8 @@ Les composants utilisent les utilitaires Tailwind. `App.css` n'est plus chargé.
 
 Principes conservés : lueur dorée subtile, header sans contour coloré et bordures de boutons fines. Montserrat est la police principale du frontend et de la Hero. Le doré est réservé aux CTA principaux, liens importants, bordures actives, petits titres, séparateurs, états sélectionnés et icônes importantes.
 
+Les en-têtes de pages éditoriales suivent le modèle de Contact : titre directement posé sur le fond de page, centré dans une largeur maximale de `3xl`, sans carte, fond propre, bordure, arrondi ni ombre. Une ligne dorée, les trois points réseau, le surtitre, le titre et son introduction assurent seuls la hiérarchie. Les cartes de contenu commencent après un espacement fluide distinct.
+
 ### 3.5 Hero protégée
 
 La Hero actuelle est réalisée et validée. Ne pas la redessiner dans la migration du Design System. Toute harmonisation future de variables communes doit être isolée, vérifiée à chaque breakpoint et ne pas altérer son rendu.
@@ -142,6 +144,12 @@ src/
 │   ├── franceDepartments.geojson
 │   └── mockListings.ts
 ├── pages/
+│   ├── LegalNoticePage.tsx
+│   ├── PrivacyPolicyPage.tsx
+│   ├── TermsOfUsePage.tsx
+│   ├── SubscriptionTermsPage.tsx
+│   ├── CookiePolicyPage.tsx
+│   └── ReportContentPage.tsx
 ├── App.tsx
 ├── index.css
 └── main.tsx

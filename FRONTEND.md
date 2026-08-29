@@ -104,6 +104,8 @@ Le voile varie de 72 % à 82 % en mode sombre et de 66 % à 78 % en mode clair. 
 
 Cette signature est actuellement active sur Contact, Abonnement, Vision et sur la section Catégories de l’accueil. Les autres sections de l’accueil n’utilisent plus d’ancien motif décoratif. Elle devient le principe recommandé pour les futures pages institutionnelles. Les pages fonctionnelles denses conservent leur fond anthracite simple, sauf validation visuelle spécifique. L’asset bitmap devra être optimisé avant la production.
 
+Les titres des pages éditoriales Contact, Vision, Abonnement et Dons sont directement posés sur leur fond de page. Leur en-tête ne doit pas prendre la forme d’une carte : aucun arrière-plan autonome, aucune bordure, aucun arrondi et aucune ombre. Leur hiérarchie commune repose sur la ligne dorée, les trois points réseau, le surtitre, le titre et le texte d’introduction.
+
 Le thème global accepte `dark` et `light`. Le sombre est le défaut, tandis que le choix utilisateur est stocké avec la clé `start-theme`. `src/lib/theme.ts` initialise `html[data-theme]` avant le montage de React. Le bouton de bascule se trouve en haut à droite de la Hero : texte et icône sur desktop/tablette, icône accessible de 44 px minimum sous 640 px. Le mode clair adapte les pages, cartes, champs, navigation et footer ; sa Hero utilise un anthracite plus clair, tandis que `START Network Cycle` conserve son fond sombre identitaire. Les signatures `BrandPattern` sont fortement atténuées, particulièrement sur mobile.
 
 Exemples : `bg-start-ink`, `text-start-cream`, `border-start-gold` et
@@ -140,18 +142,19 @@ Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les v
 VITE_SUPABASE_URL=http://127.0.0.1:54321
 VITE_SUPABASE_ANON_KEY=replace-with-local-anon-key
 VITE_DATA_SOURCE=supabase
-VITE_CONTACT_ENDPOINT=https://formspree.io/f/votre-identifiant
+VITE_CONTACT_ENDPOINT=
 ```
 
 La clé `service_role` ne doit jamais être mise dans le front-end.
 
 `VITE_DATA_SOURCE=static` conserve les données de démonstration pendant la migration. Le mode `supabase` active les services React Query pour les catégories, le feed et le détail. Il ne faut activer ce mode qu'après avoir appliqué les migrations et régénéré `frontend/src/lib/supabase/database.types.ts`.
 
-`VITE_CONTACT_ENDPOINT` doit pointer vers une fonction serveur ou un service de
+`VITE_CONTACT_ENDPOINT` peut pointer vers une fonction serveur ou un service de
 formulaire acceptant les requêtes JSON. Le formulaire envoie `name`, `email`,
-`phone`, `message`, `website` (champ anti-spam) et `source`. Sans cette variable,
-aucune donnée n'est perdue silencieusement : la page affiche que le service
-d'envoi n'est pas encore configuré.
+`phone`, `message`, `website` (champ anti-spam), `_subject` et `source`. Sans cette
+variable, FormSubmit est utilisé pour transmettre les demandes à
+`contact@startreseauchretien.com`. Lors du premier envoi, FormSubmit demande de
+confirmer cette adresse avant de distribuer les messages suivants.
 
 ## 6. Organisation des fichiers
 
@@ -234,6 +237,14 @@ Réserver Zustand à l'état d'interface non persistant : ouverture d'une sideba
 | `/dashboard/profil`   | authentifié      | édition du profil               |
 | `/admin`              | modérateur/admin | modération                      |
 | `/abonnement`         | professionnel    | choix de l'abonnement pro       |
+| `/mentions-legales`   | public           | informations légales du site    |
+| `/confidentialite`    | public           | politique de confidentialité    |
+| `/conditions-utilisation` | public       | règles d’utilisation et modération |
+| `/conditions-abonnement` | public        | conditions des formules pro     |
+| `/cookies`            | public           | politique relative aux traceurs |
+| `/signaler-un-contenu` | public          | signalement légal et modération |
+
+Le footer expose directement toutes les pages juridiques. Le formulaire de signalement utilise `VITE_REPORT_ENDPOINT` et doit être relié à un traitement serveur avant la production. Les documents reflètent l’état actuel de la maquette : aucun paiement réel ni outil publicitaire n’est actif. Ils devront être relus et actualisés lors de la connexion du backend, de Stripe, des e-mails et de tout outil de mesure.
 
 Les routes non encore implémentées affichent actuellement une page neutre. Ce comportement est volontaire : il évite les liens morts tout en signalant clairement la tranche suivante.
 

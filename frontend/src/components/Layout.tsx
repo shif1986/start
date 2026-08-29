@@ -59,6 +59,7 @@ export default function Layout({ children }: LayoutProps) {
             <NavLink to="/contact">Contact</NavLink>
             <NavLink to="/don">Faire un don</NavLink>
             <NavLink to="/contact">Support</NavLink>
+            <NavLink to="/signaler-un-contenu">Signaler un contenu</NavLink>
           </nav>
 
           <div className="flex min-h-20 min-w-32 items-center justify-center self-center max-md:order-first">
@@ -74,9 +75,15 @@ export default function Layout({ children }: LayoutProps) {
           </div>
         </div>
 
-        <div className="mt-5 flex justify-between gap-4 border-t border-start-cream/10 pt-4 text-xs text-start-cream/55 max-sm:flex-col">
+        <div className="mt-5 flex items-start justify-between gap-6 border-t border-start-cream/10 pt-4 text-xs text-start-cream/55 max-lg:flex-col max-lg:items-center max-lg:text-center">
           <span>© 2026 START Réseau Chrétien</span>
-          <span>Mentions légales • Confidentialité</span>
+          <nav className="flex flex-wrap justify-end gap-x-5 gap-y-2 max-lg:justify-center" aria-label="Informations juridiques du pied de page">
+            <NavLink to="/mentions-legales" className="transition hover:text-start-gold">Mentions légales</NavLink>
+            <NavLink to="/confidentialite" className="transition hover:text-start-gold">Confidentialité</NavLink>
+            <NavLink to="/conditions-utilisation" className="transition hover:text-start-gold">CGU</NavLink>
+            <NavLink to="/conditions-abonnement" className="transition hover:text-start-gold">Conditions d’abonnement</NavLink>
+            <NavLink to="/cookies" className="transition hover:text-start-gold">Cookies</NavLink>
+          </nav>
         </div>
       </footer>
     </div>

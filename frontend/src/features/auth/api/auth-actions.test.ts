@@ -23,19 +23,22 @@ describe("auth actions", () => {
 
   it("inscrit le type de compte dans les métadonnées contrôlées", async () => {
     const client = createClient();
-    await signUpWithEmail({ email: "pro@example.test", password: "password123", displayName: "Impact Conseil", accountType: "professional" }, client);
+    await signUpWithEmail({ email: "pro@example.test", password: "password123", displayName: "Impact Conseil", accountType: "professional", redirectPath: "/abonnement" }, client);
     expect(client.auth.signUp).toHaveBeenCalledWith(expect.objectContaining({
       email: "pro@example.test",
-      options: { data: { display_name: "Impact Conseil", account_type: "professional" } },
+      options: {
+        emailRedirectTo: `${window.location.origin}/auth/callback?next=%2Fabonnement`,
+        data: { display_name: "Impact Conseil", account_type: "professional" },
+      },
     }));
   });
 
   it("utilise une redirection OAuth locale sûre", async () => {
     const client = createClient();
-    await signInWithGoogle("/annonces", client);
+    await signInWithGoogle("/annonces", "customer", client);
     expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/annonces` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fannonces` },
     });
   });
 

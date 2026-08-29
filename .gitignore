@@ -1,4 +1,6 @@
 .DS_STORE
 .env
+.env.local
+.env.*.local
 node_modules/
 backend/.temp/
