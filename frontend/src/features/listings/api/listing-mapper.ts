@@ -80,6 +80,7 @@ export function mapDetailListing(row: DetailListingRow, signedImages: string[]):
       role: row.seller_is_verified ? "Professionnel vérifié" : "Professionnel",
       phone: row.seller_phone,
       email: row.seller_email,
+      postalAddress: row.seller_postal_address,
     },
     isFavorite: row.is_favorite,
   };

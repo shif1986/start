@@ -293,6 +293,8 @@ Le CTA « Publier une annonce » ouvre `/publier`. Cette page présente le parco
 
 La connexion Stripe nécessitera un service serveur pour créer une Checkout Session, conserver la clé secrète, vérifier les webhooks et enregistrer l'état de l'abonnement. Le frontend ne devra recevoir que les identifiants publiables nécessaires. Le droit de publier devra toujours être contrôlé côté serveur à partir d'un abonnement réellement actif, jamais à partir de l'état React ou d'une redirection de succès.
 
+Un compte particulier ne peut pas souscrire : la route frontend et la base le refusent. Il conserve les fonctionnalités gratuites de consultation, favoris, contact, notes et commentaires. Il ne reçoit les coordonnées d'un professionnel que si l'abonnement de ce dernier est actif. À l'échéance, le profil et les annonces déjà publiées du professionnel restent visibles, mais ses coordonnées sont masquées aux particuliers. Un professionnel doit disposer d'un abonnement actif pour créer ou soumettre une nouvelle annonce et pour bénéficier de l'accès professionnel complet.
+
 Le tableau de bord interne `/admin` servira à superviser les comptes, annonces, commentaires, signalements et états d'abonnement. Les paiements, factures, remboursements et litiges resteront administrés dans Stripe Dashboard.
 
 ### 11.3 Dons — état actuel
@@ -404,8 +406,12 @@ La carte du catalogue, la barre de recherche, les fiches et les avis suivent les
 
 Le frontend prévoit trois rôles :
 
-- **particulier** : compte gratuit, consultation, favoris, contact des professionnels, notes et commentaires, sans publication ;
-- **professionnel** : profil public et gestion des annonces, avec abonnement actif obligatoire pour publier ;
+- **particulier** : compte gratuit, consultation, favoris, contact des professionnels abonnés, notes et commentaires, sans abonnement professionnel ni publication ;
+- **professionnel** : profil public et gestion des annonces, avec abonnement actif obligatoire pour créer ou soumettre une annonce et obtenir l'accès professionnel complet ; après expiration, le profil et les annonces publiées restent lisibles mais les contacts sont masqués aux particuliers ;
 - **administrateur** : supervision des comptes, validations professionnelles, abonnements, annonces, commentaires et signalements.
+
+Toutes les pages publiques et toutes les annonces publiées restent consultables sans connexion. Le visiteur voit le contenu de l'annonce et le profil public, mais jamais le téléphone, l'adresse e-mail ni l'adresse postale de contact. La création d'un compte particulier gratuit est nécessaire pour révéler les coordonnées d'un professionnel dont l'abonnement est actif.
+
+Un membre actif peut commenter une annonce publiée. Un compte suspendu ne peut plus accéder aux coordonnées privées ni créer de commentaire ou d'annonce. L'interface doit présenter cet état sans proposer une nouvelle inscription à un utilisateur déjà connecté. Les administrateurs conservent les accès nécessaires à la consultation des contacts et à la modération des commentaires.
 
 Les écrans actuels sont des maquettes frontend accessibles sans authentification. Cette accessibilité est volontaire pendant la phase de conception et ne constitue pas une sécurité. Les futures permissions devront être appliquées côté serveur et base de données ; React ne doit servir qu'à présenter l'état autorisé reçu du backend.

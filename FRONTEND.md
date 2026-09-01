@@ -10,9 +10,10 @@ Ce document est la référence unique pour construire l'interface React. Le code
 - Compte professionnel : publication conditionnée à un abonnement actif.
 - Abonnement pro prévu : 7 € / mois ou 84 € / an.
 - Authentification : e-mail classique + Google.
-- Un visiteur non connecté peut consulter les annonces et les profils publics, mais il ne peut pas voir le numéro de téléphone ni l’adresse e-mail professionnelle.
-- Un particulier connecté peut consulter les annonces, commenter, signaler un contenu, enregistrer des favoris et prendre contact selon le parcours défini par le site, sans pouvoir publier d’annonce.
-- Un professionnel connecté peut consulter les annonces et les profils publics, et peut voir les coordonnées d’un autre professionnel.
+- Un visiteur non connecté peut consulter toutes les pages publiques, les annonces publiées et les profils publics, mais il ne peut voir aucune coordonnée professionnelle : téléphone, adresse e-mail ou adresse postale de contact.
+- Un particulier connecté peut consulter les annonces, commenter, signaler un contenu et enregistrer des favoris. Il ne peut ni souscrire un abonnement professionnel ni créer ou publier une annonce. Il voit les coordonnées d'un professionnel uniquement pendant la période où l'abonnement de ce professionnel est actif.
+- Un professionnel disposant d'un abonnement actif peut créer et soumettre des annonces et consulter les coordonnées professionnelles. Sans abonnement actif, il conserve son profil et ses annonces déjà publiées, mais ne peut plus créer ou soumettre d'annonce.
+- À l'expiration de l'abonnement d'un professionnel, son profil et ses annonces publiées restent lisibles, tandis que ses coordonnées sont masquées aux particuliers.
 - Une annonce professionnelle ne peut être publiée qu’après souscription à un abonnement actif et validation du compte / statut pro.
 - Carte France–Suisse dans le catalogue : recherche par pays, puis par département français ou canton suisse. Les cinq départements français d’outre-mer sont inclus.
 - Paiement prévu avec Stripe, avec un mode de paiement Google Pay et un mode classique lorsque disponible.
@@ -27,7 +28,7 @@ Créer une marketplace (site d'annonces) locale, rapide, accessible, dynamique, 
 3. consulter une fiche annonce et un profil professionnel ;
 4. créer un compte professionnel ; les professionnels peuvent y accéder pour déposer une annonce après avoir souscrit un abonnement de 7 € par mois ou 84 € par an ;
 5. créer un compte particulier gratuit, qui permet au client de laisser des commentaires, enregistrer des favoris et prendre contact selon les règles du site, sans avoir le droit de publier une annonce ;
-6. consulter l'ensemble des annonces, sans voir les coordonnées privées professionnelles, signaler un problème et laisser un commentaire après création d'un compte ;
+6. consulter l'ensemble des annonces ; après création d'un compte particulier gratuit, voir les coordonnées des professionnels dont l'abonnement est actif, signaler un problème et laisser un commentaire ;
 7. enregistrer des favoris ;
 8. signaler un contenu ;
 9. utiliser un tableau de bord professionnel ou particulier selon son rôle, ainsi qu'un tableau de bord de modération, tout en conservant l'historique de ses interactions sur le site ;
@@ -385,6 +386,10 @@ Routes disponibles :
 - `/admin` : supervision des utilisateurs, annonces, commentaires, signalements et abonnements.
 
 En mode `supabase`, la session Supabase est l'unique source de vérité. Le profil courant est chargé par React Query, les espaces particulier/professionnel vérifient le type de compte et `/admin` exige le rôle `moderator` ou `admin`. `/publier` et `/abonnement` exigent un compte professionnel. Les politiques RLS restent la protection définitive des données.
+
+Le type de compte est aussi contrôlé côté base : aucun abonnement ne peut être rattaché à un particulier et aucune annonce ne peut être créée par celui-ci. La fin d'un abonnement ne retire pas automatiquement le profil ou les annonces publiées du catalogue. Elle masque les coordonnées du professionnel aux particuliers, y compris dans le RPC de détail d'annonce.
+
+Un compte suspendu conserve uniquement la visibilité publique de son profil et de ses annonces déjà publiées. Il ne peut plus consulter les coordonnées privées, commenter, créer ou soumettre une annonce. Les administrateurs peuvent consulter les coordonnées protégées et masquer les commentaires dans le cadre de la modération.
 
 En mode `static`, les gardes laissent volontairement passer les maquettes pour conserver les parcours de démonstration. Ce mode ne doit jamais être utilisé comme preuve d'autorisation en production.
 

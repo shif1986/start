@@ -56,7 +56,7 @@ Chaque évolution de schéma reçoit une nouvelle migration horodatée. Une migr
 | Table | Responsabilité |
 |---|---|
 | `profiles` | identité privée, rôle, type de compte et vérification |
-| `profile_contacts` | coordonnées visibles uniquement aux membres authentifiés |
+| `profile_contacts` | coordonnées professionnelles protégées selon le type de compte et l'abonnement |
 | `public_profiles` | vue publique limitée, sans coordonnées privées |
 | `categories` | catégories et sous-catégories |
 | `category_fields` | définition des champs dynamiques |
@@ -64,10 +64,11 @@ Chaque évolution de schéma reçoit une nouvelle migration horodatée. Une migr
 | `listings` | contenu principal et statut d'une annonce |
 | `listing_images` | métadonnées et ordre des images |
 | `listing_field_values` | valeur JSON d'un champ dynamique |
+| `listing_comments` | commentaires publics modérables des membres actifs |
 | `favorites` | relation unique utilisateur/annonce |
 | `reports` | signalements et traitement de modération |
 
-Les futures tables `conversations`, `messages`, `reviews`, `notifications`, `plans`, `payments` et `subscriptions` ne doivent être ajoutées qu'avec leur tranche fonctionnelle et leurs tests.
+Les futures tables `conversations`, `messages`, `reviews`, `notifications` et `payments` ne doivent être ajoutées qu'avec leur tranche fonctionnelle et leurs tests. Les commentaires, plans et abonnements professionnels sont déjà présents.
 
 ## 5. Workflow d'une annonce
 
@@ -102,10 +103,17 @@ Toutes les tables exposées ont RLS activé.
 
 - modifie uniquement son profil public ;
 - ne peut modifier ni son rôle ni son badge vérifié ;
-- crée et modifie uniquement ses annonces ;
 - gère uniquement ses favoris ;
 - crée ses propres signalements ;
-- stocke ses images uniquement sous `listing-images/{userId}/{listingId}/...`.
+- un particulier ne peut ni souscrire un abonnement professionnel ni créer une annonce ;
+- un particulier peut consulter les coordonnées d'un professionnel uniquement tant que celui-ci possède un abonnement actif ;
+- un professionnel avec abonnement actif peut créer et soumettre ses annonces et consulter les coordonnées professionnelles ;
+- un professionnel sans abonnement actif ne peut pas créer ni soumettre d'annonce et ne lit que ses propres coordonnées privées ;
+- un compte suspendu ne peut plus lire les coordonnées, commenter, créer ou soumettre une annonce ;
+- un membre actif peut commenter une annonce publiée et gérer uniquement ses propres commentaires ;
+- stocke ses images uniquement sous `listing-images/{userId}/{listingId}/...` lorsqu'il possède l'annonce.
+
+L'expiration d'un abonnement ne supprime ni le profil public ni les annonces déjà publiées. Ces contenus restent consultables, mais le téléphone, l'e-mail et l'adresse postale du professionnel expiré sont masqués aux particuliers dans `profile_contacts` comme dans `get_listing_detail`. Les commentaires sont disponibles aux membres actifs et peuvent être masqués par la modération. Les notes et avis structurés relèvent encore d'une tranche fonctionnelle distincte.
 
 ### Modérateur/admin
 

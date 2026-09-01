@@ -11,6 +11,7 @@ export type Database = {
       };
       profiles: {
         Row: {
+          account_status: Database["public"]["Enums"]["account_status"];
           account_type: Database["public"]["Enums"]["account_type"];
           avatar_url: string | null;
           bio: string | null;
@@ -24,6 +25,7 @@ export type Database = {
           username: string;
         };
         Insert: {
+          account_status?: Database["public"]["Enums"]["account_status"];
           account_type?: Database["public"]["Enums"]["account_type"];
           avatar_url?: string | null;
           bio?: string | null;
@@ -37,6 +39,7 @@ export type Database = {
           username: string;
         };
         Update: {
+          account_status?: Database["public"]["Enums"]["account_status"];
           account_type?: Database["public"]["Enums"]["account_type"];
           avatar_url?: string | null;
           bio?: string | null;
@@ -48,6 +51,12 @@ export type Database = {
           updated_at?: string;
           username?: string;
         };
+        Relationships: [];
+      };
+      profile_contacts: {
+        Row: { profile_id: string; phone: string | null; public_email: string | null; postal_address: string | null; updated_at: string };
+        Insert: { profile_id: string; phone?: string | null; public_email?: string | null; postal_address?: string | null; updated_at?: string };
+        Update: { phone?: string | null; public_email?: string | null; postal_address?: string | null; updated_at?: string };
         Relationships: [];
       };
       categories: {
@@ -184,6 +193,12 @@ export type Database = {
             referencedColumns: ["id"];
           },
         ];
+      };
+      listing_comments: {
+        Row: { id: string; listing_id: string; author_id: string; body: string; is_hidden: boolean; created_at: string; updated_at: string };
+        Insert: { id?: string; listing_id: string; author_id: string; body: string; is_hidden?: boolean; created_at?: string; updated_at?: string };
+        Update: { body?: string; is_hidden?: boolean; updated_at?: string };
+        Relationships: [];
       };
       subscription_plans: {
         Row: {
@@ -343,6 +358,7 @@ export type Database = {
           seller_email: string | null;
           seller_is_verified: boolean;
           seller_phone: string | null;
+          seller_postal_address: string | null;
           seller_username: string;
           slug: string;
           status: Database["public"]["Enums"]["listing_status"];
@@ -353,6 +369,7 @@ export type Database = {
       };
     };
     Enums: {
+      account_status: "active" | "suspended";
       account_type: "customer" | "professional";
       field_type: "text" | "textarea" | "number" | "select" | "multi_select" | "checkbox" | "boolean" | "date" | "price" | "url";
       listing_status: "draft" | "pending" | "published" | "rejected" | "sold" | "archived";

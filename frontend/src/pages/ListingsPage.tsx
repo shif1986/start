@@ -66,8 +66,18 @@ export default function ListingsPage() {
     pageSize: LISTINGS_PER_PAGE,
   }), [category, country, department, requestedPage, search]);
   const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
-  const filteredListings = dataSource === "supabase" ? listingsQuery.data?.items ?? [] : staticFilteredListings;
-  const totalCount = dataSource === "supabase" ? listingsQuery.data?.totalCount ?? 0 : staticFilteredListings.length;
+  const catalogStateQuery = useListings({
+    search: null,
+    category: null,
+    countryCode: null,
+    subdivision: null,
+    page: 1,
+    pageSize: 1,
+  }, { enabled: dataSource === "supabase" });
+  const useDemoCatalog = dataSource === "static"
+    || (!catalogStateQuery.isPending && !catalogStateQuery.isError && (catalogStateQuery.data?.totalCount ?? 0) === 0);
+  const filteredListings = useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
+  const totalCount = useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
 
   const locationOptions = country === "Suisse" ? swissCantons : departments;
 
@@ -75,7 +85,7 @@ export default function ListingsPage() {
   const currentPage = Number.isFinite(requestedPage)
     ? Math.min(Math.max(requestedPage, 1), pageCount)
     : 1;
-  const visibleListings = dataSource === "supabase" ? filteredListings : filteredListings.slice(
+  const visibleListings = !useDemoCatalog ? filteredListings : filteredListings.slice(
       (currentPage - 1) * LISTINGS_PER_PAGE,
       currentPage * LISTINGS_PER_PAGE,
     );
@@ -175,9 +185,9 @@ export default function ListingsPage() {
           </div>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-x-5 gap-y-12 max-md:gap-y-9 max-sm:gap-y-7">
-          {dataSource === "supabase" && listingsQuery.isPending ? (
+          {dataSource === "supabase" && (listingsQuery.isPending || catalogStateQuery.isPending) ? (
             Array.from({ length: LISTINGS_PER_PAGE }, (_, index) => <span key={index} className="h-[390px] animate-pulse rounded-xl border border-start-cream/10 bg-start-cream/[.04]" aria-hidden="true" />)
-          ) : dataSource === "supabase" && listingsQuery.isError ? (
+          ) : dataSource === "supabase" && (listingsQuery.isError || catalogStateQuery.isError) ? (
             <div className="rounded-2xl border border-network-red/30 bg-network-red/[.06] p-10 text-center text-start-cream" role="alert">Impossible de charger les annonces. Veuillez réessayer dans quelques instants.</div>
           ) : totalCount > 0 ? (
             visibleListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)

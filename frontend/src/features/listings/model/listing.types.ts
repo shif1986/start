@@ -19,6 +19,7 @@ export type Listing = {
     role: string;
     phone: string | null;
     email: string | null;
+    postalAddress?: string | null;
   };
   featured?: boolean;
   isFavorite?: boolean;

@@ -7,13 +7,20 @@ import ListingReviews from "../components/ListingReviews";
 import { useListingDetail } from "../features/listings/hooks/use-listing-detail";
 import { getDataSource } from "../lib/data-source";
 import FavoriteButton from "../features/favorites/components/FavoriteButton";
+import { useAuth } from "../features/auth/context/use-auth";
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
+  const { session } = useAuth();
   const dataSource = getDataSource();
   const listingQuery = useListingDetail(slug, { enabled: dataSource === "supabase" });
-  const listing = dataSource === "supabase" ? listingQuery.data : mockListings.find((item) => item.id === slug || item.slug === slug);
-  const hasContactAccess = dataSource === "supabase" && Boolean(listing?.professional?.phone || listing?.professional?.email);
+  const demoListing = mockListings.find((item) => item.id === slug || item.slug === slug);
+  const listing = dataSource === "supabase" ? listingQuery.data ?? demoListing : demoListing;
+  const isSupabaseListing = dataSource === "supabase" && Boolean(listingQuery.data);
+  const isAuthenticated = Boolean(session);
+  const hasDemoContactAccess = dataSource === "supabase" && !isSupabaseListing && isAuthenticated;
+  const hasContactAccess = (isSupabaseListing || hasDemoContactAccess)
+    && Boolean(listing?.professional?.phone || listing?.professional?.email);
 
   if (dataSource === "supabase" && listingQuery.isPending) {
     return <div className="min-h-[680px] animate-pulse rounded-2xl border border-start-cream/10 bg-start-cream/[.035]" role="status" aria-label="Chargement de l’annonce" />;
@@ -96,11 +103,19 @@ export default function ListingDetailPage() {
                 <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
                   {listing.professional.phone && <li>Tél. : {listing.professional.phone}</li>}
                   {listing.professional.email && <li>E-mail : {listing.professional.email}</li>}
+                  {listing.professional.postalAddress && <li>Adresse : {listing.professional.postalAddress}</li>}
                 </ul>
                 <a href={listing.professional.email ? `mailto:${listing.professional.email}` : `tel:${listing.professional.phone}`} className="flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
                   Contacter
                 </a>
               </>
+            ) : isAuthenticated ? (
+              <div className="mt-6 rounded-xl border border-start-gold/20 bg-start-gold/[.055] p-5">
+                <h4 className="font-semibold text-start-cream">Coordonnées indisponibles</h4>
+                <p className="mt-2 text-sm leading-6 text-start-cream/60">
+                  Les coordonnées de ce professionnel ne sont pas disponibles actuellement. Son abonnement peut être arrivé à échéance.
+                </p>
+              </div>
             ) : (
               <div className="mt-6 rounded-xl border border-start-gold/20 bg-start-gold/[.055] p-5">
                 <span className="inline-flex size-10 items-center justify-center rounded-full border border-network-red/30 text-network-red" aria-hidden="true">
@@ -111,7 +126,7 @@ export default function ListingDetailPage() {
                 </span>
                 <h4 className="mt-4 font-semibold text-start-cream">Coordonnées privées</h4>
                 <p className="mt-2 text-sm leading-6 text-start-cream/60">
-                  Créez un compte gratuit pour voir le téléphone et l’e-mail de ce professionnel, puis prendre contact.
+                  Créez un compte particulier gratuit pour voir le téléphone, l’e-mail et, lorsqu’elle est renseignée, l’adresse postale de ce professionnel.
                 </p>
                 <Link to={`/inscription?redirect=${encodeURIComponent(`/annonce/${listing.slug ?? listing.id}`)}`} className="mt-5 flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
                   Créer un compte gratuit

@@ -5,7 +5,7 @@ export default function SubscriptionTermsPage() {
   return (
     <LegalDocumentPage eyebrow="Services professionnels" title="Conditions de l’abonnement" introduction="Les conditions contractuelles des formules professionnelles START, à consulter avant toute souscription.">
       <LegalSection title="Souscripteurs">
-        <p>L’abonnement est destiné aux professionnels agissant dans le cadre de leur activité. START peut demander les informations nécessaires à la vérification du profil et de l’activité avant d’autoriser la publication.</p>
+        <p>L’abonnement est exclusivement destiné aux comptes professionnels agissant dans le cadre de leur activité. Un compte particulier ne peut pas souscrire. START peut demander les informations nécessaires à la vérification du profil et de l’activité avant d’autoriser la publication.</p>
       </LegalSection>
 
       <LegalSection title="Formules et prix">
@@ -25,7 +25,8 @@ export default function SubscriptionTermsPage() {
       </LegalSection>
 
       <LegalSection title="Accès aux services">
-        <p>L’abonnement autorise la création d’un profil professionnel et la soumission d’annonces. Il ne garantit ni leur validation, ni leur classement, ni un nombre de contacts ou un résultat commercial.</p>
+        <p>L’abonnement actif autorise la création et la soumission d’annonces ainsi que l’accès aux fonctionnalités professionnelles. Il ne garantit ni leur validation, ni leur classement, ni un nombre de contacts ou un résultat commercial.</p>
+        <p>À l’expiration de l’abonnement, le profil professionnel et les annonces déjà publiées peuvent rester consultables. Le professionnel ne peut plus créer ou soumettre de nouvelle annonce et ses coordonnées sont masquées aux comptes particuliers.</p>
       </LegalSection>
 
       <LegalSection title="Suspension">

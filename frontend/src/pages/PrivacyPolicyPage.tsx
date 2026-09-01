@@ -26,6 +26,7 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Destinataires et prestataires">
         <p>Les données sont accessibles aux personnes habilitées de START et aux prestataires strictement nécessaires au fonctionnement du service, notamment pour l’hébergement, l’authentification, l’envoi d’e-mails et le paiement. Le site est hébergé par Netlify, Inc.</p>
+        <p>Le téléphone, l’adresse électronique et l’éventuelle adresse postale de contact renseignés par un professionnel sont accessibles aux particuliers connectés uniquement pendant la période où l’abonnement professionnel est actif. À son expiration, le profil et les annonces déjà publiées peuvent rester visibles, mais ces coordonnées sont masquées aux particuliers. Les visiteurs non connectés n’y ont jamais accès.</p>
         <p>Lorsque des prestataires traitent des données hors de l’Espace économique européen ou de Suisse, START applique les garanties de transfert requises par la réglementation.</p>
       </LegalSection>
 
@@ -47,6 +48,7 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Sécurité et mineurs">
         <p>START applique des mesures techniques et organisationnelles proportionnées aux risques. Aucun système ne pouvant garantir une sécurité absolue, tout incident suspect doit être signalé rapidement.</p>
+        <p>START peut suspendre un compte pour protéger les membres ou appliquer ses règles. Pendant la suspension, l’accès aux coordonnées privées et les fonctions de contribution sont désactivés, sans supprimer automatiquement les contenus publics déjà publiés.</p>
         <p>La création autonome d’un compte n’est pas destinée aux personnes ne disposant pas de la capacité juridique requise. L’autorisation du représentant légal est demandée lorsque la réglementation l’exige.</p>
       </LegalSection>
 

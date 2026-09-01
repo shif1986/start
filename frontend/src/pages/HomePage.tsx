@@ -7,8 +7,9 @@ import CategoryCard from "../components/CategoryCard";
 import ListingCard from "../components/ListingCard";
 import StartNetworkCycle from "../components/StartNetworkCycle";
 import ThemeToggle from "../components/ThemeToggle";
-
-const featuredListings = mockListings.slice(0, 8);
+import { useListings } from "../features/listings/hooks/use-listings";
+import { getDataSource } from "../lib/data-source";
+import type { Listing } from "../features/listings/model/listing.types";
 
 function HeroGradientBackdrop() {
   return (
@@ -20,9 +21,11 @@ function HeroGradientBackdrop() {
 }
 
 function SearchByLocation({
+  listings,
   selectedDepartment,
   onDepartmentSelect,
 }: {
+  listings: Listing[];
   selectedDepartment: string;
   onDepartmentSelect: (department: string) => void;
 }) {
@@ -155,7 +158,7 @@ function SearchByLocation({
       <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:order-1 max-lg:max-w-[620px] max-sm:max-w-[430px]">
         <div className="france-map-shell mx-auto w-[98%] max-sm:w-full">
           <FranceListingsMap
-            listings={mockListings}
+            listings={listings}
             selectedDepartment={selectedDepartment}
             onDepartmentSelect={onDepartmentSelect}
           />
@@ -177,6 +180,19 @@ function SearchByLocation({
 
 export default function HomePage() {
   const [selectedDepartment, setSelectedDepartment] = useState("");
+  const dataSource = getDataSource();
+  const listingsQuery = useListings({
+    search: null,
+    category: null,
+    countryCode: null,
+    subdivision: null,
+    page: 1,
+    pageSize: 8,
+  }, { enabled: dataSource === "supabase" });
+  const homeListings = dataSource === "supabase" && (listingsQuery.data?.totalCount ?? 0) > 0
+    ? listingsQuery.data?.items ?? []
+    : mockListings;
+  const featuredListings = homeListings.slice(0, 8);
 
   function handleDepartmentSelect(department: string) {
     setSelectedDepartment((current) =>
@@ -187,6 +203,7 @@ export default function HomePage() {
   return (
     <div className="home-page overflow-hidden rounded-3xl bg-[#171a21]">
       <SearchByLocation
+        listings={homeListings}
         selectedDepartment={selectedDepartment}
         onDepartmentSelect={handleDepartmentSelect}
       />
@@ -255,7 +272,7 @@ export default function HomePage() {
               compact
               featured={index === 0}
               count={
-                mockListings.filter(
+                homeListings.filter(
                   (listing) => listing.categorySlug === category.slug,
                 ).length
               }
