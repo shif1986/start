@@ -9,6 +9,12 @@ export type Database = {
         Update: { created_at?: string; listing_id?: string; user_id?: string };
         Relationships: [];
       };
+      professional_contact_clicks: {
+        Row: { address_click_count: number; click_count: number; email_click_count: number; first_clicked_at: string; last_channel: string; last_clicked_at: string; last_listing_id: string | null; phone_click_count: number; professional_id: string; user_id: string };
+        Insert: { address_click_count?: number; click_count?: number; email_click_count?: number; first_clicked_at?: string; last_channel: string; last_clicked_at?: string; last_listing_id?: string | null; phone_click_count?: number; professional_id: string; user_id: string };
+        Update: { address_click_count?: number; click_count?: number; email_click_count?: number; first_clicked_at?: string; last_channel?: string; last_clicked_at?: string; last_listing_id?: string | null; phone_click_count?: number; professional_id?: string; user_id?: string };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           account_status: Database["public"]["Enums"]["account_status"];
@@ -122,6 +128,7 @@ export type Database = {
           owner_id: string;
           postal_code: string | null;
           price: number | null;
+          price_unit: string;
           published_at: string | null;
           rejection_reason: string | null;
           slug: string;
@@ -144,6 +151,7 @@ export type Database = {
           owner_id: string;
           postal_code?: string | null;
           price?: number | null;
+          price_unit?: string;
           published_at?: string | null;
           rejection_reason?: string | null;
           slug: string;
@@ -292,6 +300,14 @@ export type Database = {
     };
     Views: Record<string, never>;
     Functions: {
+      complete_google_account_type: {
+        Args: { requested_account_type: Database["public"]["Enums"]["account_type"] };
+        Returns: undefined;
+      };
+      record_professional_contact: {
+        Args: { p_channel: string; p_listing_id: string };
+        Returns: undefined;
+      };
       has_active_professional_subscription: {
         Args: Record<PropertyKey, never>;
         Returns: boolean;

@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
 import { useOwnerListings } from "../features/listings/hooks/use-owner-listings";
 import type { DatabaseListingStatus } from "../features/listings/model/listing.types";
+import SubmitListingButton from "../features/listings/components/SubmitListingButton";
 import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { getDataSource } from "../lib/data-source";
 
@@ -13,6 +14,15 @@ const statusLabels: Record<DatabaseListingStatus, string> = {
   sold: "Vendue",
   archived: "Archivée",
 };
+
+const priceUnitLabels = { fixed: "", hour: " / heure", day: " / jour", month: " / mois" } as const;
+
+function formatListingPrice(listing: { price: number | null; priceUnit: "fixed" | "hour" | "day" | "month" | "quote"; currency: string }) {
+  if (listing.priceUnit === "quote") return "Sur devis";
+  if (listing.price === null) return null;
+  const amount = new Intl.NumberFormat("fr-FR", { style: "currency", currency: listing.currency }).format(listing.price);
+  return `${amount}${priceUnitLabels[listing.priceUnit] ?? ""}`;
+}
 
 export default function ProfessionalListingsPage() {
   const isSupabase = getDataSource() === "supabase";
@@ -46,10 +56,13 @@ export default function ProfessionalListingsPage() {
               <div className="min-w-0">
                 <span className="text-xs font-bold tracking-[.12em] text-start-gold uppercase">{statusLabels[listing.status]}</span>
                 <h2 className="mt-2 truncate text-lg font-semibold">{listing.title}</h2>
-                <p className="mt-2 text-sm text-start-cream/50">{listing.categoryName} · {listing.city}{listing.price !== null ? ` · ${new Intl.NumberFormat("fr-FR", { style: "currency", currency: listing.currency }).format(listing.price)}` : ""}</p>
+                <p className="mt-2 text-sm text-start-cream/50">{listing.categoryName} · {listing.city}{formatListingPrice(listing) ? ` · ${formatListingPrice(listing)}` : ""}</p>
                 {listing.rejectionReason && <p className="mt-3 text-sm text-red-200">Motif : {listing.rejectionReason}</p>}
               </div>
-              <Link to={`/annonce/${listing.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-start-cream/15 px-4 text-sm font-semibold text-start-cream/70 hover:border-start-gold hover:text-start-gold max-sm:col-span-2">Voir</Link>
+              <div className="grid gap-2 max-sm:col-span-2">
+                {listing.status === "draft" && <SubmitListingButton listingId={listing.id} />}
+                <Link to={`/annonce/${listing.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-start-cream/15 px-4 text-sm font-semibold text-start-cream/70 hover:border-start-gold hover:text-start-gold">Voir</Link>
+              </div>
             </article>
           ))}
         </div>

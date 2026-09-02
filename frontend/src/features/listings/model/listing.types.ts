@@ -47,6 +47,7 @@ export type OwnerListing = {
   slug: string;
   status: DatabaseListingStatus;
   price: number | null;
+  priceUnit: "fixed" | "hour" | "day" | "month" | "quote";
   currency: string;
   city: string;
   categoryName: string;

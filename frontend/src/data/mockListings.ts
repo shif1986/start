@@ -22,6 +22,7 @@ export const mockListings: Listing[] = [
       role: "Cabinet de conseil",
       phone: "+33 1 84 00 00 01",
       email: "contact@impactconseil.fr",
+      postalAddress: "10 rue de la Paix, 75002 Paris",
     },
     featured: true,
   },
@@ -44,6 +45,7 @@ export const mockListings: Listing[] = [
       role: "Professeur de musique",
       phone: "+33 4 72 00 00 02",
       email: "lyon@musiquelumiere.fr",
+      postalAddress: "24 rue de la Lumière, 69002 Lyon",
     },
     featured: true,
   },
@@ -66,6 +68,7 @@ export const mockListings: Listing[] = [
       role: "Entreprise de maintenance",
       phone: "+33 5 56 00 00 03",
       email: "contact@maisongrace.fr",
+      postalAddress: "18 cours de la Grâce, 33000 Bordeaux",
     },
   },
   {
@@ -87,6 +90,7 @@ export const mockListings: Listing[] = [
       role: "Conseiller familial",
       phone: "+33 4 91 00 00 04",
       email: "contact@mediationvie.fr",
+      postalAddress: "12 boulevard de la Vie, 13006 Marseille",
     },
   },
   {
@@ -108,6 +112,7 @@ export const mockListings: Listing[] = [
       role: "Traiteur",
       phone: "+33 2 40 00 00 05",
       email: "nantes@tableduroyaume.fr",
+      postalAddress: "8 rue du Royaume, 44000 Nantes",
     },
   },
   {
@@ -129,6 +134,7 @@ export const mockListings: Listing[] = [
       role: "Designer web",
       phone: "+33 4 72 00 00 06",
       email: "contact@studiosiloe.fr",
+      postalAddress: "15 quai Siloé, 69002 Lyon",
     },
   },
   {
@@ -150,6 +156,7 @@ export const mockListings: Listing[] = [
       role: "Professeure de piano",
       phone: "+33 5 61 00 00 07",
       email: "elodie@harmonies.fr",
+      postalAddress: "21 rue des Harmonies, 31000 Toulouse",
     },
   },
   {
@@ -171,6 +178,7 @@ export const mockListings: Listing[] = [
       role: "Photographe",
       phone: "+33 3 88 00 00 08",
       email: "bonjour@lumierestudio.fr",
+      postalAddress: "7 avenue de la Lumière, 67000 Strasbourg",
     },
   },
 ];

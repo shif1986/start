@@ -36,6 +36,9 @@ export function useToggleFavorite(listing: Listing) {
       snapshot?.lists.forEach(([key, data]) => queryClient.setQueryData(key, data));
       queryClient.setQueryData(detailKey, snapshot?.detail);
     },
+    onSettled: () => {
+      if (user) void queryClient.invalidateQueries({ queryKey: listingKeys.favorites(user.id) });
+    },
   });
 
   return { ...mutation, user };

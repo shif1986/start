@@ -287,6 +287,8 @@ En production, tous les utilisateurs utiliseront la même connexion. Après auth
 
 Le CTA « Publier une annonce » ouvre `/publier`. Cette page présente le parcours obligatoire : compte professionnel, abonnement actif, puis publication. La création de compte depuis ce parcours présélectionne le type professionnel et conduit à `/abonnement`. Un compte particulier qui serait choisi à la place revient dans son espace et ne peut pas poursuivre vers l'abonnement de publication.
 
+Lorsqu'un professionnel abonné crée une annonce, elle est enregistrée directement avec le statut `pending` afin d'être envoyée à la modération sans étape de brouillon supplémentaire. Les anciens brouillons conservent une action manuelle de soumission.
+
 ### 11.2 Stripe — état actuel et branchement futur
 
 `/abonnement` présente les formules professionnelles de 7 € par mois et 84 € par an ainsi qu'un choix visuel entre carte bancaire et Google Pay. Aucun paiement n'est actuellement créé et le bouton de continuation ne débite rien.

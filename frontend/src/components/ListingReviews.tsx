@@ -1,19 +1,33 @@
-import { useState, type FormEvent } from "react";
+import { useEffect, useState, type FormEvent } from "react";
+import { Link, useLocation } from "react-router-dom";
 import type { Listing } from "../features/listings/model/listing.types";
+import { getUserReviews, saveUserReview, USER_REVIEWS_CHANGED, type UserReview } from "../features/reviews/model/user-reviews";
 
 type ListingReviewsProps = {
   listing: Listing;
   canReview?: boolean;
+  isAuthenticated?: boolean;
+  userId?: string;
 };
 
-export default function ListingReviews({ listing, canReview = false }: ListingReviewsProps) {
+export default function ListingReviews({ listing, canReview = false, isAuthenticated = false, userId = "" }: ListingReviewsProps) {
+  const location = useLocation();
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [userReviews, setUserReviews] = useState<UserReview[]>([]);
+
+  useEffect(() => {
+    const refresh = () => setUserReviews(getUserReviews(userId).filter((review) => review.listingId === listing.id));
+    refresh();
+    window.addEventListener(USER_REVIEWS_CHANGED, refresh);
+    return () => window.removeEventListener(USER_REVIEWS_CHANGED, refresh);
+  }, [listing.id, userId]);
 
   function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canReview || rating === 0 || !comment.trim()) return;
+    saveUserReview(userId, listing, rating, comment);
     setIsSubmitted(true);
     setRating(0);
     setComment("");
@@ -55,11 +69,19 @@ export default function ListingReviews({ listing, canReview = false }: ListingRe
         <div className="mt-7 flex items-center justify-between gap-6 rounded-xl border border-start-cream/10 bg-[#0b0d10]/70 p-5 max-sm:flex-col max-sm:items-start">
           <div>
             <h3 className="font-semibold text-start-cream">Vous avez fait appel à ce professionnel ?</h3>
-            <p className="mt-2 text-sm leading-6 text-start-cream/55">Connectez-vous avec votre compte particulier gratuit pour laisser une note et partager votre expérience.</p>
+            <p className="mt-2 text-sm leading-6 text-start-cream/55">{isAuthenticated ? "Les évaluations sont réservées aux comptes particuliers actifs." : "Connectez-vous avec votre compte particulier gratuit pour laisser une note et partager votre expérience."}</p>
           </div>
-          <button type="button" className="shrink-0 rounded-xl border border-start-gold/60 px-5 py-3 font-semibold text-start-gold transition hover:bg-start-gold hover:text-start-ink max-sm:w-full">Se connecter pour évaluer</button>
+          {!isAuthenticated && <Link to={`/connexion?redirect=${encodeURIComponent(`${location.pathname}${location.search}#avis`)}`} className="shrink-0 rounded-xl border border-start-gold/60 px-5 py-3 text-center font-semibold text-start-gold transition hover:bg-start-gold hover:text-start-ink max-sm:w-full">Se connecter pour évaluer</Link>}
         </div>
       )}
+
+      {userReviews.length > 0 && <div className="mt-7 grid gap-4 border-t border-start-cream/10 pt-6">
+        <h3 className="font-semibold text-start-cream">Votre avis publié</h3>
+        {userReviews.map((review) => <article key={review.id} className="rounded-xl border border-start-cream/10 bg-[#0b0d10]/70 p-5">
+          <div className="text-start-gold" aria-label={`${review.rating} étoiles sur 5`}>{"★".repeat(review.rating)}<span className="text-start-cream/20">{"★".repeat(5 - review.rating)}</span></div>
+          <p className="mt-3 text-sm leading-6 text-start-cream/65">{review.comment}</p>
+        </article>)}
+      </div>}
     </section>
   );
 }

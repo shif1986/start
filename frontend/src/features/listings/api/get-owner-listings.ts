@@ -5,7 +5,7 @@ import type { OwnerListing } from "../model/listing.types";
 import { signListingImages } from "./sign-listing-images";
 
 type OwnerListingResult = Pick<Database["public"]["Tables"]["listings"]["Row"],
-  "id" | "title" | "slug" | "status" | "price" | "currency" | "city" | "created_at" | "updated_at" | "published_at" | "rejection_reason"
+  "id" | "title" | "slug" | "status" | "price" | "price_unit" | "currency" | "city" | "created_at" | "updated_at" | "published_at" | "rejection_reason"
 > & {
   categories: Pick<Database["public"]["Tables"]["categories"]["Row"], "name" | "slug">;
   listing_images: Pick<Database["public"]["Tables"]["listing_images"]["Row"], "storage_path" | "position">[];
@@ -19,7 +19,7 @@ export async function getOwnerListings(
 
   const { data, error } = await client
     .from("listings")
-    .select("id,title,slug,status,price,currency,city,created_at,updated_at,published_at,rejection_reason,categories(name,slug),listing_images(storage_path,position)")
+    .select("id,title,slug,status,price,price_unit,currency,city,created_at,updated_at,published_at,rejection_reason,categories(name,slug),listing_images(storage_path,position)")
     .eq("owner_id", userId)
     .order("created_at", { ascending: false });
 
@@ -41,6 +41,7 @@ export async function getOwnerListings(
       slug: row.slug,
       status: row.status,
       price: row.price,
+      priceUnit: row.price_unit as OwnerListing["priceUnit"],
       currency: row.currency,
       city: row.city,
       categoryName: row.categories.name,

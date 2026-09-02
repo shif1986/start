@@ -964,7 +964,7 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
 }
 
 .listings-map .leaflet-tile-pane {
-  filter: brightness(1.06) saturate(.72) contrast(1.02);
+  filter: grayscale(1) invert(.92) contrast(1.18) brightness(.58);
   opacity: .94;
 }
 

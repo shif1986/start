@@ -54,7 +54,8 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
 export async function signInWithGoogle(redirectPath: string, accountType: Database["public"]["Enums"]["account_type"], client: SupabaseClient<Database> = getSupabaseClient()) {
   const safePath = safeRedirectPath(redirectPath);
   sessionStorage.setItem("start-oauth-account-type", accountType);
-  const redirectTo = new URL(`/auth/callback?next=${encodeURIComponent(safePath)}`, window.location.origin).toString();
+  sessionStorage.setItem("start-oauth-next", safePath);
+  const redirectTo = new URL("/auth/callback", window.location.origin).toString();
   const { data, error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
   if (error) throw new Error("Impossible de lancer la connexion Google.", { cause: error });
   return data;

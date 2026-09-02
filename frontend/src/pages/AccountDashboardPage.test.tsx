@@ -6,6 +6,9 @@ import AccountDashboardPage from "./AccountDashboardPage";
 vi.mock("../lib/data-source", () => ({ getDataSource: () => "static" }));
 vi.mock("../features/profiles/hooks/use-current-profile", () => ({ useCurrentProfile: () => ({ data: null }) }));
 vi.mock("../features/subscriptions/hooks/use-current-subscription", () => ({ useCurrentSubscription: () => ({ data: null }) }));
+vi.mock("../features/auth/context/use-auth", () => ({ useAuth: () => ({ user: null }) }));
+vi.mock("../features/favorites/hooks/use-favorite-listings", () => ({ useFavoriteListings: () => ({ data: [] }) }));
+vi.mock("../features/contacts/hooks/use-professional-contact-count", () => ({ useProfessionalContactCount: () => ({ data: 0 }) }));
 
 describe("AccountDashboardPage", () => {
   it("n'affiche aucune identité ou statistique personnelle fictive", () => {

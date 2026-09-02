@@ -7,6 +7,7 @@ const listingMocks = vi.hoisted(() => ({ own: vi.fn() }));
 
 vi.mock("../lib/data-source", () => ({ getDataSource: () => "supabase" }));
 vi.mock("../features/listings/hooks/use-owner-listings", () => ({ useOwnerListings: listingMocks.own }));
+vi.mock("../features/listings/components/SubmitListingButton", () => ({ default: () => <button type="button">Soumettre</button> }));
 
 describe("ProfessionalListingsPage", () => {
   beforeEach(() => {
@@ -17,6 +18,7 @@ describe("ProfessionalListingsPage", () => {
         slug: "service-professionnel",
         status: "draft",
         price: 120,
+        priceUnit: "hour",
         currency: "EUR",
         city: "Paris",
         categoryName: "Services",

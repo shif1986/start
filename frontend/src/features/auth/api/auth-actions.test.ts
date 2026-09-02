@@ -38,8 +38,9 @@ describe("auth actions", () => {
     await signInWithGoogle("/annonces", "customer", client);
     expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fannonces` },
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+    expect(sessionStorage.getItem("start-oauth-next")).toBe("/annonces");
   });
 
   it("déconnecte via Supabase", async () => {

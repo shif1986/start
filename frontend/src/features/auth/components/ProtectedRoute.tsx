@@ -12,9 +12,10 @@ type ProtectedRouteProps = {
   children: ReactNode;
   roles?: UserRole[];
   accountTypes?: AccountType[];
+  unauthorizedTo?: string;
 };
 
-export default function ProtectedRoute({ children, roles, accountTypes }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, roles, accountTypes, unauthorizedTo = "/" }: ProtectedRouteProps) {
   const location = useLocation();
   const { session, isLoading } = useAuth();
   const profileQuery = useCurrentProfile();
@@ -32,7 +33,7 @@ export default function ProtectedRoute({ children, roles, accountTypes }: Protec
 
   const profile = profileQuery.data;
   if (!profile || (roles && !roles.includes(profile.role)) || (accountTypes && !accountTypes.includes(profile.accountType))) {
-    return <Navigate to="/" replace />;
+    return <Navigate to={unauthorizedTo} replace />;
   }
 
   return children;

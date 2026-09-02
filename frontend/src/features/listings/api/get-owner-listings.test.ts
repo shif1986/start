@@ -32,6 +32,7 @@ describe("getOwnerListings", () => {
         slug: "service-professionnel",
         status: "draft",
         price: 120,
+        price_unit: "hour",
         currency: "EUR",
         city: "Paris",
         created_at: "2026-08-28T12:00:00Z",

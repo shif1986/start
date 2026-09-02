@@ -13,7 +13,7 @@ export default function PrivacyPolicyPage() {
         <ul className="grid gap-2 pl-5 [list-style:disc]">
           <li>identité, coordonnées et authentification pour créer et sécuriser les comptes ;</li>
           <li>profil, annonces, avis et échanges pour fournir le service de mise en relation ;</li>
-          <li>demandes de contact et signalements pour répondre, modérer et prévenir les abus ;</li>
+          <li>clics sur « Contacter », demandes de contact et signalements pour fournir l’historique d’activité, modérer et prévenir les abus ;</li>
           <li>données d’abonnement, de facturation et de paiement pour gérer les souscriptions ;</li>
           <li>données techniques et journaux de sécurité pour protéger et maintenir la plateforme ;</li>
           <li>adresse électronique de newsletter uniquement avec le consentement de la personne.</li>
@@ -27,6 +27,7 @@ export default function PrivacyPolicyPage() {
       <LegalSection title="Destinataires et prestataires">
         <p>Les données sont accessibles aux personnes habilitées de START et aux prestataires strictement nécessaires au fonctionnement du service, notamment pour l’hébergement, l’authentification, l’envoi d’e-mails et le paiement. Le site est hébergé par Netlify, Inc.</p>
         <p>Le téléphone, l’adresse électronique et l’éventuelle adresse postale de contact renseignés par un professionnel sont accessibles aux particuliers connectés uniquement pendant la période où l’abonnement professionnel est actif. À son expiration, le profil et les annonces déjà publiées peuvent rester visibles, mais ces coordonnées sont masquées aux particuliers. Les visiteurs non connectés n’y ont jamais accès.</p>
+        <p>Lorsqu’un particulier clique sur « Contacter » ou directement sur un téléphone, un e-mail ou une adresse postale, START enregistre le professionnel concerné, l’annonce utilisée, le type de coordonnée, le nombre de clics et leurs dates. L’adresse ouvre un service cartographique externe. Ce suivi indique seulement qu’une prise de contact a été initiée : il ne permet pas de savoir si un appel a abouti, si un e-mail a effectivement été envoyé ou si un déplacement a eu lieu.</p>
         <p>Lorsque des prestataires traitent des données hors de l’Espace économique européen ou de Suisse, START applique les garanties de transfert requises par la réglementation.</p>
       </LegalSection>
 
@@ -34,7 +35,7 @@ export default function PrivacyPolicyPage() {
         <ul className="grid gap-2 pl-5 [list-style:disc]">
           <li>compte et profil : pendant l’utilisation du service, puis le temps nécessaire à la gestion des réclamations ;</li>
           <li>annonces et modération : pendant leur publication puis en archivage limité pour la sécurité et les litiges ;</li>
-          <li>demandes de contact : jusqu’à trois ans après le dernier échange ;</li>
+          <li>clics et demandes de contact : jusqu’à trois ans après le dernier clic ou échange ;</li>
           <li>documents comptables et factures : durée légale applicable ;</li>
           <li>newsletter : jusqu’au retrait du consentement ou après une période prolongée sans interaction ;</li>
           <li>journaux techniques : durée proportionnée aux besoins de sécurité.</li>

@@ -8,19 +8,38 @@ import { useListingDetail } from "../features/listings/hooks/use-listing-detail"
 import { getDataSource } from "../lib/data-source";
 import FavoriteButton from "../features/favorites/components/FavoriteButton";
 import { useAuth } from "../features/auth/context/use-auth";
+import { useCurrentProfile } from "../features/profiles/hooks/use-current-profile";
+import { recordProfessionalContact, type ContactChannel } from "../features/contacts/api/contact-clicks";
+import { recordDemoContact } from "../features/contacts/model/demo-contact-clicks";
+import { professionalContactCountKey } from "../features/contacts/hooks/use-professional-contact-count";
+import { queryClient } from "../lib/query-client";
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
   const { session } = useAuth();
+  const profileQuery = useCurrentProfile();
   const dataSource = getDataSource();
   const listingQuery = useListingDetail(slug, { enabled: dataSource === "supabase" });
   const demoListing = mockListings.find((item) => item.id === slug || item.slug === slug);
   const listing = dataSource === "supabase" ? listingQuery.data ?? demoListing : demoListing;
   const isSupabaseListing = dataSource === "supabase" && Boolean(listingQuery.data);
   const isAuthenticated = Boolean(session);
+  const canReview = profileQuery.data?.accountType === "customer"
+    && profileQuery.data.accountStatus === "active";
   const hasDemoContactAccess = dataSource === "supabase" && !isSupabaseListing && isAuthenticated;
   const hasContactAccess = (isSupabaseListing || hasDemoContactAccess)
     && Boolean(listing?.professional?.phone || listing?.professional?.email);
+
+  function handleContactClick(channel: ContactChannel) {
+    if (!session?.user.id || !listing?.professional) return;
+    if (!isSupabaseListing) {
+      recordDemoContact(session.user.id, listing.professional.name);
+      return;
+    }
+    void recordProfessionalContact(listing.id, channel)
+      .then(() => queryClient.invalidateQueries({ queryKey: professionalContactCountKey(session.user.id) }))
+      .catch(() => undefined);
+  }
 
   if (dataSource === "supabase" && listingQuery.isPending) {
     return <div className="min-h-[680px] animate-pulse rounded-2xl border border-start-cream/10 bg-start-cream/[.035]" role="status" aria-label="Chargement de l’annonce" />;
@@ -90,7 +109,7 @@ export default function ListingDetailPage() {
 
             <ListingLocationMap listing={listing} />
 
-            <ListingReviews listing={listing} canReview={false} />
+            <ListingReviews listing={listing} canReview={canReview} isAuthenticated={isAuthenticated} userId={session?.user.id} />
           </div>
 
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
@@ -101,11 +120,11 @@ export default function ListingDetailPage() {
             {hasContactAccess && listing.professional ? (
               <>
                 <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
-                  {listing.professional.phone && <li>Tél. : {listing.professional.phone}</li>}
-                  {listing.professional.email && <li>E-mail : {listing.professional.email}</li>}
-                  {listing.professional.postalAddress && <li>Adresse : {listing.professional.postalAddress}</li>}
+                  {listing.professional.phone && <li>Tél. : <a href={`tel:${listing.professional.phone}`} onClick={() => handleContactClick("phone")} className="font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">{listing.professional.phone}</a></li>}
+                  {listing.professional.email && <li>E-mail : <a href={`mailto:${listing.professional.email}`} onClick={() => handleContactClick("email")} className="break-all font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">{listing.professional.email}</a></li>}
+                  {listing.professional.postalAddress && <li>Adresse : <a href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(listing.professional.postalAddress)}`} target="_blank" rel="noreferrer" onClick={() => handleContactClick("address")} className="font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">{listing.professional.postalAddress}</a></li>}
                 </ul>
-                <a href={listing.professional.email ? `mailto:${listing.professional.email}` : `tel:${listing.professional.phone}`} className="flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
+                <a href={listing.professional.email ? `mailto:${listing.professional.email}` : `tel:${listing.professional.phone}`} onClick={() => handleContactClick(listing.professional?.email ? "email" : "phone")} className="flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink hover:bg-[#d5b66f]">
                   Contacter
                 </a>
               </>
