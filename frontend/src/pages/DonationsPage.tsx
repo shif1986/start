@@ -1,17 +1,23 @@
-import { useMemo, useState, type FormEvent } from "react";
+import { useEffect, useMemo, useState, type FormEvent } from "react";
+import { useSearchParams } from "react-router-dom";
 import ThemedPage from "../components/ThemedPage";
+import { createDonationCheckout, getDonationStatus, type DonationStatus } from "../features/donations/api/donation-billing";
 
 type DonationFrequency = "once" | "monthly";
-type PaymentMethod = "card" | "google-pay";
-
 const suggestedAmounts = [10, 25, 50, 100];
 
 export default function DonationsPage() {
   const [frequency, setFrequency] = useState<DonationFrequency>("once");
   const [selectedAmount, setSelectedAmount] = useState<number | "custom">(25);
   const [customAmount, setCustomAmount] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("card");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [email, setEmail] = useState("");
+  const [consent, setConsent] = useState(false);
+  const [pending, setPending] = useState(false);
   const [feedbackMessage, setFeedbackMessage] = useState("");
+  const [confirmedDonation, setConfirmedDonation] = useState<DonationStatus | null>(null);
+  const [searchParams] = useSearchParams();
 
   const amount = useMemo(() => {
     if (selectedAmount !== "custom") return selectedAmount;
@@ -19,13 +25,28 @@ export default function DonationsPage() {
     return Number.isFinite(parsedAmount) && parsedAmount > 0 ? parsedAmount : 0;
   }, [customAmount, selectedAmount]);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  useEffect(() => {
+    const sessionId = searchParams.get("session_id");
+    if (!sessionId) return;
+    setFeedbackMessage("Confirmation du paiement en cours…");
+    void getDonationStatus(sessionId).then((result) => {
+      setConfirmedDonation(result);
+      setFeedbackMessage(result.status === "succeeded" || result.status === "active" ? "Merci, votre don a été confirmé par Stripe." : "Le paiement est encore en cours de confirmation.");
+    }).catch((error) => setFeedbackMessage(error instanceof Error ? error.message : "Impossible de confirmer ce don."));
+  }, [searchParams]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    setFeedbackMessage(
-      amount > 0
-        ? "Vous allez poursuivre vers le paiement sécurisé de votre don."
-        : "Choisissez ou saisissez un montant supérieur à 0 €.",
-    );
+    if (amount < 1 || amount > 10_000) { setFeedbackMessage("Choisissez un montant compris entre 1 € et 10 000 €."); return; }
+    setPending(true);
+    setFeedbackMessage("");
+    try {
+      const url = await createDonationCheckout({ amountCents: Math.round(amount * 100), frequency, firstName, lastName, email, consent: true });
+      window.location.assign(url);
+    } catch (error) {
+      setFeedbackMessage(error instanceof Error ? error.message : "Impossible d’ouvrir le paiement.");
+      setPending(false);
+    }
   }
 
   return (
@@ -40,6 +61,9 @@ export default function DonationsPage() {
             Votre soutien aide START à accompagner les initiatives locales, développer les outils du réseau et favoriser des projets porteurs de sens.
           </p>
         </header>
+
+        {searchParams.get("checkout") === "cancelled" && <p role="status" className="mx-auto mt-8 max-w-3xl rounded-xl border border-start-gold/25 p-4 text-center text-start-cream/65">Le paiement a été annulé. Aucun don n’a été confirmé.</p>}
+        {confirmedDonation && (confirmedDonation.status === "succeeded" || confirmedDonation.status === "active") && <p role="status" className="mx-auto mt-8 max-w-3xl rounded-xl border border-network-blue/30 bg-network-blue/[.06] p-4 text-center text-start-cream/80">Merci ! Don de {(confirmedDonation.amountCents / 100).toLocaleString("fr-FR")} € {confirmedDonation.frequency === "monthly" ? "mensuel" : "ponctuel"} confirmé.</p>}
 
         <div className="mt-[clamp(48px,7vw,80px)] grid grid-cols-[.82fr_1.18fr] items-start gap-8 max-lg:grid-cols-1">
           <section className="relative overflow-hidden rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_top_left,rgba(199,164,93,.1),transparent_38%),#17191e] p-[clamp(22px,4vw,36px)] shadow-[0_24px_70px_rgba(0,0,0,.22)] max-lg:order-2">
@@ -87,31 +111,25 @@ export default function DonationsPage() {
             <fieldset className="mt-7">
               <legend className="text-sm font-semibold text-start-cream/80">Vos informations</legend>
               <div className="mt-3 grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-                <label className="grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Prénom<input required autoComplete="given-name" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" /></label>
-                <label className="grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Nom<input required autoComplete="family-name" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" /></label>
+                <label className="grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Prénom<input required maxLength={80} value={firstName} onChange={(event) => setFirstName(event.target.value)} autoComplete="given-name" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" /></label>
+                <label className="grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Nom<input required maxLength={80} value={lastName} onChange={(event) => setLastName(event.target.value)} autoComplete="family-name" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" /></label>
               </div>
-              <label className="mt-4 grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Adresse e-mail<input required type="email" autoComplete="email" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" placeholder="vous@exemple.fr" /></label>
+              <label className="mt-4 grid gap-2 text-xs font-semibold tracking-wide text-start-cream/55 uppercase">Adresse e-mail<input required type="email" maxLength={160} value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" className="min-h-12 rounded-xl border border-start-cream/12 bg-[#080c12] px-4 font-normal tracking-normal text-start-cream normal-case outline-none focus:border-start-gold" placeholder="vous@exemple.fr" /></label>
             </fieldset>
 
-            <fieldset className="mt-7">
-              <legend className="text-sm font-semibold text-start-cream/80">Mode de paiement</legend>
-              <div className="mt-3 grid grid-cols-2 gap-3 max-sm:grid-cols-1">
-                <button type="button" onClick={() => setPaymentMethod("card")} aria-pressed={paymentMethod === "card"} className={`min-h-12 rounded-xl border px-4 py-3 text-sm font-semibold transition ${paymentMethod === "card" ? "border-start-gold text-start-gold" : "border-start-cream/12 text-start-cream/60"}`}>Carte bancaire</button>
-                <button type="button" onClick={() => setPaymentMethod("google-pay")} aria-pressed={paymentMethod === "google-pay"} className={`min-h-12 rounded-xl border px-4 py-3 text-sm font-semibold transition ${paymentMethod === "google-pay" ? "border-network-blue text-network-blue" : "border-start-cream/12 text-start-cream/60"}`}>Google Pay</button>
-              </div>
-            </fieldset>
+            <div className="mt-7 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Stripe proposera uniquement les moyens disponibles pour votre appareil et votre navigateur, notamment la carte et Google Pay lorsqu’il est éligible.</div>
 
             <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-start-cream/50">
-              <input required type="checkbox" className="mt-1 accent-[#c7a45d]" />
+              <input required checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" className="mt-1 accent-[#c7a45d]" />
               <span>J’accepte que mes informations soient utilisées pour traiter mon don et recevoir son récapitulatif.</span>
             </label>
 
             <div className="mt-7 flex items-end justify-between gap-4 border-t border-start-cream/10 pt-5">
               <div><span className="block text-xs text-start-cream/45">Total {frequency === "monthly" ? "mensuel" : "du don"}</span><strong className="text-3xl text-start-gold">{amount.toLocaleString("fr-FR", { maximumFractionDigits: 2 })} €</strong></div>
-              <span className="text-right text-xs text-start-cream/40">{paymentMethod === "card" ? "Carte bancaire" : "Google Pay"}</span>
+              <span className="text-right text-xs text-start-cream/40">Paiement sécurisé Stripe</span>
             </div>
 
-            <button type="submit" className="mt-6 min-h-13 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink shadow-[0_14px_35px_rgba(199,164,93,.16)] transition hover:-translate-y-0.5 hover:bg-[#d5b66f]">Continuer vers le paiement sécurisé</button>
+            <button type="submit" disabled={pending || !consent} className="mt-6 min-h-13 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink shadow-[0_14px_35px_rgba(199,164,93,.16)] transition hover:-translate-y-0.5 hover:bg-[#d5b66f] disabled:cursor-not-allowed disabled:opacity-50">{pending ? "Ouverture du paiement…" : "Continuer vers le paiement sécurisé"}</button>
             <p className="mt-3 text-center text-[.68rem] leading-5 text-start-cream/35">Vos informations de paiement sont protégées par un traitement sécurisé.</p>
             {feedbackMessage && <p className="mt-4 rounded-xl border border-network-blue/20 bg-network-blue/[.06] px-4 py-3 text-sm leading-6 text-start-cream/65" role="status" aria-live="polite">{feedbackMessage}</p>}
           </form>

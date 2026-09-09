@@ -3,6 +3,12 @@ export type Json = string | number | boolean | null | { [key: string]: Json | un
 export type Database = {
   public: {
     Tables: {
+      moderation_audit_log: {
+        Row: { id: string; moderator_id: string; action: string; target_type: string; target_id: string; reason: string; metadata: Json; created_at: string };
+        Insert: { id?: string; moderator_id: string; action: string; target_type: string; target_id: string; reason: string; metadata?: Json; created_at?: string };
+        Update: never;
+        Relationships: [];
+      };
       favorites: {
         Row: { created_at: string; listing_id: string; user_id: string };
         Insert: { created_at?: string; listing_id: string; user_id: string };
@@ -112,6 +118,18 @@ export type Database = {
           },
         ];
       };
+      category_fields: {
+        Row: { category_id: string; created_at: string; field_type: Database["public"]["Enums"]["field_type"]; help_text: string | null; id: string; is_filterable: boolean; is_required: boolean; key: string; name: string; placeholder: string | null; position: number; updated_at: string; validation: Json };
+        Insert: { category_id: string; created_at?: string; field_type: Database["public"]["Enums"]["field_type"]; help_text?: string | null; id?: string; is_filterable?: boolean; is_required?: boolean; key: string; name: string; placeholder?: string | null; position?: number; updated_at?: string; validation?: Json };
+        Update: Partial<Database["public"]["Tables"]["category_fields"]["Insert"]>;
+        Relationships: [{ foreignKeyName: "category_fields_category_id_fkey"; columns: ["category_id"]; isOneToOne: false; referencedRelation: "categories"; referencedColumns: ["id"] }];
+      };
+      category_field_options: {
+        Row: { field_id: string; id: string; label: string; position: number; value: string };
+        Insert: { field_id: string; id?: string; label: string; position?: number; value: string };
+        Update: Partial<Database["public"]["Tables"]["category_field_options"]["Insert"]>;
+        Relationships: [{ foreignKeyName: "category_field_options_field_id_fkey"; columns: ["field_id"]; isOneToOne: false; referencedRelation: "category_fields"; referencedColumns: ["id"] }];
+      };
       listings: {
         Row: {
           category_id: string;
@@ -133,6 +151,8 @@ export type Database = {
           rejection_reason: string | null;
           slug: string;
           status: Database["public"]["Enums"]["listing_status"];
+          subdivision_code: string | null;
+          subdivision_name: string | null;
           title: string;
           updated_at: string;
         };
@@ -156,6 +176,8 @@ export type Database = {
           rejection_reason?: string | null;
           slug: string;
           status?: Database["public"]["Enums"]["listing_status"];
+          subdivision_code?: string | null;
+          subdivision_name?: string | null;
           title: string;
           updated_at?: string;
         };
@@ -202,10 +224,50 @@ export type Database = {
           },
         ];
       };
+      listing_field_values: {
+        Row: { created_at: string; field_id: string; listing_id: string; updated_at: string; value: Json };
+        Insert: { created_at?: string; field_id: string; listing_id: string; updated_at?: string; value: Json };
+        Update: { updated_at?: string; value?: Json };
+        Relationships: [];
+      };
       listing_comments: {
         Row: { id: string; listing_id: string; author_id: string; body: string; is_hidden: boolean; created_at: string; updated_at: string };
         Insert: { id?: string; listing_id: string; author_id: string; body: string; is_hidden?: boolean; created_at?: string; updated_at?: string };
         Update: { body?: string; is_hidden?: boolean; updated_at?: string };
+        Relationships: [];
+      };
+      listing_reviews: {
+        Row: { id: string; listing_id: string; author_id: string; rating: number; body: string; is_hidden: boolean; created_at: string; updated_at: string };
+        Insert: { id?: string; listing_id: string; author_id: string; rating: number; body: string; is_hidden?: boolean; created_at?: string; updated_at?: string };
+        Update: Partial<Database["public"]["Tables"]["listing_reviews"]["Insert"]>;
+        Relationships: [
+          { foreignKeyName: "listing_reviews_listing_id_fkey"; columns: ["listing_id"]; isOneToOne: false; referencedRelation: "listings"; referencedColumns: ["id"] },
+        ];
+      };
+      reports: {
+        Row: {
+          created_at: string;
+          details: string | null;
+          id: string;
+          listing_id: string;
+          reason: Database["public"]["Enums"]["report_reason"];
+          reporter_id: string;
+          reviewed_at: string | null;
+          reviewed_by: string | null;
+          status: Database["public"]["Enums"]["report_status"];
+        };
+        Insert: {
+          created_at?: string;
+          details?: string | null;
+          id?: string;
+          listing_id: string;
+          reason: Database["public"]["Enums"]["report_reason"];
+          reporter_id: string;
+          reviewed_at?: string | null;
+          reviewed_by?: string | null;
+          status?: Database["public"]["Enums"]["report_status"];
+        };
+        Update: Partial<Database["public"]["Tables"]["reports"]["Insert"]>;
         Relationships: [];
       };
       subscription_plans: {
@@ -297,9 +359,72 @@ export type Database = {
           },
         ];
       };
+      stripe_webhook_events: {
+        Row: { id: string; event_type: string; received_at: string; processed_at: string | null; last_error: string | null };
+        Insert: { id: string; event_type: string; received_at?: string; processed_at?: string | null; last_error?: string | null };
+        Update: { event_type?: string; processed_at?: string | null; last_error?: string | null };
+        Relationships: [];
+      };
+      donations: {
+        Row: { id: string; donor_first_name: string; donor_last_name: string; donor_email: string; frequency: Database["public"]["Enums"]["donation_frequency"]; amount_cents: number; currency: string; status: Database["public"]["Enums"]["donation_status"]; stripe_checkout_session_id: string | null; stripe_customer_id: string | null; stripe_payment_intent_id: string | null; stripe_subscription_id: string | null; consent_at: string; completed_at: string | null; created_at: string; updated_at: string };
+        Insert: { id?: string; donor_first_name: string; donor_last_name: string; donor_email: string; frequency: Database["public"]["Enums"]["donation_frequency"]; amount_cents: number; currency?: string; status?: Database["public"]["Enums"]["donation_status"]; stripe_checkout_session_id?: string | null; stripe_customer_id?: string | null; stripe_payment_intent_id?: string | null; stripe_subscription_id?: string | null; consent_at: string; completed_at?: string | null; created_at?: string; updated_at?: string };
+        Update: { status?: Database["public"]["Enums"]["donation_status"]; stripe_checkout_session_id?: string | null; stripe_customer_id?: string | null; stripe_payment_intent_id?: string | null; stripe_subscription_id?: string | null; completed_at?: string | null; updated_at?: string };
+        Relationships: [];
+      };
+      donation_payments: {
+        Row: { id: string; donation_id: string; provider_payment_id: string; amount_cents: number; currency: string; status: Database["public"]["Enums"]["donation_payment_status"]; receipt_url: string | null; paid_at: string | null; created_at: string; updated_at: string };
+        Insert: { id?: string; donation_id: string; provider_payment_id: string; amount_cents: number; currency: string; status: Database["public"]["Enums"]["donation_payment_status"]; receipt_url?: string | null; paid_at?: string | null; created_at?: string; updated_at?: string };
+        Update: { status?: Database["public"]["Enums"]["donation_payment_status"]; receipt_url?: string | null; paid_at?: string | null; updated_at?: string };
+        Relationships: [];
+      };
     };
-    Views: Record<string, never>;
+    Views: {
+      active_professional_profiles: {
+        Row: {
+          avatar_url: string | null;
+          bio: string | null;
+          city: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          id: string | null;
+          is_verified: boolean | null;
+          username: string | null;
+        };
+        Relationships: [];
+      };
+      public_profiles: {
+        Row: {
+          account_type: Database["public"]["Enums"]["account_type"] | null;
+          avatar_url: string | null;
+          bio: string | null;
+          city: string | null;
+          created_at: string | null;
+          display_name: string | null;
+          id: string | null;
+          is_verified: boolean | null;
+          username: string | null;
+        };
+        Relationships: [];
+      };
+    };
     Functions: {
+      update_my_profile: {
+        Args: {
+          p_avatar_url?: string | null;
+          p_bio?: string | null;
+          p_city?: string | null;
+          p_display_name: string;
+          p_phone?: string | null;
+          p_postal_address?: string | null;
+          p_public_email?: string | null;
+          p_username: string;
+        };
+        Returns: undefined;
+      };
+      moderate_listing: { Args: { p_listing_id: string; p_decision: Database["public"]["Enums"]["listing_status"]; p_reason: string }; Returns: undefined };
+      moderate_profile: { Args: { p_profile_id: string; p_action: string; p_reason: string }; Returns: undefined };
+      moderate_report: { Args: { p_report_id: string; p_status: Database["public"]["Enums"]["report_status"]; p_reason: string }; Returns: undefined };
+      moderate_review: { Args: { p_review_id: string; p_action: string; p_reason: string }; Returns: undefined };
       complete_google_account_type: {
         Args: { requested_account_type: Database["public"]["Enums"]["account_type"] };
         Returns: undefined;
@@ -359,6 +484,7 @@ export type Database = {
           country_code: string;
           currency: string;
           description: string;
+          fields: Json;
           id: string;
           images: Json;
           is_favorite: boolean;
@@ -366,6 +492,7 @@ export type Database = {
           longitude: number | null;
           owner_id: string;
           price: number | null;
+          price_unit: string;
           published_at: string | null;
           seller_avatar_url: string | null;
           seller_bio: string | null;
@@ -387,6 +514,9 @@ export type Database = {
     Enums: {
       account_status: "active" | "suspended";
       account_type: "customer" | "professional";
+      donation_frequency: "once" | "monthly";
+      donation_payment_status: "succeeded" | "failed" | "refunded";
+      donation_status: "pending" | "active" | "succeeded" | "failed" | "canceled";
       field_type: "text" | "textarea" | "number" | "select" | "multi_select" | "checkbox" | "boolean" | "date" | "price" | "url";
       listing_status: "draft" | "pending" | "published" | "rejected" | "sold" | "archived";
       report_reason: "scam" | "forbidden_content" | "spam" | "wrong_category" | "counterfeit" | "already_sold" | "other";

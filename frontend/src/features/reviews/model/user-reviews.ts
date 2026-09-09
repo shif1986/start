@@ -43,3 +43,17 @@ export function saveUserReview(userId: string, listing: Listing, rating: number,
   window.dispatchEvent(new CustomEvent(USER_REVIEWS_CHANGED, { detail: { userId } }));
   return review;
 }
+
+export function updateUserReview(userId: string, reviewId: string, rating: number, comment: string) {
+  const reviews = getUserReviews(userId).map((review) => review.id === reviewId
+    ? { ...review, rating, comment: comment.trim() }
+    : review);
+  localStorage.setItem(storageKey(userId), JSON.stringify(reviews));
+  window.dispatchEvent(new CustomEvent(USER_REVIEWS_CHANGED, { detail: { userId } }));
+}
+
+export function deleteUserReview(userId: string, reviewId: string) {
+  const reviews = getUserReviews(userId).filter((review) => review.id !== reviewId);
+  localStorage.setItem(storageKey(userId), JSON.stringify(reviews));
+  window.dispatchEvent(new CustomEvent(USER_REVIEWS_CHANGED, { detail: { userId } }));
+}

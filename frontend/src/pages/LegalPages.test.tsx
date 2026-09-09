@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { MemoryRouter } from "react-router-dom";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import CookiePolicyPage from "./CookiePolicyPage";
 import PrivacyPolicyPage from "./PrivacyPolicyPage";
 import ReportContentPage from "./ReportContentPage";
 import SubscriptionTermsPage from "./SubscriptionTermsPage";
 import TermsOfUsePage from "./TermsOfUsePage";
+
+vi.mock("../features/auth/context/use-auth", () => ({ useAuth: () => ({ user: null }) }));
 
 const documentPages = [
   [PrivacyPolicyPage, "Politique de confidentialité"],

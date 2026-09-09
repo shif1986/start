@@ -15,6 +15,7 @@ export default function PrivacyPolicyPage() {
           <li>profil, annonces, avis et échanges pour fournir le service de mise en relation ;</li>
           <li>clics sur « Contacter », demandes de contact et signalements pour fournir l’historique d’activité, modérer et prévenir les abus ;</li>
           <li>données d’abonnement, de facturation et de paiement pour gérer les souscriptions ;</li>
+          <li>identité, adresse e-mail, consentement, montant, fréquence et références Stripe nécessaires au traitement des dons et à l’émission des reçus ;</li>
           <li>données techniques et journaux de sécurité pour protéger et maintenir la plateforme ;</li>
           <li>adresse électronique de newsletter uniquement avec le consentement de la personne.</li>
         </ul>

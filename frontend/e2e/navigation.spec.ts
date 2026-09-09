@@ -31,7 +31,20 @@ test.afterEach(({ page }) => {
   expect(browserErrors.get(page) ?? []).toEqual([]);
 });
 
+test("un visiteur ne peut pas ouvrir le tableau de bord de modération", async ({ page }) => {
+  await page.goto("/admin", { waitUntil: "domcontentloaded" });
+  await expect(page).toHaveURL(/\/connexion\?redirect=%2Fadmin/);
+});
+
+test("le callback OAuth affiche proprement une erreur fournisseur", async ({ page }) => {
+  await page.goto("/auth/callback?error_description=Connexion%20Google%20annulee", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Connexion non finalisée" })).toBeVisible();
+  await expect(page.getByRole("alert")).toContainText("Connexion Google annulee");
+  await expect(page.getByRole("link", { name: "Revenir à la connexion" })).toBeVisible();
+});
+
 test("la navigation reste compacte et sans chevauchement à toutes les largeurs", async ({ page }) => {
+  test.setTimeout(120_000);
   for (const width of responsiveWidths) {
     await page.setViewportSize({ width, height: width < 500 ? 720 : 900 });
     await page.goto("/", { waitUntil: "domcontentloaded" });

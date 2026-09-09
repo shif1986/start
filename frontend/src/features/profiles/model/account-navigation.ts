@@ -1,7 +1,9 @@
 export const professionalAccountNavigation = [
   { label: "Tableau de bord", to: "/espace/professionnel" },
   { label: "Mes annonces", to: "/espace/professionnel/annonces" },
-  { label: "Mon profil", to: "/espace/professionnel" },
+  { label: "Mes favoris", to: "/espace/professionnel/favoris" },
+  { label: "Mes avis", to: "/espace/professionnel/avis" },
+  { label: "Mon profil", to: "/espace/professionnel/profil" },
   { label: "Abonnement", to: "/espace/professionnel/abonnement" },
 ] as const;
 

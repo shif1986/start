@@ -1,6 +1,6 @@
-import { useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Listing } from "../features/listings/model/listing.types";
-import franceDepartmentsGeoJsonRaw from "../data/franceDepartments.geojson?raw";
+import { loadGeoJson, mapDataUrls } from "../features/maps/api/geojson";
 
 type GeoJsonFeature = {
   type: "Feature";
@@ -35,8 +35,6 @@ type FranceListingsMapProps = {
   selectedDepartment: string;
   onDepartmentSelect: (department: string) => void;
 };
-
-const geoJson = JSON.parse(franceDepartmentsGeoJsonRaw) as GeoJsonResponse;
 
 const OVERSEAS_DEPARTMENTS = new Set([
   "Guadeloupe",
@@ -217,6 +215,24 @@ export default function FranceListingsMap({
   selectedDepartment,
   onDepartmentSelect,
 }: FranceListingsMapProps) {
+  const [geoJson, setGeoJson] = useState<GeoJsonResponse | null>(null);
+  const [mapDataError, setMapDataError] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+    loadGeoJson(mapDataUrls.france)
+      .then((payload) => {
+        if (isActive) setGeoJson(payload as GeoJsonResponse);
+      })
+      .catch(() => {
+        if (isActive) setMapDataError(true);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const listingCounts = useMemo(() => {
     const counts = new Map<string, number>();
 
@@ -275,7 +291,7 @@ export default function FranceListingsMap({
         };
       })
       .filter((item): item is DepartmentMapItem => Boolean(item));
-  }, [listingCounts]);
+  }, [geoJson, listingCounts]);
 
   return (
     <section
@@ -286,6 +302,9 @@ export default function FranceListingsMap({
         <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase max-sm:text-[.6rem]">France</span>
         <strong className="text-sm text-start-cream max-sm:text-xs">{listings.length} annonces disponibles</strong>
       </div>
+
+      {!geoJson && !mapDataError && <div className="absolute inset-0 grid place-items-center" role="status"><span className="size-9 animate-spin rounded-full border-2 border-start-cream/15 border-t-start-gold" aria-hidden="true" /><span className="sr-only">Chargement de la carte</span></div>}
+      {mapDataError && <p className="absolute inset-x-8 top-1/2 -translate-y-1/2 rounded-xl border border-network-red/30 bg-[#101318]/90 p-4 text-center text-sm text-start-cream" role="alert">La carte est momentanément indisponible.</p>}
 
       <svg
         className="block h-auto w-full overflow-visible"

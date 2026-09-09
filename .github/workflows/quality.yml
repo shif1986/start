@@ -1,0 +1,86 @@
+name: Qualité
+
+on:
+  pull_request:
+  push:
+    branches: [develop, main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: quality-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  frontend:
+    name: Frontend
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm run test:run
+      - run: npm run build
+      - run: npm run bundle:check
+
+  e2e:
+    name: Parcours navigateur
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+      - name: Conserver les traces en cas d’échec
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: frontend/playwright-report/
+          retention-days: 7
+
+  database:
+    name: Base Supabase
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.113.0
+      - run: supabase start --workdir backend
+      - run: supabase db reset --workdir backend
+      - run: supabase test db --workdir backend
+      - run: supabase db lint --workdir backend --local --level warning
+      - run: npm ci
+        working-directory: frontend
+      - name: Exporter les clés de l’instance locale
+        run: |
+          status_json="$(supabase status --workdir backend -o json)"
+          echo "SUPABASE_TEST_URL=$(jq -r '.API_URL // .api_url' <<< "$status_json")" >> "$GITHUB_ENV"
+          echo "SUPABASE_TEST_PUBLISHABLE_KEY=$(jq -r '.PUBLISHABLE_KEY // .ANON_KEY // .publishable_key // .anon_key' <<< "$status_json")" >> "$GITHUB_ENV"
+          echo "SUPABASE_TEST_SECRET_KEY=$(jq -r '.SECRET_KEY // .SERVICE_ROLE_KEY // .secret_key // .service_role_key' <<< "$status_json")" >> "$GITHUB_ENV"
+      - run: npm run test:integration
+        working-directory: frontend

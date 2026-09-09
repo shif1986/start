@@ -1,0 +1,8 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.integration.tsbuildinfo",
+    "types": ["node", "vitest/globals"]
+  },
+  "include": ["integration", "src/lib/supabase/database.types.ts"]
+}

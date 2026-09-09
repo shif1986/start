@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
 import { signInWithEmail, signInWithGoogle, signOut, signUpWithEmail } from "./auth-actions";
@@ -15,6 +15,10 @@ function createClient() {
 }
 
 describe("auth actions", () => {
+  beforeEach(() => {
+    sessionStorage.clear();
+  });
+
   it("connecte avec e-mail sans stocker de session parallèle", async () => {
     const client = createClient();
     await signInWithEmail({ email: "user@example.test", password: "password123" }, client);
@@ -35,12 +39,28 @@ describe("auth actions", () => {
 
   it("utilise une redirection OAuth locale sûre", async () => {
     const client = createClient();
-    await signInWithGoogle("/annonces", "customer", client);
+    await signInWithGoogle("/annonces", "customer", false, client);
     expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fannonces` },
     });
     expect(sessionStorage.getItem("start-oauth-next")).toBe("/annonces");
+  });
+
+  it("laisse le callback choisir l'espace pour une connexion Google ordinaire", async () => {
+    const client = createClient();
+    sessionStorage.setItem("start-oauth-next", "/admin");
+    await signInWithGoogle(undefined, "customer", false, client);
+    expect(sessionStorage.getItem("start-oauth-next")).toBeNull();
+  });
+
+  it("conserve l’intention administration dans le callback OAuth", async () => {
+    const client = createClient();
+    await signInWithGoogle("/admin", "customer", true, client);
+    expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "google",
+      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fadmin&intent=admin` },
+    });
   });
 
   it("déconnecte via Supabase", async () => {

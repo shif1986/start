@@ -4,3 +4,5 @@
 .env.*.local
 node_modules/
 backend/.temp/
+backend/supabase/.temp/
+backend/supabase/.branches/

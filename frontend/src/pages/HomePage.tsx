@@ -1,6 +1,5 @@
-import { useState } from "react";
+import { lazy, Suspense, useState } from "react";
 import { Link } from "react-router-dom";
-import FranceListingsMap from "../components/FranceListingsMap";
 import { mockListings } from "../data/mockListings";
 import { homeCategories } from "../data/categories";
 import CategoryCard from "../components/CategoryCard";
@@ -10,6 +9,8 @@ import ThemeToggle from "../components/ThemeToggle";
 import { useListings } from "../features/listings/hooks/use-listings";
 import { getDataSource } from "../lib/data-source";
 import type { Listing } from "../features/listings/model/listing.types";
+
+const FranceListingsMap = lazy(() => import("../components/FranceListingsMap"));
 
 function HeroGradientBackdrop() {
   return (
@@ -157,11 +158,13 @@ function SearchByLocation({
 
       <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:order-1 max-lg:max-w-[620px] max-sm:max-w-[430px]">
         <div className="france-map-shell mx-auto w-[98%] max-sm:w-full">
-          <FranceListingsMap
-            listings={listings}
-            selectedDepartment={selectedDepartment}
-            onDepartmentSelect={onDepartmentSelect}
-          />
+          <Suspense fallback={<div className="aspect-[5/4] w-full animate-pulse rounded-2xl bg-start-cream/[.035]" role="status" aria-label="Chargement de la carte de France" />}>
+            <FranceListingsMap
+              listings={listings}
+              selectedDepartment={selectedDepartment}
+              onDepartmentSelect={onDepartmentSelect}
+            />
+          </Suspense>
         </div>
       </div>
 
@@ -189,8 +192,9 @@ export default function HomePage() {
     page: 1,
     pageSize: 8,
   }, { enabled: dataSource === "supabase" });
+  const realListings = listingsQuery.data?.items ?? [];
   const homeListings = dataSource === "supabase" && (listingsQuery.data?.totalCount ?? 0) > 0
-    ? listingsQuery.data?.items ?? []
+    ? import.meta.env.DEV ? [...realListings, ...mockListings] : realListings
     : mockListings;
   const featuredListings = homeListings.slice(0, 8);
 

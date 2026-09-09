@@ -15,6 +15,7 @@ function renderRoute(element: React.ReactNode) {
     <MemoryRouter initialEntries={["/admin"]}>
       <Routes>
         <Route path="/connexion" element={<div>Connexion</div>} />
+        <Route path="/compte-professionnel-requis" element={<div>Compte professionnel requis</div>} />
         <Route path="/" element={<div>Accueil</div>} />
         <Route path="/admin" element={element} />
       </Routes>
@@ -40,6 +41,13 @@ describe("ProtectedRoute", () => {
     useCurrentProfileMock.mockReturnValue({ data: undefined, isPending: false });
     renderRoute(<ProtectedRoute><div>Privé</div></ProtectedRoute>);
     expect(screen.getByText("Connexion")).toBeInTheDocument();
+  });
+
+  it("redirige un visiteur vers une page publique personnalisée", () => {
+    useAuthMock.mockReturnValue({ session: null, isLoading: false });
+    useCurrentProfileMock.mockReturnValue({ data: undefined, isPending: false });
+    renderRoute(<ProtectedRoute unauthenticatedTo="/compte-professionnel-requis"><div>Privé</div></ProtectedRoute>);
+    expect(screen.getByText("Compte professionnel requis")).toBeInTheDocument();
   });
 
   it("refuse un rôle insuffisant", () => {

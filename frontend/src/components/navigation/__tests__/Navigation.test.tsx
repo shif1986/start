@@ -72,6 +72,17 @@ describe("Navigation", () => {
     accountLinks.forEach((link) => expect(link).toHaveAttribute("href", "/espace/professionnel"));
   });
 
+  it("conserve l'espace professionnel comme accès principal pour un professionnel administrateur", () => {
+    accountMocks.auth.mockReturnValue({ session: { user: { id: "user-1" } }, user: { id: "user-1" }, isLoading: false });
+    accountMocks.profile.mockReturnValue({ data: { accountType: "professional", role: "admin" }, isPending: false });
+
+    renderNavigation();
+
+    screen.getAllByRole("link", { name: "Mon espace" }).forEach((link) => {
+      expect(link).toHaveAttribute("href", "/espace/professionnel");
+    });
+  });
+
   it("ouvre et ferme le panneau avec les attributs ARIA attendus", async () => {
     const { user } = renderNavigation();
     const trigger = screen.getByRole("button", { name: "Ouvrir le menu" });

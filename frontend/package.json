@@ -5,12 +5,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npm run maps:check",
     "build": "tsc -b && vite build",
+    "bundle:check": "node scripts/check-bundle-budget.mjs",
     "lint": "oxlint",
-    "typecheck": "tsc -p tsconfig.app.json --strict --noEmit",
+    "typecheck": "tsc -p tsconfig.app.json --strict --noEmit && tsc -p tsconfig.integration.json --strict --noEmit",
     "test": "vitest",
     "test:run": "vitest run",
+    "test:integration": "vitest run --config vitest.integration.config.ts",
     "test:e2e": "playwright test",
+    "maps:check": "node scripts/optimize-geojson.mjs --check",
+    "maps:optimize": "node scripts/optimize-geojson.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -58,25 +58,41 @@ export function parseListingImages(value: Json): ListingImageRow[] {
   });
 }
 
+export function parseListingFields(value: Json): NonNullable<Listing["details"]> {
+  if (!Array.isArray(value)) return [];
+  return value.flatMap((item) => {
+    if (!item || typeof item !== "object" || Array.isArray(item) || typeof item.key !== "string" || typeof item.name !== "string" || !("value" in item)) return [];
+    const rawOptions = Array.isArray(item.options) ? item.options : [];
+    const options = rawOptions.flatMap((option) => option && typeof option === "object" && !Array.isArray(option) && typeof option.label === "string" && typeof option.value === "string" ? [{ label: option.label, value: option.value }] : []);
+    return [{ key: item.key, label: item.name, fieldType: typeof item.field_type === "string" ? item.field_type : "text", value: item.value ?? null, options }];
+  });
+}
+
 export function mapDetailListing(row: DetailListingRow, signedImages: string[]): Listing {
+  const images = parseListingImages(row.images);
   return {
     id: row.id,
+    ownerId: row.owner_id,
     slug: row.slug,
     title: row.title,
     category: row.category_name,
     categorySlug: row.category_slug,
     image: signedImages[0] ?? fallbackListingImage(row.category_slug),
+    images: signedImages.length > 0 ? signedImages.map((src, index) => ({ src, altText: images[index]?.alt_text ?? `Photo ${index + 1} de ${row.title}` })) : [{ src: fallbackListingImage(row.category_slug), altText: `Illustration de ${row.title}` }],
     country: countryName(row.country_code),
     department: row.subdivision_name ?? row.subdivision_code ?? row.city,
     city: row.city,
     coordinates: row.latitude !== null && row.longitude !== null ? [row.latitude, row.longitude] : null,
     price: row.price,
+    priceUnit: row.price_unit as Listing["priceUnit"],
     currency: row.currency,
     description: row.description,
     rating: null,
     reviewCount: 0,
+    details: parseListingFields(row.fields),
     professional: {
       name: row.seller_display_name,
+      username: row.seller_username,
       role: row.seller_is_verified ? "Professionnel vérifié" : "Professionnel",
       phone: row.seller_phone,
       email: row.seller_email,

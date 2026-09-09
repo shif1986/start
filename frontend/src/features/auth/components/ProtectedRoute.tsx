@@ -13,9 +13,10 @@ type ProtectedRouteProps = {
   roles?: UserRole[];
   accountTypes?: AccountType[];
   unauthorizedTo?: string;
+  unauthenticatedTo?: string;
 };
 
-export default function ProtectedRoute({ children, roles, accountTypes, unauthorizedTo = "/" }: ProtectedRouteProps) {
+export default function ProtectedRoute({ children, roles, accountTypes, unauthorizedTo = "/", unauthenticatedTo }: ProtectedRouteProps) {
   const location = useLocation();
   const { session, isLoading } = useAuth();
   const profileQuery = useCurrentProfile();
@@ -27,8 +28,10 @@ export default function ProtectedRoute({ children, roles, accountTypes, unauthor
   }
 
   if (!session) {
+    if (unauthenticatedTo) return <Navigate to={unauthenticatedTo} replace />;
     const redirect = encodeURIComponent(`${location.pathname}${location.search}`);
-    return <Navigate to={`/connexion?redirect=${redirect}`} replace />;
+    const adminIntent = location.pathname.startsWith("/admin") ? "&admin=true" : "";
+    return <Navigate to={`/connexion?redirect=${redirect}${adminIntent}`} replace />;
   }
 
   const profile = profileQuery.data;

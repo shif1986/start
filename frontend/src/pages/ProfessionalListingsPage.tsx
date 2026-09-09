@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
 import { useOwnerListings } from "../features/listings/hooks/use-owner-listings";
 import type { DatabaseListingStatus } from "../features/listings/model/listing.types";
@@ -25,6 +25,7 @@ function formatListingPrice(listing: { price: number | null; priceUnit: "fixed" 
 }
 
 export default function ProfessionalListingsPage() {
+  const location = useLocation();
   const isSupabase = getDataSource() === "supabase";
   const listingsQuery = useOwnerListings(isSupabase);
   const listings = listingsQuery.data ?? [];
@@ -33,10 +34,12 @@ export default function ProfessionalListingsPage() {
     <AccountShell
       eyebrow="Compte professionnel"
       title="Mes annonces"
-      description="Suivez vos brouillons, vos annonces en validation et vos publications actives."
+      description="Gérez vos annonces publiées et mettez leurs informations à jour."
       navigation={[...professionalAccountNavigation]}
       action={<Link to="/publier" className="inline-flex min-h-11 items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink">Créer une annonce</Link>}
     >
+      {location.state?.listingPublished && <p role="status" className="rounded-xl border border-emerald-400/25 bg-emerald-400/[.07] px-4 py-3 text-emerald-200">Votre annonce est publiée et visible immédiatement.</p>}
+      {location.state?.listingUpdated && <p role="status" className="rounded-xl border border-emerald-400/25 bg-emerald-400/[.07] px-4 py-3 text-emerald-200">Les modifications de votre annonce ont été enregistrées.</p>}
       {listingsQuery.isPending && <p className="rounded-xl border border-dashed border-start-cream/15 p-6 text-start-cream/55" role="status">Chargement de vos annonces…</p>}
       {listingsQuery.isError && <p className="rounded-xl border border-network-red/25 bg-network-red/[.06] p-4 text-red-200" role="alert">Impossible de charger vos annonces pour le moment.</p>}
       {!listingsQuery.isPending && !listingsQuery.isError && listings.length === 0 && (
@@ -61,6 +64,7 @@ export default function ProfessionalListingsPage() {
               </div>
               <div className="grid gap-2 max-sm:col-span-2">
                 {listing.status === "draft" && <SubmitListingButton listingId={listing.id} />}
+                <Link to={`/espace/professionnel/annonces/${listing.id}/modifier`} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-start-gold px-4 text-sm font-bold text-start-ink">Modifier</Link>
                 <Link to={`/annonce/${listing.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-start-cream/15 px-4 text-sm font-semibold text-start-cream/70 hover:border-start-gold hover:text-start-gold">Voir</Link>
               </div>
             </article>

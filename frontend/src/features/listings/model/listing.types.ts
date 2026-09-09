@@ -1,21 +1,26 @@
 export type Listing = {
   id: string;
+  ownerId?: string;
   slug?: string;
   title: string;
   category: string;
   categorySlug: string;
   image: string;
+  images?: { src: string; altText: string }[];
   country?: "France" | "Suisse";
   department: string;
   city: string;
   coordinates: [number, number] | null;
   price: number | null;
+  priceUnit?: "fixed" | "hour" | "day" | "month" | "quote";
   currency?: string;
   description: string;
   rating: number | null;
   reviewCount: number;
+  details?: { key: string; label: string; fieldType: string; value: import("../../../lib/supabase/database.types").Json; options: { label: string; value: string }[] }[];
   professional?: {
     name: string;
+    username?: string;
     role: string;
     phone: string | null;
     email: string | null;

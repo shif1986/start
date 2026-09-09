@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import ThemedPage from "../components/ThemedPage";
+import { canAccessAdmin, resolveAuthDestination } from "../features/auth/model/auth-destination";
 import { getCurrentProfile } from "../features/profiles/api/get-current-profile";
 import { getSupabaseClient } from "../lib/supabase/client";
 
@@ -48,13 +49,21 @@ export default function AuthCallbackPage() {
       }
 
       const profile = await getCurrentProfile(data.session.user.id, client);
-      const requestedNext = safeNext(searchParams.get("next")) ?? safeNext(sessionStorage.getItem("start-oauth-next"));
+      const hasAdminIntent = sessionStorage.getItem("start-auth-admin-intent") === "true" || searchParams.get("intent") === "admin";
+      if (hasAdminIntent && !canAccessAdmin(profile.role)) {
+        sessionStorage.removeItem("start-auth-admin-intent");
+        sessionStorage.removeItem("start-oauth-next");
+        await client.auth.signOut();
+        throw new Error("Accès administrateur refusé : ce compte ne possède pas le rôle administrateur ou modérateur.");
+      }
+      const storedNext = safeNext(sessionStorage.getItem("start-oauth-next"));
+      const rawRequestedNext = safeNext(searchParams.get("next")) ?? storedNext;
+      const requestedNext = rawRequestedNext?.startsWith("/admin") && !hasAdminIntent
+        ? undefined
+        : rawRequestedNext;
+      sessionStorage.removeItem("start-auth-admin-intent");
       sessionStorage.removeItem("start-oauth-next");
-      const destination = profile.accountType === "professional"
-        ? requestedNext ?? "/abonnement"
-        : requestedNext === "/abonnement" || requestedNext?.startsWith("/espace/professionnel")
-          ? "/espace/particulier"
-          : requestedNext ?? "/espace/particulier";
+      const destination = resolveAuthDestination(profile.accountType, requestedNext);
 
       if (active) navigate(destination, { replace: true });
     }

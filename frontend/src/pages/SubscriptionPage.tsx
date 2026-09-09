@@ -6,6 +6,7 @@ import { useCurrentSubscription } from "../features/subscriptions/hooks/use-curr
 import { useSubscriptionPlans } from "../features/subscriptions/hooks/use-subscription-plans";
 import type { SubscriptionPlan } from "../features/subscriptions/model/subscription.types";
 import { getDataSource } from "../lib/data-source";
+import { createSubscriptionCheckout } from "../features/subscriptions/api/stripe-billing";
 
 type Plan = "monthly" | "yearly";
 
@@ -27,11 +28,25 @@ export default function SubscriptionPage() {
   const plansQuery = useSubscriptionPlans(isSupabase);
   const subscriptionQuery = useCurrentSubscription(isSupabase);
   const [plan, setPlan] = useState<Plan>("monthly");
+  const [checkoutPending, setCheckoutPending] = useState(false);
+  const [checkoutError, setCheckoutError] = useState("");
   const plans = isSupabase ? plansQuery.data ?? [] : previewPlans;
   const selectedPlan = plans.find((candidate) => candidate.interval === plan) ?? plans[0];
   const currentSubscription = subscriptionQuery.data;
   const isEntitled = currentSubscription?.status === "active" || currentSubscription?.status === "trialing";
   const formatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: selectedPlan?.currency ?? "EUR" });
+
+  async function openCheckout() {
+    if (!selectedPlan || isEntitled) return;
+    setCheckoutPending(true);
+    setCheckoutError("");
+    try {
+      window.location.assign(await createSubscriptionCheckout(selectedPlan.code));
+    } catch (error) {
+      setCheckoutError(error instanceof Error ? error.message : "Impossible d’ouvrir le paiement.");
+      setCheckoutPending(false);
+    }
+  }
 
   return (
     <ThemedPage
@@ -91,8 +106,9 @@ export default function SubscriptionPage() {
           <aside className="rounded-2xl border border-start-gold/25 bg-[#0b0d10]/90 p-[clamp(18px,3vw,28px)] max-sm:rounded-xl">
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Récapitulatif</span>
             {selectedPlan ? <div className="mt-5 flex items-end justify-between gap-4 border-b border-start-cream/10 pb-5 max-sm:items-start"><div><strong className="block">{selectedPlan.name}</strong><span className="text-sm text-start-cream/45">Renouvellement automatique</span></div><strong className="shrink-0 text-2xl text-start-gold">{formatter.format(selectedPlan.priceCents / 100)}</strong></div> : <p className="mt-5 text-sm text-start-cream/50">Sélectionnez une formule disponible.</p>}
-            <div className="mt-6 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Le paiement sécurisé sera ouvert uniquement après connexion du serveur Stripe et de son webhook signé.</div>
-            <button type="button" disabled className="mt-6 w-full cursor-not-allowed rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink opacity-55">{isEntitled ? "Abonnement déjà actif" : "Paiement bientôt disponible"}</button>
+            <div className="mt-6 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Le paiement s’ouvre sur la page sécurisée Stripe. Les moyens disponibles, dont Google Pay sur les appareils compatibles, sont proposés directement par Stripe.</div>
+            {checkoutError && <p role="alert" className="mt-4 text-sm text-red-200">{checkoutError}</p>}
+            <button type="button" disabled={!isSupabase || isEntitled || !selectedPlan || checkoutPending} onClick={() => void openCheckout()} className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-55">{isEntitled ? "Abonnement déjà actif" : checkoutPending ? "Ouverture du paiement…" : "Souscrire avec Stripe"}</button>
             <Link to="/espace/professionnel" className="mt-4 block text-center text-sm text-start-cream/45 hover:text-start-gold">Retour à mon espace professionnel</Link>
           </aside>
         </div>

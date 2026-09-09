@@ -1,0 +1,10 @@
+import { useState } from "react";
+import { moderateReport, type AdminReport } from "../api/admin-dashboard";
+import { adminDashboardKey } from "../hooks/use-admin-dashboard";
+import { queryClient } from "../../../lib/query-client";
+
+export default function AdminReportCard({ report }: { report: AdminReport }) {
+  const [reason, setReason] = useState(""); const [pending, setPending] = useState(false); const [error, setError] = useState("");
+  async function act(status: "reviewing" | "resolved" | "dismissed") { if (!window.confirm("Confirmer le traitement de ce signalement ?")) return; setPending(true); setError(""); try { await moderateReport(report.id, status, reason); await queryClient.invalidateQueries({ queryKey: adminDashboardKey }); } catch (cause) { setError(cause instanceof Error ? cause.message : "Action impossible."); } finally { setPending(false); } }
+  return <article className="rounded-xl border border-start-cream/10 p-5"><div className="flex flex-wrap justify-between gap-3"><div><strong>{report.listingTitle}</strong><p className="text-sm text-start-cream/50">Signalé par {report.reporterName} · {report.reason}</p></div><span className="text-network-red">{report.status}</span></div>{report.details && <p className="mt-3 text-sm text-start-cream/65">{report.details}</p>}<label className="mt-4 grid gap-2 text-sm">Motif de décision<input value={reason} onChange={(event) => setReason(event.target.value)} minLength={5} maxLength={1000} className="rounded-lg border border-start-cream/15 bg-[#0b0d10] px-3 py-2" /></label><div className="mt-3 flex flex-wrap gap-2"><button type="button" disabled={pending || reason.trim().length < 5} onClick={() => void act("reviewing")}>Examiner</button><button type="button" disabled={pending || reason.trim().length < 5} onClick={() => void act("resolved")} className="text-start-gold">Résoudre</button><button type="button" disabled={pending || reason.trim().length < 5} onClick={() => void act("dismissed")} className="text-network-red">Rejeter</button></div>{error && <p role="alert" className="mt-3 text-sm text-red-200">{error}</p>}</article>;
+}

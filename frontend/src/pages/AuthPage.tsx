@@ -15,14 +15,15 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const isRegister = mode === "register";
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const isAdminLogin = !isRegister && searchParams.get("admin") === "true";
   const requestedProfessional = isRegister && searchParams.get("type") === "professional";
   const [accountType, setAccountType] = useState<"customer" | "professional">(requestedProfessional ? "professional" : "customer");
   const [feedback, setFeedback] = useState("");
   const [isGooglePending, setIsGooglePending] = useState(false);
   const [googleEnabled, setGoogleEnabled] = useState<boolean | null>(null);
-  const redirect = safeRedirect(searchParams.get("redirect"));
+  const redirect = isAdminLogin ? "/admin" : safeRedirect(searchParams.get("redirect"));
   const redirectQuery = redirect ? `?redirect=${encodeURIComponent(redirect)}` : "";
-  const loginPath = `/connexion${redirectQuery}`;
+  const loginPath = isAdminLogin ? "/connexion?admin=true&redirect=%2Fadmin" : `/connexion${redirectQuery}`;
   const registerPath = `/inscription${redirectQuery}`;
   const dataSource = getDataSource();
   const accountHome = accountType === "professional"
@@ -49,6 +50,11 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
 
   async function handleEmailSubmit(values: AuthFormValues) {
     setFeedback("");
+    if (isAdminLogin) {
+      sessionStorage.setItem("start-auth-admin-intent", "true");
+    } else {
+      sessionStorage.removeItem("start-auth-admin-intent");
+    }
 
     if (dataSource === "static") {
       setFeedback("La connexion réelle est indisponible : configurez Supabase puis redémarrez l’application.");
@@ -72,8 +78,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
         await signInWithEmail({ email: values.email, password: values.password });
       }
 
-      const requestedPath = redirect && (!isRegister || accountType === "professional") ? redirect : accountHome;
-      navigate(`/auth/callback?next=${encodeURIComponent(requestedPath)}`, { replace: true });
+      const requestedPath = redirect && (!isRegister || accountType === "professional")
+        ? redirect
+        : isRegister ? accountHome : undefined;
+      navigate(requestedPath ? `/auth/callback?next=${encodeURIComponent(requestedPath)}` : "/auth/callback", { replace: true });
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "L’authentification n’a pas abouti.");
     }
@@ -92,7 +100,12 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     setFeedback("");
     setIsGooglePending(true);
     try {
-      await signInWithGoogle(redirect ?? accountHome, accountType);
+      if (isAdminLogin) {
+        sessionStorage.setItem("start-auth-admin-intent", "true");
+      } else {
+        sessionStorage.removeItem("start-auth-admin-intent");
+      }
+      await signInWithGoogle(redirect ?? (isRegister ? accountHome : undefined), accountType, isAdminLogin);
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "La connexion Google n’a pas abouti.");
       setIsGooglePending(false);
@@ -107,8 +120,9 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           <Link to={loginPath} aria-current={!isRegister ? "page" : undefined} className={`flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold transition ${!isRegister ? "bg-start-gold text-start-ink" : "text-start-cream/55 hover:text-start-gold"}`}>Se connecter</Link>
           <Link to={registerPath} aria-current={isRegister ? "page" : undefined} className={`flex min-h-11 items-center justify-center rounded-lg px-4 text-sm font-semibold transition ${isRegister ? "bg-start-gold text-start-ink" : "text-start-cream/55 hover:text-start-gold"}`}>Créer un compte</Link>
         </nav>
-        <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">{isRegister ? "Rejoindre START" : "Bienvenue"}</span>
-        <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-semibold tracking-[-.035em]">{isRegister ? "Créer un compte" : "Se connecter"}</h1>
+        <span className="text-xs font-bold tracking-[.2em] text-start-gold uppercase">{isRegister ? "Rejoindre START" : isAdminLogin ? "Accès sécurisé" : "Bienvenue"}</span>
+        <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-semibold tracking-[-.035em]">{isRegister ? "Créer un compte" : isAdminLogin ? "Connexion administration" : "Se connecter"}</h1>
+        {isAdminLogin && <p className="mt-4 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm leading-6 text-start-cream/65">Connectez-vous avec votre compte administrateur. L’accès sera refusé automatiquement si ce compte ne possède pas le rôle requis.</p>}
         {dataSource === "static" && <p className="mt-3 text-start-cream/55">Mode de démonstration local. Activez Supabase pour créer une session réelle.</p>}
 
         {requestedProfessional && <p className="mt-5 rounded-xl border border-start-gold/25 bg-start-gold/[.06] px-4 py-3 text-sm text-start-cream/65">Créez votre compte professionnel, puis choisissez votre abonnement pour continuer vers la publication.</p>}
@@ -126,10 +140,11 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           {isRegister && <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Nom complet<input className={fieldClassName} type="text" autoComplete="name" aria-invalid={Boolean(form.formState.errors.displayName)} {...form.register("displayName")} />{form.formState.errors.displayName && <span className="text-xs text-red-300">{form.formState.errors.displayName.message}</span>}</label>}
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Adresse e-mail<input className={fieldClassName} type="email" autoComplete="email" aria-invalid={Boolean(form.formState.errors.email)} {...form.register("email")} />{form.formState.errors.email && <span className="text-xs text-red-300">{form.formState.errors.email.message}</span>}</label>
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Mot de passe<input className={fieldClassName} type="password" autoComplete={isRegister ? "new-password" : "current-password"} aria-invalid={Boolean(form.formState.errors.password)} {...form.register("password")} />{form.formState.errors.password && <span className="text-xs text-red-300">{form.formState.errors.password.message}</span>}</label>
-          <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : "Se connecter"}</button>
+          <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : isAdminLogin ? "Accéder à l’administration" : "Se connecter"}</button>
         </form>
         {feedback && <p className="mt-5 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm text-start-cream/75" role="status" aria-live="polite">{feedback}</p>}
         <p className="mt-6 text-center text-sm text-start-cream/55">{isRegister ? "Déjà membre ?" : "Pas encore de compte ?"} <Link className="font-semibold text-start-gold" to={isRegister ? loginPath : registerPath}>{isRegister ? "Se connecter" : "Créer un compte gratuit"}</Link></p>
+        {!isRegister && <div className="mt-5 border-t border-start-cream/10 pt-5 text-center"><Link className="inline-flex min-h-10 items-center justify-center rounded-lg border border-start-cream/10 px-4 py-2 text-xs font-semibold text-start-cream/45 transition hover:border-start-gold/40 hover:text-start-gold" to={isAdminLogin ? "/connexion" : "/connexion?admin=true&redirect=%2Fadmin"}>{isAdminLogin ? "Retour à la connexion classique" : "Accès administration"}</Link></div>}
       </div>
     </ThemedPage>
   );

@@ -1,19 +1,10 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CircleMarker, GeoJSON, MapContainer, Popup, TileLayer, Tooltip, ZoomControl, useMap } from "react-leaflet";
 import type { FeatureCollection } from "geojson";
 import type { Listing } from "../features/listings/model/listing.types";
-import franceDepartmentsGeoJsonRaw from "../data/franceDepartments.geojson?raw";
-import overseasDepartmentsGeoJsonRaw from "../data/overseasDepartments.geojson?raw";
-import switzerlandGeoJsonRaw from "../data/switzerland.geojson?raw";
+import { loadGeoJson, mapDataUrls } from "../features/maps/api/geojson";
 
-const metropolitanDepartments = JSON.parse(franceDepartmentsGeoJsonRaw) as FeatureCollection;
-const overseasDepartments = JSON.parse(overseasDepartmentsGeoJsonRaw) as FeatureCollection;
-const switzerlandGeoJson = JSON.parse(switzerlandGeoJsonRaw) as FeatureCollection;
-const franceDepartmentsGeoJson: FeatureCollection = {
-  type: "FeatureCollection",
-  features: [...metropolitanDepartments.features, ...overseasDepartments.features],
-};
 const markerColors = ["#4DA3FF", "#FFB33D", "#FF4D4F"] as const;
 
 function FitListings({ listings, selectedCountry }: { listings: Listing[]; selectedCountry: string }) {
@@ -44,6 +35,35 @@ function FitListings({ listings, selectedCountry }: { listings: Listing[]; selec
 }
 
 export default function ListingsMap({ listings, selectedCountry = "" }: { listings: Listing[]; selectedCountry?: string }) {
+  const [franceDepartmentsGeoJson, setFranceDepartmentsGeoJson] = useState<FeatureCollection | null>(null);
+  const [switzerlandGeoJson, setSwitzerlandGeoJson] = useState<FeatureCollection | null>(null);
+  const [mapDataError, setMapDataError] = useState(false);
+
+  useEffect(() => {
+    let isActive = true;
+
+    Promise.all([
+      loadGeoJson(mapDataUrls.france),
+      loadGeoJson(mapDataUrls.overseas),
+      loadGeoJson(mapDataUrls.switzerland),
+    ])
+      .then(([metropolitan, overseas, switzerland]) => {
+        if (!isActive) return;
+        setFranceDepartmentsGeoJson({
+          type: "FeatureCollection",
+          features: [...metropolitan.features, ...overseas.features],
+        });
+        setSwitzerlandGeoJson(switzerland);
+      })
+      .catch(() => {
+        if (isActive) setMapDataError(true);
+      });
+
+    return () => {
+      isActive = false;
+    };
+  }, []);
+
   const groups = useMemo(() => {
     const grouped = new Map<string, Listing[]>();
     listings.forEach((listing) => {
@@ -68,7 +88,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
         />
         <ZoomControl position="bottomright" />
         <FitListings listings={listings} selectedCountry={selectedCountry} />
-        <GeoJSON
+        {franceDepartmentsGeoJson && <GeoJSON
           data={franceDepartmentsGeoJson}
           interactive={false}
           style={{
@@ -78,8 +98,8 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
             opacity: 0.88,
             weight: 0.95,
           }}
-        />
-        <GeoJSON
+        />}
+        {switzerlandGeoJson && <GeoJSON
           data={switzerlandGeoJson}
           interactive={false}
           style={{
@@ -89,7 +109,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
             opacity: 0.95,
             weight: 1.6,
           }}
-        />
+        />}
 
         {groups.map((group, index) => {
           const first = group[0];
@@ -120,6 +140,8 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
           );
         })}
       </MapContainer>
+      {!franceDepartmentsGeoJson && !mapDataError && <p className="pointer-events-none absolute right-5 bottom-5 z-[500] rounded-lg bg-[#080c12]/85 px-3 py-2 text-xs text-start-cream/70" role="status">Chargement des limites géographiques…</p>}
+      {mapDataError && <p className="absolute right-5 bottom-5 z-[500] rounded-lg border border-network-red/30 bg-[#080c12]/90 px-3 py-2 text-xs text-start-cream" role="alert">Les limites géographiques sont indisponibles. Les annonces restent visibles.</p>}
     </section>
   );
 }

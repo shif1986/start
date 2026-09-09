@@ -1,7 +1,9 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
 import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
+import { createCustomerPortal } from "../features/subscriptions/api/stripe-billing";
 
 const benefits = [
   "Créer et soumettre vos annonces",
@@ -11,6 +13,9 @@ const benefits = [
 ];
 
 export default function ProfessionalSubscriptionPage() {
+  const [searchParams] = useSearchParams();
+  const [portalPending, setPortalPending] = useState(false);
+  const [portalError, setPortalError] = useState("");
   const subscriptionQuery = useCurrentSubscription();
   const subscription = subscriptionQuery.data;
   const expiresAt = subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd) : null;
@@ -26,6 +31,13 @@ export default function ProfessionalSubscriptionPage() {
     ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: subscription.plan.currency, maximumFractionDigits: 0 }).format(subscription.plan.priceCents / 100)
     : "—";
 
+  async function openPortal() {
+    setPortalPending(true);
+    setPortalError("");
+    try { window.location.assign(await createCustomerPortal()); }
+    catch (error) { setPortalError(error instanceof Error ? error.message : "Impossible d’ouvrir la facturation."); setPortalPending(false); }
+  }
+
   return (
     <AccountShell
       eyebrow="Compte professionnel"
@@ -33,6 +45,7 @@ export default function ProfessionalSubscriptionPage() {
       description="Retrouvez votre formule, sa période de validité et les services disponibles avec votre compte START."
       navigation={[...professionalAccountNavigation]}
     >
+      {searchParams.get("checkout") === "success" && <p role="status" className="mb-6 rounded-xl border border-network-blue/25 bg-network-blue/[.06] p-4 text-network-blue">Paiement reçu par Stripe. L’abonnement apparaîtra actif dès la confirmation du webhook.</p>}
       {subscriptionQuery.isPending && <p className="rounded-2xl border border-start-cream/10 bg-[#121418] p-8 text-start-cream/60" role="status">Chargement de votre abonnement…</p>}
       {subscriptionQuery.isError && <p className="rounded-2xl border border-network-red/25 bg-network-red/[.06] p-6 text-red-200" role="alert">Impossible de charger votre abonnement pour le moment.</p>}
 
@@ -79,8 +92,10 @@ export default function ProfessionalSubscriptionPage() {
               <div className="mt-6 grid gap-3">
                 <Link to="/publier" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-start-gold px-5 font-bold text-start-ink">Créer une annonce</Link>
                 <Link to="/espace/professionnel/annonces" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-cream/15 px-5 font-semibold text-start-cream/70">Gérer mes annonces</Link>
+                <button type="button" disabled={portalPending} onClick={() => void openPortal()} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-gold/30 px-5 font-semibold text-start-gold disabled:opacity-50">{portalPending ? "Ouverture…" : "Gérer le paiement ou résilier"}</button>
               </div>
-              <p className="mt-5 text-xs leading-5 text-start-cream/40">La gestion du paiement, du renouvellement et de la résiliation sera disponible après l’intégration de Stripe.</p>
+              {portalError && <p role="alert" className="mt-4 text-sm text-red-200">{portalError}</p>}
+              <p className="mt-5 text-xs leading-5 text-start-cream/40">Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe.</p>
             </aside>
           </div>
         </div>

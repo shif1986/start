@@ -1,5 +1,5 @@
+import { lazy, Suspense } from "react";
 import { Link, useParams } from "react-router-dom";
-import ListingLocationMap from "../components/ListingLocationMap";
 import { mockListings } from "../data/mockListings";
 import ThemedPage from "../components/ThemedPage";
 import BrandPattern from "../components/BrandPattern";
@@ -13,6 +13,27 @@ import { recordProfessionalContact, type ContactChannel } from "../features/cont
 import { recordDemoContact } from "../features/contacts/model/demo-contact-clicks";
 import { professionalContactCountKey } from "../features/contacts/hooks/use-professional-contact-count";
 import { queryClient } from "../lib/query-client";
+import ListingGallery from "../components/ListingGallery";
+import type { Json } from "../lib/supabase/database.types";
+
+const ListingLocationMap = lazy(() => import("../components/ListingLocationMap"));
+
+const priceUnitLabels = { fixed: "", hour: " / heure", day: " / jour", month: " / mois" } as const;
+
+function formatPrice(price: number | null, unit: NonNullable<import("../features/listings/model/listing.types").Listing["priceUnit"]> = "fixed", currency = "EUR") {
+  if (unit === "quote") return "Sur devis";
+  if (price === null) return "Sur demande";
+  return `${new Intl.NumberFormat("fr-FR", { style: "currency", currency }).format(price)}${priceUnitLabels[unit]}`;
+}
+
+function formatDetailValue(value: Json, options: { label: string; value: string }[]) {
+  const labels = new Map(options.map((option) => [option.value, option.label]));
+  if (Array.isArray(value)) return value.map((item) => typeof item === "string" ? labels.get(item) ?? item : String(item)).join(", ");
+  if (typeof value === "boolean") return value ? "Oui" : "Non";
+  if (typeof value === "string") return labels.get(value) ?? value;
+  if (typeof value === "number") return new Intl.NumberFormat("fr-FR").format(value);
+  return "Non renseigné";
+}
 
 export default function ListingDetailPage() {
   const { slug } = useParams();
@@ -24,8 +45,9 @@ export default function ListingDetailPage() {
   const listing = dataSource === "supabase" ? listingQuery.data ?? demoListing : demoListing;
   const isSupabaseListing = dataSource === "supabase" && Boolean(listingQuery.data);
   const isAuthenticated = Boolean(session);
-  const canReview = profileQuery.data?.accountType === "customer"
-    && profileQuery.data.accountStatus === "active";
+  const canReview = (profileQuery.data?.accountType === "customer" || profileQuery.data?.accountType === "professional")
+    && profileQuery.data.accountStatus === "active"
+    && listing?.ownerId !== session?.user.id;
   const hasDemoContactAccess = dataSource === "supabase" && !isSupabaseListing && isAuthenticated;
   const hasContactAccess = (isSupabaseListing || hasDemoContactAccess)
     && Boolean(listing?.professional?.phone || listing?.professional?.email);
@@ -73,18 +95,7 @@ export default function ListingDetailPage() {
           </p>
         </div>
 
-        <figure className="relative mt-8 aspect-[16/7] min-h-56 overflow-hidden rounded-2xl border border-start-cream/10 bg-[#080c12] shadow-[0_20px_55px_rgba(0,0,0,.24)] max-md:aspect-[4/3] max-sm:min-h-52">
-          <img
-            src={listing.image}
-            alt={`Illustration de l’annonce : ${listing.title}`}
-            className="size-full object-cover brightness-[.9] transition duration-700 hover:scale-[1.015] hover:brightness-100"
-          />
-          <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-[#080c12]/75 via-transparent to-transparent" aria-hidden="true" />
-          <figcaption className="absolute right-5 bottom-5 left-5 flex items-end justify-between gap-4 text-sm max-sm:right-4 max-sm:bottom-4 max-sm:left-4 max-sm:flex-col max-sm:items-start max-sm:gap-2">
-            <span className="rounded-full border border-white/20 bg-[#0b0d10]/70 px-3 py-1.5 font-semibold text-start-cream backdrop-blur-md">Photo de l’annonce</span>
-            <span className="rounded-full bg-[#0b0d10]/55 px-3 py-1 text-start-cream/75 backdrop-blur-sm">{listing.city} · {listing.department}</span>
-          </figcaption>
-        </figure>
+        <ListingGallery images={listing.images ?? [{ src: listing.image, altText: `Illustration de l’annonce : ${listing.title}` }]} />
 
         <div className="grid grid-cols-[1fr_310px] gap-10 pt-10 max-lg:grid-cols-1">
           <div className="min-w-0">
@@ -102,20 +113,24 @@ export default function ListingDetailPage() {
               <div>
                 <span className="block text-xs font-bold tracking-wider text-network-yellow uppercase">Prix</span>
                 <strong>
-                  {listing.price ? `${listing.price} €` : "Prix libre"}
+                  {formatPrice(listing.price, listing.priceUnit, listing.currency)}
                 </strong>
               </div>
             </div>
 
-            <ListingLocationMap listing={listing} />
+            {listing.details && listing.details.length > 0 && <section className="my-8" aria-labelledby="listing-details-title"><h2 id="listing-details-title" className="text-xl font-semibold">Caractéristiques</h2><dl className="mt-4 grid grid-cols-2 gap-3 max-sm:grid-cols-1">{listing.details.map((detail) => <div key={detail.key} className="rounded-xl border border-start-cream/10 bg-black/15 p-4"><dt className="text-xs font-bold tracking-wide text-start-cream/45 uppercase">{detail.label}</dt><dd className="mt-2 font-semibold text-start-cream/85">{formatDetailValue(detail.value, detail.options)}</dd></div>)}</dl></section>}
 
-            <ListingReviews listing={listing} canReview={canReview} isAuthenticated={isAuthenticated} userId={session?.user.id} />
+            <Suspense fallback={<div className="my-8 h-72 animate-pulse rounded-2xl border border-start-cream/10 bg-start-cream/[.035]" role="status" aria-label="Chargement de la carte de localisation" />}>
+              <ListingLocationMap listing={listing} />
+            </Suspense>
+
+            <ListingReviews listing={listing} canReview={canReview} isAuthenticated={isAuthenticated} isPersistedListing={dataSource !== "supabase" || isSupabaseListing} userId={session?.user.id} />
           </div>
 
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
             <BrandPattern variant="nodes" className="-right-24 -bottom-36 -z-10 h-[380px] w-[280px] text-start-cream/[.055] opacity-50 max-sm:opacity-30" />
             <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Profil professionnel</span>
-            <h3 className="mt-3">{listing.professional?.name ?? "Professionnel"}</h3>
+            <h3 className="mt-3">{listing.professional?.username ? <Link className="hover:text-start-gold" to={`/professionnel/${listing.professional.username}`}>{listing.professional.name}</Link> : listing.professional?.name ?? "Professionnel"}</h3>
             <p className="text-start-cream/65">{listing.professional?.role ?? "Membre du réseau"}</p>
             {hasContactAccess && listing.professional ? (
               <>
@@ -155,6 +170,7 @@ export default function ListingDetailPage() {
                 </Link>
               </div>
             )}
+            {isSupabaseListing && <Link to={`/signaler-un-contenu?listing=${listing.id}`} className="mt-4 block text-center text-xs text-start-cream/40 underline underline-offset-4 hover:text-network-red">Signaler cette annonce</Link>}
           </aside>
         </div>
       </div>

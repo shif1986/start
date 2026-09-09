@@ -1,14 +1,15 @@
-import { useEffect, useMemo } from "react";
+import { lazy, Suspense, useEffect, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { mockListings } from "../data/mockListings";
 import { categories } from "../data/categories";
 import { departments, swissCantons } from "../data/departments";
 import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
-import ListingsMap from "../components/ListingsMap";
 import { normalizeListingFilters } from "../features/listings/model/listing-filters";
 import { useListings } from "../features/listings/hooks/use-listings";
 import { getDataSource } from "../lib/data-source";
+
+const ListingsMap = lazy(() => import("../components/ListingsMap"));
 
 const filterControlClass =
   "h-12 w-full box-border rounded-xl border border-start-cream/15 bg-[#080c12] px-4 py-0 text-start-cream outline-none transition focus:border-start-gold max-sm:h-14";
@@ -25,6 +26,7 @@ function SelectChevron() {
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dataSource = getDataSource();
+  const blendDemoCatalog = dataSource === "supabase" && import.meta.env.DEV;
 
   const search = searchParams.get("q") ?? "";
   const department = searchParams.get("department") ?? "";
@@ -62,9 +64,9 @@ export default function ListingsPage() {
     category,
     country,
     subdivision: department,
-    page: requestedPage,
-    pageSize: LISTINGS_PER_PAGE,
-  }), [category, country, department, requestedPage, search]);
+    page: blendDemoCatalog ? 1 : requestedPage,
+    pageSize: blendDemoCatalog ? 100 : LISTINGS_PER_PAGE,
+  }), [blendDemoCatalog, category, country, department, requestedPage, search]);
   const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
   const catalogStateQuery = useListings({
     search: null,
@@ -76,8 +78,12 @@ export default function ListingsPage() {
   }, { enabled: dataSource === "supabase" });
   const useDemoCatalog = dataSource === "static"
     || (!catalogStateQuery.isPending && !catalogStateQuery.isError && (catalogStateQuery.data?.totalCount ?? 0) === 0);
-  const filteredListings = useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
-  const totalCount = useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
+  const filteredListings = blendDemoCatalog
+    ? [...(listingsQuery.data?.items ?? []), ...staticFilteredListings]
+    : useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
+  const totalCount = blendDemoCatalog
+    ? filteredListings.length
+    : useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
 
   const locationOptions = country === "Suisse" ? swissCantons : departments;
 
@@ -85,7 +91,7 @@ export default function ListingsPage() {
   const currentPage = Number.isFinite(requestedPage)
     ? Math.min(Math.max(requestedPage, 1), pageCount)
     : 1;
-  const visibleListings = !useDemoCatalog ? filteredListings : filteredListings.slice(
+  const visibleListings = !useDemoCatalog && !blendDemoCatalog ? filteredListings : filteredListings.slice(
       (currentPage - 1) * LISTINGS_PER_PAGE,
       currentPage * LISTINGS_PER_PAGE,
     );
@@ -132,7 +138,9 @@ export default function ListingsPage() {
 
   return (
     <ThemedPage ambiance="dark" className="px-[clamp(8px,2vw,28px)] pt-[clamp(8px,2vw,24px)] pb-[clamp(44px,7vw,96px)]">
-      <ListingsMap listings={filteredListings} selectedCountry={country} />
+      <Suspense fallback={<div className="h-[clamp(520px,68vh,720px)] animate-pulse rounded-2xl border border-start-gold/20 bg-[#171a21] max-sm:h-[430px]" role="status" aria-label="Chargement de la carte" />}>
+        <ListingsMap listings={filteredListings} selectedCountry={country} />
+      </Suspense>
 
       <section className="relative z-10 mx-auto mt-10 mb-16 w-[min(94%,1120px)] rounded-2xl border border-start-gold/25 bg-[#121418]/95 p-5 shadow-[0_22px_65px_rgba(0,0,0,.35)] backdrop-blur-xl max-md:mt-7 max-md:mb-12 max-md:w-full max-sm:p-4">
         <div className="grid grid-cols-[1.25fr_1fr_.8fr_1fr_auto] items-end gap-3 max-xl:grid-cols-2 max-sm:grid-cols-1">

@@ -69,7 +69,26 @@ describe("AuthPage Supabase", () => {
     const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
     await waitFor(() => expect(googleButton).toBeEnabled());
     await userEvent.click(googleButton);
-    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces", "customer");
+    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces", "customer", false);
+  });
+
+  it("laisse le profil décider de l'espace après une connexion Google ordinaire", async () => {
+    renderAuth();
+    const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
+    await waitFor(() => expect(googleButton).toBeEnabled());
+    await userEvent.click(googleButton);
+    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith(undefined, "customer", false);
+  });
+
+  it("propose un accès administration sans contourner le contrôle du rôle", async () => {
+    renderAuth("/connexion?admin=true&redirect=%2Fadmin");
+    expect(screen.getByRole("heading", { name: "Connexion administration" })).toBeInTheDocument();
+    expect(screen.getByText(/L’accès sera refusé automatiquement/)).toBeInTheDocument();
+
+    const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
+    await waitFor(() => expect(googleButton).toBeEnabled());
+    await userEvent.click(googleButton);
+    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/admin", "customer", true);
   });
 
   it("lie clairement inscription et connexion en conservant la redirection", async () => {

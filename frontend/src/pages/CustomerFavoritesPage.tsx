@@ -5,11 +5,13 @@ import { mockListings } from "../data/mockListings";
 import { useAuth } from "../features/auth/context/use-auth";
 import { useFavoriteListings } from "../features/favorites/hooks/use-favorite-listings";
 import { DEMO_FAVORITES_CHANGED, getDemoFavoriteIds } from "../features/favorites/model/demo-favorites";
-import { customerAccountNavigation } from "../features/profiles/model/account-navigation";
+import { customerAccountNavigation, professionalAccountNavigation } from "../features/profiles/model/account-navigation";
+import { getDataSource } from "../lib/data-source";
 
-export default function CustomerFavoritesPage() {
+export default function CustomerFavoritesPage({ accountType = "customer" }: { accountType?: "customer" | "professional" }) {
   const { user } = useAuth();
-  const favoritesQuery = useFavoriteListings();
+  const dataSource = getDataSource();
+  const favoritesQuery = useFavoriteListings(dataSource === "supabase");
   const [demoFavoriteIds, setDemoFavoriteIds] = useState<string[]>([]);
 
   useEffect(() => {
@@ -28,10 +30,10 @@ export default function CustomerFavoritesPage() {
 
   return (
     <AccountShell
-      eyebrow="Compte particulier"
+      eyebrow={accountType === "professional" ? "Compte professionnel" : "Compte particulier"}
       title="Mes favoris"
       description="Retrouvez ici les annonces que vous avez enregistrées."
-      navigation={[...customerAccountNavigation]}
+      navigation={[...(accountType === "professional" ? professionalAccountNavigation : customerAccountNavigation)]}
     >
       {favoritesQuery.isPending ? (
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-5" aria-label="Chargement des favoris">

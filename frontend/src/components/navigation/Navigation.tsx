@@ -21,10 +21,10 @@ export default function Navigation() {
   const navigationState: NavigationState = isMenuOpen ? "menu-open" : displayState;
   const accountType = profileQuery.data?.accountType ?? user?.user_metadata.account_type;
   const role = profileQuery.data?.role;
-  const accountPath = role === "admin" || role === "moderator"
-    ? "/admin"
-    : accountType === "professional"
-      ? "/espace/professionnel"
+  const accountPath = accountType === "professional"
+    ? "/espace/professionnel"
+    : role === "admin" || role === "moderator"
+      ? "/admin"
       : "/espace/particulier";
   const accountAction = session
     ? { ...navigationActions.account, to: accountPath }
