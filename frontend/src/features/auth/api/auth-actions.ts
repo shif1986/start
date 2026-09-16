@@ -10,6 +10,7 @@ type EmailCredentials = {
 
 type SignUpCredentials = EmailCredentials & {
   displayName: string;
+  companyName: string;
   accountType: Database["public"]["Enums"]["account_type"];
   redirectPath: string;
 };
@@ -43,6 +44,7 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
       emailRedirectTo,
       data: {
         display_name: credentials.displayName,
+        company_name: credentials.accountType === "professional" ? credentials.companyName || null : null,
         account_type: credentials.accountType,
       },
     },
@@ -51,8 +53,19 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
   return data;
 }
 
-export async function signInWithGoogle(redirectPath: string | undefined, accountType: Database["public"]["Enums"]["account_type"], adminIntent = false, client: SupabaseClient<Database> = getSupabaseClient()) {
+export async function signInWithGoogle(
+  redirectPath: string | undefined,
+  accountType: Database["public"]["Enums"]["account_type"],
+  adminIntent = false,
+  client: SupabaseClient<Database> = getSupabaseClient(),
+  registrationIdentity?: { displayName: string; companyName: string },
+) {
   sessionStorage.setItem("start-oauth-account-type", accountType);
+  if (registrationIdentity) {
+    sessionStorage.setItem("start-oauth-registration-identity", JSON.stringify(registrationIdentity));
+  } else {
+    sessionStorage.removeItem("start-oauth-registration-identity");
+  }
   if (redirectPath) {
     sessionStorage.setItem("start-oauth-next", safeRedirectPath(redirectPath));
   } else {
@@ -62,7 +75,13 @@ export async function signInWithGoogle(redirectPath: string | undefined, account
   if (redirectPath) callbackUrl.searchParams.set("next", safeRedirectPath(redirectPath));
   if (adminIntent) callbackUrl.searchParams.set("intent", "admin");
   const redirectTo = callbackUrl.toString();
-  const { data, error } = await client.auth.signInWithOAuth({ provider: "google", options: { redirectTo } });
+  const { data, error } = await client.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo,
+      queryParams: { prompt: "select_account" },
+    },
+  });
   if (error) throw new Error("Impossible de lancer la connexion Google.", { cause: error });
   return data;
 }

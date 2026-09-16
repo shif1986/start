@@ -28,6 +28,7 @@ export type Database = {
           avatar_url: string | null;
           bio: string | null;
           city: string | null;
+          company_name: string | null;
           created_at: string;
           display_name: string;
           id: string;
@@ -42,6 +43,7 @@ export type Database = {
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
+          company_name?: string | null;
           created_at?: string;
           display_name: string;
           id: string;
@@ -56,6 +58,7 @@ export type Database = {
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
+          company_name?: string | null;
           display_name?: string;
           id?: string;
           is_verified?: boolean;
@@ -384,6 +387,7 @@ export type Database = {
           avatar_url: string | null;
           bio: string | null;
           city: string | null;
+          company_name: string | null;
           created_at: string | null;
           display_name: string | null;
           id: string | null;
@@ -398,6 +402,7 @@ export type Database = {
           avatar_url: string | null;
           bio: string | null;
           city: string | null;
+          company_name: string | null;
           created_at: string | null;
           display_name: string | null;
           id: string | null;
@@ -414,6 +419,7 @@ export type Database = {
           p_bio?: string | null;
           p_city?: string | null;
           p_display_name: string;
+          p_company_name?: string | null;
           p_phone?: string | null;
           p_postal_address?: string | null;
           p_public_email?: string | null;
@@ -427,6 +433,10 @@ export type Database = {
       moderate_review: { Args: { p_review_id: string; p_action: string; p_reason: string }; Returns: undefined };
       complete_google_account_type: {
         Args: { requested_account_type: Database["public"]["Enums"]["account_type"] };
+        Returns: undefined;
+      };
+      complete_registration_identity: {
+        Args: { p_display_name: string; p_company_name?: string | null };
         Returns: undefined;
       };
       record_professional_contact: {
@@ -497,12 +507,13 @@ export type Database = {
           seller_avatar_url: string | null;
           seller_bio: string | null;
           seller_city: string | null;
-          seller_display_name: string;
+          seller_company_name: string | null;
+          seller_display_name: string | null;
           seller_email: string | null;
           seller_is_verified: boolean;
           seller_phone: string | null;
           seller_postal_address: string | null;
-          seller_username: string;
+          seller_username: string | null;
           slug: string;
           status: Database["public"]["Enums"]["listing_status"];
           subdivision_code: string | null;

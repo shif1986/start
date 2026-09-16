@@ -12,7 +12,7 @@ import { profileFormSchema, type ProfileFormValues } from "../features/profiles/
 import { profileKeys } from "../features/profiles/model/profile-keys";
 import { queryClient } from "../lib/query-client";
 
-const emptyValues: ProfileFormValues = { username: "", displayName: "", avatarUrl: "", bio: "", city: "", phone: "", publicEmail: "", postalAddress: "" };
+const emptyValues: ProfileFormValues = { username: "", displayName: "", companyName: "", avatarUrl: "", bio: "", city: "", phone: "", publicEmail: "", postalAddress: "" };
 
 export default function EditProfessionalProfilePage() {
   const { user } = useAuth();
@@ -27,7 +27,7 @@ export default function EditProfessionalProfilePage() {
     void getCurrentProfileContacts(user.id).then((contacts) => {
       if (cancelled || !profileQuery.data) return;
       form.reset({
-        username: profileQuery.data.username, displayName: profileQuery.data.displayName,
+        username: profileQuery.data.username, displayName: profileQuery.data.displayName, companyName: profileQuery.data.companyName ?? "",
         avatarUrl: profileQuery.data.avatarUrl ?? "", bio: profileQuery.data.bio ?? "", city: profileQuery.data.city ?? "",
         phone: contacts.phone, publicEmail: contacts.publicEmail, postalAddress: contacts.postalAddress,
       });
@@ -49,7 +49,8 @@ export default function EditProfessionalProfilePage() {
 
   const inputClass = "min-h-11 rounded-xl border border-start-cream/15 bg-[#0b0d10] px-4 py-3 text-start-cream outline-none focus:border-start-gold";
   const fields: { name: keyof ProfileFormValues; label: string; type?: string; placeholder?: string }[] = [
-    { name: "username", label: "Nom d’utilisateur" }, { name: "displayName", label: "Nom affiché" },
+    { name: "username", label: "Nom d’utilisateur" }, { name: "displayName", label: "Votre nom et prénom" },
+    { name: "companyName", label: "Nom de l’entreprise" },
     { name: "avatarUrl", label: "Adresse HTTPS de la photo", type: "url", placeholder: "https://…" },
     { name: "city", label: "Ville" }, { name: "phone", label: "Téléphone", type: "tel" },
     { name: "publicEmail", label: "E-mail professionnel public", type: "email" },

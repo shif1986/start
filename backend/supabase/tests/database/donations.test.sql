@@ -5,7 +5,10 @@ select has_table('public', 'donations', 'la table des dons existe');
 select has_table('public', 'donation_payments', 'la table des versements existe');
 
 set local role anon;
-select is((select count(*) from public.donations), 0::bigint, 'un visiteur ne lit pas les données donateur');
+select throws_ok(
+  $$select count(*) from public.donations$$,
+  '42501', null, 'un visiteur ne lit pas les données donateur'
+);
 select throws_ok(
   $$insert into public.donations (donor_first_name, donor_last_name, donor_email, frequency, amount_cents, consent_at)
     values ('Ada', 'Test', 'ada@example.test', 'once', 2500, now())$$,

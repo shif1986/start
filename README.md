@@ -1,21 +1,27 @@
 # START Marketplace
 
-Application React/Vite connectable progressivement à Supabase.
+Marketplace React/Vite reliée à Supabase : authentification, comptes particuliers/professionnels, annonces, abonnements Stripe, dons, avis, favoris, signalements et modération.
 
 ## Démarrage frontend
 
 ```bash
-bun install
-bun run dev
+cd frontend
+npm install
+cp .env.example .env.local
+npm run dev
 ```
 
-Le frontend reste en source statique tant que `VITE_DATA_SOURCE` n'est pas défini à `supabase`. Copier `frontend/.env.example` vers `frontend/.env.local` avant d'activer Supabase.
+`VITE_DATA_SOURCE=supabase` active la source réelle. Le mode `static` reste réservé aux démonstrations locales et ne constitue jamais une autorisation.
 
 La procédure d'activation de la connexion Google est décrite dans [docs/GOOGLE_OAUTH.md](docs/GOOGLE_OAUTH.md).
 
 Le pipeline de qualité et la procédure staging/production, secrets, migrations et rollback sont décrits dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
 Le découpage du bundle, l'optimisation des cartes et la recette Lighthouse sont documentés dans [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
+
+Les métadonnées, la page 404, `robots.txt`, le sitemap et la configuration du domaine sont documentés dans [docs/SEO.md](docs/SEO.md).
+
+La recette post-déploiement, les alertes, sauvegardes et incidents sont documentés dans [docs/EXPLOITATION.md](docs/EXPLOITATION.md).
 
 Les règles d'accès aux coordonnées professionnelles sont documentées dans [docs/SECURITE_COORDONNEES_PROFESSIONNELLES.md](docs/SECURITE_COORDONNEES_PROFESSIONNELLES.md).
 
@@ -24,11 +30,13 @@ L'installation de Docker, la configuration de Supabase local et la recette compl
 ## Validation
 
 ```bash
-bun run test
-bun run typecheck
-bun run lint
-bun run build
-bun run test:e2e
+cd frontend
+npm run test:run
+npm run typecheck
+npm run lint
+npm run build
+npm run bundle:check
+npm run test:e2e
 ```
 
 ## Supabase local
@@ -36,10 +44,9 @@ bun run test:e2e
 Docker est requis.
 
 ```bash
-bun run backend:start
-bun run backend:reset
-bun run backend:test
-bun run backend:types
+npx supabase start --workdir backend
+npx supabase db reset --workdir backend
+npx supabase test db --workdir backend
 ```
 
-Avec npm/npx, consulter [docs/TESTS_LOCAUX.md](docs/TESTS_LOCAUX.md). Toujours exécuter le reset avant les tests après l'ajout d'une migration.
+Consulter [docs/TESTS_LOCAUX.md](docs/TESTS_LOCAUX.md). Toujours exécuter le reset avant les tests après l'ajout d'une migration.

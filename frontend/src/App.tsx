@@ -2,9 +2,9 @@ import { lazy, Suspense } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./features/auth/components/ProtectedRoute";
+import HomePage from "./pages/HomePage";
+import ListingsPage from "./pages/ListingsPage";
 
-const HomePage = lazy(() => import("./pages/HomePage"));
-const ListingsPage = lazy(() => import("./pages/ListingsPage"));
 const ListingDetailPage = lazy(() => import("./pages/ListingDetailPage"));
 const AboutPage = lazy(() => import("./pages/AboutPage"));
 const DonationsPage = lazy(() => import("./pages/DonationsPage"));
@@ -30,6 +30,7 @@ const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 const EditListingPage = lazy(() => import("./pages/EditListingPage"));
 const EditProfessionalProfilePage = lazy(() => import("./pages/EditProfessionalProfilePage"));
 const PublicProfessionalProfilePage = lazy(() => import("./pages/PublicProfessionalProfilePage"));
+const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
 function PageLoadingFallback() {
   return (
@@ -76,6 +77,7 @@ function App() {
           <Route path="/conditions-abonnement" element={<SubscriptionTermsPage />} />
           <Route path="/cookies" element={<CookiePolicyPage />} />
           <Route path="/signaler-un-contenu" element={<ReportContentPage />} />
+          <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </Layout>

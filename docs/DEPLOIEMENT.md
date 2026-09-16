@@ -9,7 +9,7 @@
 | Staging | branche `develop` | projet de préproduction | projet Supabase staging |
 | Production | branche `main` + validation manuelle | domaine public | projet Supabase production |
 
-Le frontend est une application Vite statique. L’hébergeur doit rediriger les routes inconnues vers `index.html` afin que React Router traite les URLs comme `/annonce/...` et `/admin`.
+Le frontend est une application Vite statique. L’hébergeur doit rediriger les routes applicatives vers `index.html` afin que React Router traite les URLs comme `/annonce/...` et `/admin`. Il doit aussi permettre une vraie réponse HTTP 404 pour les URLs inexistantes ; la page 404 React seule ne change pas le statut du fallback SPA.
 
 ## Variables frontend
 
@@ -18,6 +18,7 @@ Configurer dans chaque environnement d’hébergement :
 - `VITE_DATA_SOURCE=supabase` ;
 - `VITE_SUPABASE_URL` ;
 - `VITE_SUPABASE_PUBLISHABLE_KEY` ;
+- `VITE_PUBLIC_SITE_URL`, uniquement pour le domaine HTTPS définitif (canoniques et sitemap) ;
 - les éventuels endpoints publics documentés dans `frontend/.env.example`.
 
 Une variable préfixée par `VITE_` est intégrée au JavaScript public. Ne jamais y placer de clé `service_role`, secret Stripe, mot de passe de base ou jeton d’accès.
@@ -41,6 +42,8 @@ L’environnement `production` doit exiger une approbation. Le workflow `Déploy
 5. Ouvrir une pull request `develop` vers `main`.
 6. Après validation, lancer manuellement les migrations `production`, puis déployer le frontend.
 7. Exécuter la vérification post-déploiement ci-dessous.
+
+Lancer ensuite `npm run smoke:deployment -- https://domaine-cible.example` ou le workflow manuel **Recette HTTP après déploiement**. Le runbook complet se trouve dans [EXPLOITATION.md](EXPLOITATION.md).
 
 ## Vérification post-déploiement
 

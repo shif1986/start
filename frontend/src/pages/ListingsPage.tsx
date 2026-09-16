@@ -26,7 +26,6 @@ function SelectChevron() {
 export default function ListingsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const dataSource = getDataSource();
-  const blendDemoCatalog = dataSource === "supabase" && import.meta.env.DEV;
 
   const search = searchParams.get("q") ?? "";
   const department = searchParams.get("department") ?? "";
@@ -64,26 +63,13 @@ export default function ListingsPage() {
     category,
     country,
     subdivision: department,
-    page: blendDemoCatalog ? 1 : requestedPage,
-    pageSize: blendDemoCatalog ? 100 : LISTINGS_PER_PAGE,
-  }), [blendDemoCatalog, category, country, department, requestedPage, search]);
+    page: requestedPage,
+    pageSize: LISTINGS_PER_PAGE,
+  }), [category, country, department, requestedPage, search]);
   const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
-  const catalogStateQuery = useListings({
-    search: null,
-    category: null,
-    countryCode: null,
-    subdivision: null,
-    page: 1,
-    pageSize: 1,
-  }, { enabled: dataSource === "supabase" });
-  const useDemoCatalog = dataSource === "static"
-    || (!catalogStateQuery.isPending && !catalogStateQuery.isError && (catalogStateQuery.data?.totalCount ?? 0) === 0);
-  const filteredListings = blendDemoCatalog
-    ? [...(listingsQuery.data?.items ?? []), ...staticFilteredListings]
-    : useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
-  const totalCount = blendDemoCatalog
-    ? filteredListings.length
-    : useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
+  const useDemoCatalog = dataSource === "static";
+  const filteredListings = useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
+  const totalCount = useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
 
   const locationOptions = country === "Suisse" ? swissCantons : departments;
 
@@ -91,7 +77,7 @@ export default function ListingsPage() {
   const currentPage = Number.isFinite(requestedPage)
     ? Math.min(Math.max(requestedPage, 1), pageCount)
     : 1;
-  const visibleListings = !useDemoCatalog && !blendDemoCatalog ? filteredListings : filteredListings.slice(
+  const visibleListings = !useDemoCatalog ? filteredListings : filteredListings.slice(
       (currentPage - 1) * LISTINGS_PER_PAGE,
       currentPage * LISTINGS_PER_PAGE,
     );
@@ -138,9 +124,12 @@ export default function ListingsPage() {
 
   return (
     <ThemedPage ambiance="dark" className="px-[clamp(8px,2vw,28px)] pt-[clamp(8px,2vw,24px)] pb-[clamp(44px,7vw,96px)]">
-      <Suspense fallback={<div className="h-[clamp(520px,68vh,720px)] animate-pulse rounded-2xl border border-start-gold/20 bg-[#171a21] max-sm:h-[430px]" role="status" aria-label="Chargement de la carte" />}>
-        <ListingsMap listings={filteredListings} selectedCountry={country} />
-      </Suspense>
+      <div className="relative overflow-hidden rounded-2xl border border-start-gold/25 bg-[#171a21] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
+        <img src="/maps/catalogue-preview.svg" alt="" width="1200" height="650" fetchPriority="high" className="pointer-events-none absolute inset-0 size-full object-cover" />
+        <Suspense fallback={<div className="relative h-[clamp(520px,68vh,720px)] max-sm:h-[430px]" role="status" aria-label="Chargement de la carte interactive" />}>
+          <ListingsMap listings={filteredListings} selectedCountry={country} />
+        </Suspense>
+      </div>
 
       <section className="relative z-10 mx-auto mt-10 mb-16 w-[min(94%,1120px)] rounded-2xl border border-start-gold/25 bg-[#121418]/95 p-5 shadow-[0_22px_65px_rgba(0,0,0,.35)] backdrop-blur-xl max-md:mt-7 max-md:mb-12 max-md:w-full max-sm:p-4">
         <div className="grid grid-cols-[1.25fr_1fr_.8fr_1fr_auto] items-end gap-3 max-xl:grid-cols-2 max-sm:grid-cols-1">
@@ -193,9 +182,9 @@ export default function ListingsPage() {
           </div>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-x-5 gap-y-12 max-md:gap-y-9 max-sm:gap-y-7">
-          {dataSource === "supabase" && (listingsQuery.isPending || catalogStateQuery.isPending) ? (
+          {dataSource === "supabase" && listingsQuery.isPending ? (
             Array.from({ length: LISTINGS_PER_PAGE }, (_, index) => <span key={index} className="h-[390px] animate-pulse rounded-xl border border-start-cream/10 bg-start-cream/[.04]" aria-hidden="true" />)
-          ) : dataSource === "supabase" && (listingsQuery.isError || catalogStateQuery.isError) ? (
+          ) : dataSource === "supabase" && listingsQuery.isError ? (
             <div className="rounded-2xl border border-network-red/30 bg-network-red/[.06] p-10 text-center text-start-cream" role="alert">Impossible de charger les annonces. Veuillez réessayer dans quelques instants.</div>
           ) : totalCount > 0 ? (
             visibleListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)

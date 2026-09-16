@@ -7,6 +7,7 @@ export async function updateMyProfile(values: ProfileFormValues, client: Supabas
   const { error } = await client.rpc("update_my_profile", {
     p_username: values.username,
     p_display_name: values.displayName,
+    p_company_name: values.companyName || null,
     p_avatar_url: values.avatarUrl || null,
     p_bio: values.bio || null,
     p_city: values.city || null,

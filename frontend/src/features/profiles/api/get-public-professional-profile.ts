@@ -14,6 +14,7 @@ export type PublicProfessionalProfile = {
   id: string;
   username: string;
   displayName: string;
+  companyName: string | null;
   avatarUrl: string | null;
   bio: string | null;
   city: string | null;
@@ -24,7 +25,7 @@ export type PublicProfessionalProfile = {
 
 export async function getPublicProfessionalProfile(username: string, includeContacts: boolean, client: SupabaseClient<Database> = getSupabaseClient()): Promise<PublicProfessionalProfile | null> {
   const profileResult = await client.from("active_professional_profiles")
-    .select("id,username,display_name,avatar_url,bio,city,is_verified")
+    .select("id,username,display_name,company_name,avatar_url,bio,city,is_verified")
     .eq("username", username)
     .maybeSingle();
   if (profileResult.error) throw new Error("Impossible de charger ce professionnel.", { cause: profileResult.error });
@@ -67,6 +68,7 @@ export async function getPublicProfessionalProfile(username: string, includeCont
     id: profileResult.data.id,
     username: profileResult.data.username,
     displayName: profileResult.data.display_name,
+    companyName: profileResult.data.company_name,
     avatarUrl: profileResult.data.avatar_url,
     bio: profileResult.data.bio,
     city: profileResult.data.city,

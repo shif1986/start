@@ -721,7 +721,7 @@ html[data-theme="light"] textarea::placeholder { color: rgb(37 36 31 / 42%) !imp
 
 html[data-theme="light"] .mobile-navigation-bar,
 html[data-theme="light"] .desktop-navigation { color: #25241f; }
-html[data-theme="light"] .navigation-logo { content: url("/logo-start-couleur.png"); }
+html[data-theme="light"] .navigation-logo { content: url("/logo-start-couleur-616.png"); }
 html[data-theme="light"] .navigation-logo-fallback,
 html[data-theme="light"] .mobile-menu-trigger,
 html[data-theme="light"] .mobile-drawer-close,
@@ -969,13 +969,11 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
 }
 
 .listings-map .leaflet-container {
-  background: #061525;
+  background: transparent;
 }
 
 .listings-map {
-  background:
-    radial-gradient(ellipse at top left, rgb(199 164 93 / 28%) 0%, rgb(199 164 93 / 11%) 30%, transparent 60%),
-    linear-gradient(145deg, #171a21 0%, #0c0f15 100%) !important;
+  background: transparent !important;
 }
 
 .leaflet-popup-content-wrapper,
@@ -991,7 +989,7 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
   background-color: #080d14 !important;
   background-image:
     linear-gradient(rgb(5 10 16 / 72%), rgb(5 10 16 / 82%)),
-    url("/images/backgrounds/contact-network.png") !important;
+    url("/images/backgrounds/contact-network.jpg") !important;
   background-attachment: fixed !important;
   background-position: center top !important;
   background-repeat: no-repeat !important;
@@ -1009,7 +1007,7 @@ html[data-theme="light"] .discreet-network-background {
   background-color: #10151c !important;
   background-image:
     linear-gradient(rgb(8 13 20 / 66%), rgb(8 13 20 / 78%)),
-    url("/images/backgrounds/contact-network.png") !important;
+    url("/images/backgrounds/contact-network.jpg") !important;
   color: #f4efe5;
 }
 

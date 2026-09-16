@@ -22,16 +22,16 @@ Supabase apporte PostgreSQL, Auth, Storage et les fonctions RPC. La migration SQ
 Docker doit être démarré pour l'environnement Supabase local.
 
 ```bash
-bun run backend:start
-bun run backend:reset
-bun run backend:test
-bun run backend:stop
+npx supabase start --workdir backend
+npx supabase db reset --workdir backend
+npx supabase test db --workdir backend
+npx supabase stop --workdir backend
 ```
 
-- `backend:start` démarre les services locaux ;
-- `backend:reset` rejoue toutes les migrations puis le seed ;
-- `backend:test` lance les tests pgTAP ;
-- `backend:stop` arrête proprement les services.
+- `start` démarre les services locaux ;
+- `db reset` rejoue toutes les migrations puis le seed ;
+- `test db` lance les tests pgTAP ;
+- `stop` arrête proprement les services.
 
 ## 3. Organisation des fichiers
 
@@ -68,20 +68,20 @@ Chaque évolution de schéma reçoit une nouvelle migration horodatée. Une migr
 | `favorites` | relation unique utilisateur/annonce |
 | `reports` | signalements et traitement de modération |
 
-Les futures tables `conversations`, `messages`, `reviews`, `notifications` et `payments` ne doivent être ajoutées qu'avec leur tranche fonctionnelle et leurs tests. Les commentaires, plans et abonnements professionnels sont déjà présents.
+Les avis structurés (`listing_reviews`), commentaires historiques, plans, abonnements, paiements de dons et événements Stripe sont également présents.
 
 ## 5. Workflow d'une annonce
 
 ```text
-draft → pending → published
-              ↘ rejected
-published → sold
-published → archived
+nouvelle annonce : draft → published
+published → sold | archived
+anciens parcours : draft ↔ pending, rejected → draft | archived
 ```
 
-- un vendeur crée seulement `draft` ou `pending` ;
-- un vendeur peut préparer, soumettre, vendre ou archiver son contenu ;
-- seul un modérateur/admin publie, refuse ou active `is_featured` ;
+- le dépôt multi-étapes crée d'abord la ligne technique puis la publie immédiatement après validation des champs et images ;
+- un professionnel doit avoir un abonnement actif pour créer ou publier ;
+- un professionnel peut modifier son annonce sans repasser par un brouillon ;
+- la modération peut refuser une annonce publiée, suspendre un profil et gérer `is_featured` ;
 - une annonce `published` possède obligatoirement `published_at` ;
 - le propriétaire d'une annonce ne peut jamais être changé par le vendeur.
 
@@ -163,39 +163,9 @@ Elle retourne seulement les annonces publiées, place les annonces à la une en 
 
 Chaque tranche suit : **test pgTAP rouge → migration SQL → reset local → test vert → test RLS par rôle**.
 
-### Tranche B1 — fondation
+Les tranches fondation, sécurité/RLS, dépôt, coordonnées, abonnements, avis, signalements, modération, Stripe et dons possèdent des migrations et tests pgTAP. Après toute modification, la suite complète doit repartir d'une base locale réinitialisée avant un envoi distant.
 
-- [x] tables principales ;
-- [x] clés étrangères et contraintes ;
-- [x] index catalogue/propriétaire/modération ;
-- [x] trigger `updated_at` ;
-- [x] création automatique du profil ;
-- [x] RLS propriétaire/public/admin ;
-- [x] bucket et politiques Storage ;
-- [x] RPC de recherche ;
-- [ ] tests RLS avec utilisateurs simulés ;
-- [ ] tests détaillés des transitions de statut.
-
-### Tranche B2 — fiche et dépôt
-
-- valider la catégorie du champ dynamique par rapport à celle de l'annonce ;
-- valider la forme JSON selon `field_type` ;
-- ajouter une fonction transactionnelle de soumission ;
-- empêcher plus de 20 images par annonce ;
-- tester chaque échec avant d'ajouter la règle SQL.
-
-### Tranche B3 — favoris, profil et signalement
-
-- tester les lectures croisées interdites ;
-- tester l'unicité des favoris et signalements ;
-- ajouter les compteurs via vues ou requêtes agrégées, sans compteur client fiable.
-
-### Tranche B4 — administration
-
-- journal d'audit des actions sensibles ;
-- transitions de modération transactionnelles ;
-- tests d'impossibilité d'auto-promotion ;
-- tests d'accès anonyme, authentifié, modérateur et admin.
+Le total des assertions n'est pas figé dans ce document. Exécuter `npx supabase db reset --workdir backend`, puis `npx supabase test db --workdir backend` et exiger `Result: PASS`.
 
 ## 10. Règles de migration
 

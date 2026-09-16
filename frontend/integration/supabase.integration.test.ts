@@ -87,7 +87,11 @@ suite("Supabase local : Auth, API et Storage", () => {
     expect((catalogue.data ?? []).some((item) => item.id === listingId)).toBe(true);
     const detail = await anonymous.rpc("get_listing_detail", { listing_slug: slug });
     expect(detail.error).toBeNull();
-    expect((detail.data ?? [])[0]?.seller_username).toBeTruthy();
+    expect((detail.data ?? [])[0]?.seller_username).toBeNull();
+
+    const authenticatedDetail = await professional.rpc("get_listing_detail", { listing_slug: slug });
+    expect(authenticatedDetail.error).toBeNull();
+    expect((authenticatedDetail.data ?? [])[0]?.seller_username).toBeTruthy();
   });
 
   it("gère le favori avec un membre connecté", async () => {

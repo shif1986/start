@@ -91,8 +91,9 @@ export function mapDetailListing(row: DetailListingRow, signedImages: string[]):
     reviewCount: 0,
     details: parseListingFields(row.fields),
     professional: {
-      name: row.seller_display_name,
-      username: row.seller_username,
+      name: row.seller_display_name ?? "Professionnel",
+      companyName: row.seller_company_name,
+      username: row.seller_username ?? undefined,
       role: row.seller_is_verified ? "Professionnel vérifié" : "Professionnel",
       phone: row.seller_phone,
       email: row.seller_email,

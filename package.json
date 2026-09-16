@@ -14,7 +14,8 @@
     "backend:stop": "supabase stop --workdir backend",
     "backend:reset": "supabase db reset --workdir backend",
     "backend:test": "supabase test db --workdir backend",
-    "backend:types": "supabase gen types typescript --local --workdir backend > frontend/src/lib/supabase/database.types.ts"
+    "backend:types": "supabase gen types typescript --local --workdir backend > frontend/src/lib/supabase/database.types.ts",
+    "smoke:deployment": "node scripts/smoke-deployment.mjs"
   },
   "devDependencies": {
     "supabase": "^2.113.0"

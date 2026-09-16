@@ -48,6 +48,22 @@ export default function AuthCallbackPage() {
         sessionStorage.removeItem("start-oauth-account-type");
       }
 
+      const pendingIdentity = sessionStorage.getItem("start-oauth-registration-identity");
+      if (pendingIdentity) {
+        const identity = JSON.parse(pendingIdentity) as { displayName?: string; companyName?: string };
+        if (identity.displayName) {
+          const { error: identityError } = await client.rpc("complete_registration_identity", {
+            p_display_name: identity.displayName,
+            p_company_name: identity.companyName || null,
+          });
+          if (identityError) {
+            const detail = import.meta.env.DEV ? ` (${identityError.code}: ${identityError.message})` : "";
+            throw new Error(`Impossible d’enregistrer votre identité.${detail}`);
+          }
+        }
+        sessionStorage.removeItem("start-oauth-registration-identity");
+      }
+
       const profile = await getCurrentProfile(data.session.user.id, client);
       const hasAdminIntent = sessionStorage.getItem("start-auth-admin-intent") === "true" || searchParams.get("intent") === "admin";
       if (hasAdminIntent && !canAccessAdmin(profile.role)) {

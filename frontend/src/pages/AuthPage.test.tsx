@@ -56,11 +56,12 @@ describe("AuthPage Supabase", () => {
 
   it("crée un compte professionnel et demande la confirmation e-mail", async () => {
     renderAuth("/inscription?type=professional");
-    await userEvent.type(screen.getByLabelText("Nom complet"), "Impact Conseil");
+    await userEvent.type(screen.getByLabelText("Votre nom et prénom"), "Jean Dupont");
+    await userEvent.type(screen.getByLabelText(/Nom de l’entreprise/), "Impact Conseil");
     await userEvent.type(screen.getByLabelText("Adresse e-mail"), "pro@example.test");
     await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Créer mon compte et choisir mon abonnement" }));
-    expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Impact Conseil", redirectPath: "/abonnement" }));
+    expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Jean Dupont", companyName: "Impact Conseil", redirectPath: "/abonnement" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Vérifiez votre adresse e-mail");
   });
 
@@ -70,6 +71,22 @@ describe("AuthPage Supabase", () => {
     await waitFor(() => expect(googleButton).toBeEnabled());
     await userEvent.click(googleButton);
     expect(authMocks.signInWithGoogle).toHaveBeenCalledWith("/annonces", "customer", false);
+  });
+
+  it("conserve le nom personnel et l’entreprise pendant une inscription Google professionnelle", async () => {
+    renderAuth("/inscription?type=professional");
+    await userEvent.type(screen.getByLabelText("Votre nom et prénom"), "Jean Dupont");
+    await userEvent.type(screen.getByLabelText(/Nom de l’entreprise/), "Impact Conseil");
+    const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
+    await waitFor(() => expect(googleButton).toBeEnabled());
+    await userEvent.click(googleButton);
+    expect(authMocks.signInWithGoogle).toHaveBeenCalledWith(
+      "/abonnement",
+      "professional",
+      false,
+      undefined,
+      { displayName: "Jean Dupont", companyName: "Impact Conseil" },
+    );
   });
 
   it("laisse le profil décider de l'espace après une connexion Google ordinaire", async () => {

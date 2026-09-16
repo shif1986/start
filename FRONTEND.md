@@ -99,7 +99,7 @@ Les accents réseau sont utilisés régulièrement sur de petits éléments fonc
 
 ### Signature de fond officielle
 
-La signature principale du site est le réseau sombre aux connexions dorées fourni par `public/images/backgrounds/contact-network.png`. La classe globale `discreet-network-background` applique cet asset avec un voile très dense : le motif doit être ressenti comme une texture et non lu comme une illustration. Le centre reste visuellement calme, les connexions apparaissent surtout sur les bords et les contenus reposent sur des surfaces suffisamment contrastées.
+La signature principale du site est le réseau sombre aux connexions dorées servi depuis `public/images/backgrounds/contact-network.jpg`. La classe globale `discreet-network-background` applique cet asset optimisé avec un voile très dense : le motif doit être ressenti comme une texture et non lu comme une illustration. Le centre reste visuellement calme, les connexions apparaissent surtout sur les bords et les contenus reposent sur des surfaces suffisamment contrastées.
 
 Le voile varie de 72 % à 82 % en mode sombre et de 66 % à 78 % en mode clair. Le fond reste fixe sur les grands écrans pour les pages longues et repasse en défilement normal sous `640px`. Ne pas ajouter simultanément un grand motif `BrandPattern` sur une page utilisant cette signature.
 
@@ -123,25 +123,26 @@ La page d’accueil affiche `StartNetworkCycle` immédiatement après les catég
 La définition apparaît seulement à l’entrée dans le viewport. L’animation présente les six étapes une seule fois puis s’arrête ; elle s’interrompt également lorsque l’onglet est caché et respecte `prefers-reduced-motion`. Le diagramme est centré, les six titres utilisent une taille uniforme et la définition active apparaît près de son icône sur desktop/tablette. Sur mobile, le diagramme reste compact et la définition passe sous celui-ci. La connexion active est signalée par une flèche pleine plus visible. Les boutons permettent un accès direct au clavier, au clic ou au tap. « L’argent du Royaume » reste la conclusion du composant et ne compte pas parmi les six étapes.
 
 ```bash
-bun install
-bun run dev
-bun run test
-bun run typecheck
-bun run lint
-bun run build
-bun run check
-bun run test:e2e
+cd frontend
+npm install
+npm run dev
+npm run test:run
+npm run typecheck
+npm run lint
+npm run build
+npm run bundle:check
+npm run test:e2e
 ```
 
 Le serveur front-end utilise `http://127.0.0.1:5173`.
 
 ## 5. Configuration locale
 
-Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les valeurs retournées par `bun run backend:start` :
+Copier `frontend/.env.example` vers `frontend/.env.local`, puis renseigner les valeurs retournées par `npx supabase status --workdir backend` :
 
 ```dotenv
 VITE_SUPABASE_URL=http://127.0.0.1:54321
-VITE_SUPABASE_ANON_KEY=replace-with-local-anon-key
+VITE_SUPABASE_PUBLISHABLE_KEY=replace-with-local-publishable-key
 VITE_DATA_SOURCE=supabase
 VITE_CONTACT_ENDPOINT=
 ```
@@ -170,12 +171,14 @@ frontend/
 │   │   ├── categories/
 │   │   ├── favorites/
 │   │   ├── profiles/
-│   │   ├── dashboard/
+│   │   ├── reports/
+│   │   ├── reviews/
+│   │   ├── subscriptions/
 │   │   └── admin/
 │   ├── lib/                 # client Supabase et utilitaires
-│   ├── stores/              # état UI local/global uniquement
+│   ├── pages/               # pages déclarées par App.tsx
 │   ├── test/                # setup et fixtures de test
-│   └── styles.css
+│   └── index.css            # styles globaux et tokens Tailwind
 ├── .env.example
 ├── package.json
 └── vite.config.ts
@@ -227,15 +230,13 @@ Réserver Zustand à l'état d'interface non persistant : ouverture d'une sideba
 | `/`                   | public           | accueil et recherche principale |
 | `/annonces`           | public           | catalogue, filtres et tri       |
 | `/annonce/:slug`      | public           | fiche annonce                   |
-| `/categorie/:slug`    | public           | catalogue préfiltré             |
-| `/vendeur/:username`  | public           | profil et annonces du vendeur   |
+| `/categories`         | public           | toutes les catégories           |
+| `/professionnel/:username` | membre connecté | profil professionnel protégé |
 | `/connexion`          | public           | connexion                       |
 | `/inscription`        | public           | création de compte              |
 | `/publier`            | authentifié      | formulaire multi-étapes         |
-| `/dashboard`          | authentifié      | synthèse vendeur                |
-| `/dashboard/annonces` | authentifié      | gestion des annonces            |
-| `/dashboard/favoris`  | authentifié      | favoris                         |
-| `/dashboard/profil`   | authentifié      | édition du profil               |
+| `/espace/particulier/*` | particulier    | tableau de bord, favoris et avis  |
+| `/espace/professionnel/*` | professionnel | profil, annonces, favoris, avis et abonnement |
 | `/admin`              | modérateur/admin | modération                      |
 | `/abonnement`         | professionnel    | choix de l'abonnement pro       |
 | `/mentions-legales`   | public           | informations légales du site    |
@@ -245,13 +246,11 @@ Réserver Zustand à l'état d'interface non persistant : ouverture d'une sideba
 | `/cookies`            | public           | politique relative aux traceurs |
 | `/signaler-un-contenu` | public          | signalement légal et modération |
 
-Le footer expose directement toutes les pages juridiques. Le formulaire de signalement utilise `VITE_REPORT_ENDPOINT` et doit être relié à un traitement serveur avant la production. Les documents reflètent l’état actuel de la maquette : aucun paiement réel ni outil publicitaire n’est actif. Ils devront être relus et actualisés lors de la connexion du backend, de Stripe, des e-mails et de tout outil de mesure.
+Le footer expose directement toutes les pages juridiques. Le formulaire public de contact/signalement utilise les endpoints documentés dans `.env.example`, tandis que le signalement d’une annonce authentifiée est persisté dans Supabase. Les documents devront être relus lors de l’ajout d’e-mails transactionnels ou d’un outil de mesure.
 
-Les routes non encore implémentées affichent actuellement une page neutre. Ce comportement est volontaire : il évite les liens morts tout en signalant clairement la tranche suivante.
+Les routes inconnues affichent une page 404 applicative et passent en `noindex,nofollow`. La protection de `/admin` et des espaces personnels dépend du profil Supabase, pas du bouton utilisé pour ouvrir la connexion.
 
-État de la maquette : `/connexion` contient un lien discret « Accès administration » qui ouvre `/admin`. Il facilite la revue du frontend uniquement et ne constitue pas une authentification. À terme, la connexion commune redirigera automatiquement selon le rôle retourné par le backend.
-
-La page `/abonnement` est également une maquette frontend : les sélecteurs mensuel/annuel, carte et Google Pay sont visuels et aucun paiement n'est débité. La clé secrète Stripe, la création des sessions Checkout, les webhooks et le contrôle de l'abonnement actif devront rester côté serveur.
+La page `/abonnement` utilise Stripe Checkout côté serveur, le portail client et la confirmation par webhook. Les secrets restent dans les Edge Functions ; le navigateur ne reçoit jamais la clé secrète Stripe.
 
 ### Catégories V1
 
@@ -275,7 +274,7 @@ Chaque tranche suit strictement : test rouge → code minimal correct → test v
 - [x] carte d'annonce accessible ;
 - [x] catalogue responsive ;
 - [x] tri et recherche ;
-- [ ] pagination avec conservation des filtres ;
+- [x] pagination avec conservation des filtres ;
 - [x] état favori relié à Supabase, mise à jour optimiste ciblée, rollback et retour de connexion explicite.
 
 Critères de fin : URL partageable, aucune erreur TypeScript, navigation clavier, états chargement / vide / erreur visibles.
@@ -381,7 +380,7 @@ Routes disponibles :
 
 - `/connexion` et `/inscription` : accès et choix particulier/professionnel ;
 - `/espace/particulier` : favoris, contacts et avis ;
-- `/espace/professionnel` : profil, annonces et abonnement ;
+- `/espace/professionnel` : profil, annonces, favoris, avis et abonnement ;
 - `/abonnement` : choix mensuel à 7 € ou annuel à 84 €, récapitulatif et moyens de paiement ;
 - `/admin` : supervision des utilisateurs, annonces, commentaires, signalements et abonnements.
 
@@ -393,4 +392,4 @@ Un compte suspendu conserve uniquement la visibilité publique de son profil et 
 
 En mode `static`, les gardes laissent volontairement passer les maquettes pour conserver les parcours de démonstration. Ce mode ne doit jamais être utilisé comme preuve d'autorisation en production.
 
-La page `/abonnement` est une maquette frontend : aucun débit, renouvellement ou changement de statut n'est effectué. Les boutons Carte bancaire et Google Pay préparent uniquement l'intégration future de Stripe.
+La page `/abonnement` ouvre Stripe Checkout, puis le webhook met à jour la source de vérité `subscriptions`. Le portail client gère ensuite paiement et résiliation.

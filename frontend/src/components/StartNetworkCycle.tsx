@@ -181,7 +181,7 @@ export default function StartNetworkCycle() {
             </svg>
 
             <div className="network-cycle-logo absolute top-1/2 left-1/2 flex size-[38%] -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border border-start-gold/65 bg-[#090c11] p-[5.5%] shadow-[0_0_42px_rgba(199,164,93,.2)]">
-              <img src="/Logo START_blanc.png" alt="START Réseau Chrétien" className="w-full scale-110" />
+              <img src="/logo-start-blanc-616.png" alt="START Réseau Chrétien" width="616" height="314" loading="lazy" decoding="async" className="w-full scale-110" />
             </div>
 
             {networkSteps.map((step, index) => {

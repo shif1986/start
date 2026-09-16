@@ -27,14 +27,20 @@ describe("auth actions", () => {
 
   it("inscrit le type de compte dans les métadonnées contrôlées", async () => {
     const client = createClient();
-    await signUpWithEmail({ email: "pro@example.test", password: "password123", displayName: "Impact Conseil", accountType: "professional", redirectPath: "/abonnement" }, client);
+    await signUpWithEmail({ email: "pro@example.test", password: "password123", displayName: "Jean Dupont", companyName: "Impact Conseil", accountType: "professional", redirectPath: "/abonnement" }, client);
     expect(client.auth.signUp).toHaveBeenCalledWith(expect.objectContaining({
       email: "pro@example.test",
       options: {
         emailRedirectTo: `${window.location.origin}/auth/callback?next=%2Fabonnement`,
-        data: { display_name: "Impact Conseil", account_type: "professional" },
+        data: { display_name: "Jean Dupont", company_name: "Impact Conseil", account_type: "professional" },
       },
     }));
+  });
+
+  it("conserve l’identité saisie avant une inscription Google", async () => {
+    const client = createClient();
+    await signInWithGoogle("/abonnement", "professional", false, client, { displayName: "Jean Dupont", companyName: "Impact Conseil" });
+    expect(JSON.parse(sessionStorage.getItem("start-oauth-registration-identity") ?? "{}")).toEqual({ displayName: "Jean Dupont", companyName: "Impact Conseil" });
   });
 
   it("utilise une redirection OAuth locale sûre", async () => {
@@ -42,7 +48,10 @@ describe("auth actions", () => {
     await signInWithGoogle("/annonces", "customer", false, client);
     expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fannonces` },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=%2Fannonces`,
+        queryParams: { prompt: "select_account" },
+      },
     });
     expect(sessionStorage.getItem("start-oauth-next")).toBe("/annonces");
   });
@@ -59,7 +68,10 @@ describe("auth actions", () => {
     await signInWithGoogle("/admin", "customer", true, client);
     expect(client.auth.signInWithOAuth).toHaveBeenCalledWith({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback?next=%2Fadmin&intent=admin` },
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback?next=%2Fadmin&intent=admin`,
+        queryParams: { prompt: "select_account" },
+      },
     });
   });
 

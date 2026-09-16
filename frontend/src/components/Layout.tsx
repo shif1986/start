@@ -1,6 +1,7 @@
 import { useEffect, useRef, type ReactNode } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import Navigation from "./navigation/Navigation";
+import { applyPageMetadata, resolvePageMetadata } from "../lib/page-metadata";
 
 type LayoutProps = {
   children: ReactNode;
@@ -9,6 +10,11 @@ type LayoutProps = {
 export default function Layout({ children }: LayoutProps) {
   const { pathname } = useLocation();
   const mainRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const metadata = resolvePageMetadata(pathname);
+    applyPageMetadata(metadata, import.meta.env.VITE_PUBLIC_SITE_URL);
+  }, [pathname]);
 
   useEffect(() => {
     const main = mainRef.current;
@@ -63,7 +69,7 @@ export default function Layout({ children }: LayoutProps) {
           </nav>
 
           <div className="flex min-h-20 min-w-32 items-center justify-center self-center max-md:order-first">
-            <img src="/logo-start-couleur.png" alt="START Réseau Chrétien" className="h-auto w-44 max-sm:w-40" />
+            <img src="/logo-start-couleur-616.png" alt="START Réseau Chrétien" width="616" height="314" loading="lazy" className="h-auto w-44 max-sm:w-40" />
           </div>
 
           <div className="flex flex-col gap-3 text-start-cream/70 max-md:w-full max-md:max-w-sm">

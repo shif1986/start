@@ -70,7 +70,7 @@ npx supabase db reset --workdir ../backend
 npx supabase test db --workdir ../backend
 ```
 
-Résultat de référence au 8 septembre 2026 : 8 fichiers pgTAP et 92 tests réussis. Ce nombre est informatif ; toute nouvelle tranche peut ajouter des tests.
+Le nombre de fichiers et d’assertions évolue avec les migrations. Le résultat attendu est toujours `All tests successful` et `Result: PASS` ; ne pas se fier à un ancien total documenté.
 
 ## 5. Valider le frontend
 
@@ -113,8 +113,8 @@ Vite affiche l'adresse exacte, généralement `http://127.0.0.1:5173`.
 5. Ajouter une image JPEG, PNG, WebP ou AVIF de moins de 8 Mio.
 6. Soumettre l'annonce.
 7. Dans Supabase Studio, vérifier :
-   - une ligne dans `listings` avec le statut `pending` ;
-   - les valeurs spécifiques dans `listing_field_values` si la catégorie en propose ;
+   - une ligne dans `listings` avec le statut `published` et `published_at` renseigné ;
+   - les valeurs spécifiques dans `listing_field_values` uniquement si la catégorie impose ou propose ces champs ;
    - les métadonnées dans `listing_images` ;
    - le fichier dans le bucket privé `listing-images` ;
    - l'annonce dans l'espace professionnel du frontend.

@@ -13,7 +13,7 @@ describe("getListingDetail", () => {
         category_id: "category-id", category_name: "Services", category_slug: "services",
         images: [{ storage_path: "owner/listing/one.webp", alt_text: "Photo", position: 0, width: 1200, height: 800 }],
         fields: [{ key: "urgent", name: "Intervention urgente", field_type: "boolean", value: true, options: [] }],
-        seller_display_name: "Impact Conseil", seller_username: "impact", seller_avatar_url: null, seller_bio: null, seller_city: "Paris",
+        seller_display_name: "Jean Dupont", seller_company_name: "Impact Conseil", seller_username: "impact", seller_avatar_url: null, seller_bio: null, seller_city: "Paris",
         seller_is_verified: true, seller_phone: "+33 6 00 00 00 00", seller_email: "contact@example.test", is_favorite: true,
       }],
       error: null,
@@ -31,7 +31,7 @@ describe("getListingDetail", () => {
       images: [{ src: "https://images.test/one.webp", altText: "Photo" }],
       priceUnit: "hour",
       details: [{ key: "urgent", label: "Intervention urgente", value: true }],
-      professional: { name: "Impact Conseil", phone: "+33 6 00 00 00 00", email: "contact@example.test" },
+      professional: { name: "Jean Dupont", companyName: "Impact Conseil", phone: "+33 6 00 00 00 00", email: "contact@example.test" },
     });
   });
 

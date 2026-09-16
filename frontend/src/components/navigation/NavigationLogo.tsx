@@ -14,8 +14,11 @@ export default function NavigationLogo() {
         <span className="navigation-logo-fallback">START</span>
       ) : (
         <img
-          src="/Logo START_blanc.png"
+          src="/logo-start-blanc-616.png"
           alt="START Réseau Chrétien"
+          width="616"
+          height="314"
+          fetchPriority="high"
           className="navigation-logo"
           onError={() => setHasImageError(true)}
         />

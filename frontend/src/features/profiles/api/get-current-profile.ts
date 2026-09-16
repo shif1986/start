@@ -6,7 +6,7 @@ import type { CurrentProfile } from "../model/profile.types";
 export async function getCurrentProfile(userId: string, client: SupabaseClient<Database> = getSupabaseClient()): Promise<CurrentProfile> {
   const currentResult = await client
     .from("profiles")
-    .select("id,username,display_name,avatar_url,bio,city,role,account_type,account_status,is_verified")
+    .select("id,username,display_name,company_name,avatar_url,bio,city,role,account_type,account_status,is_verified")
     .eq("id", userId)
     .single();
 
@@ -16,6 +16,7 @@ export async function getCurrentProfile(userId: string, client: SupabaseClient<D
       id: data.id,
       username: data.username,
       displayName: data.display_name,
+      companyName: data.company_name,
       avatarUrl: data.avatar_url,
       bio: data.bio,
       city: data.city,
@@ -48,6 +49,7 @@ export async function getCurrentProfile(userId: string, client: SupabaseClient<D
     id: data.id,
     username: data.username,
     displayName: data.display_name,
+    companyName: null,
     avatarUrl: data.avatar_url,
     bio: data.bio,
     city: data.city,

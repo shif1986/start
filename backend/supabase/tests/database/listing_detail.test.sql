@@ -1,8 +1,8 @@
 begin;
-select plan(4);
+select plan(6);
 
 insert into auth.users (id, email, raw_user_meta_data)
-values ('a2000000-0000-4000-8000-000000000001', 'detail-pro@example.test', '{"display_name":"Pro détail","account_type":"professional"}'::jsonb);
+values ('a2000000-0000-4000-8000-000000000001', 'detail-pro@example.test', '{"display_name":"Jean Dupont","company_name":"Garage Dupont","account_type":"professional"}'::jsonb);
 
 insert into public.category_fields (id, category_id, name, key, field_type, position)
 values ('a2100000-0000-4000-8000-000000000001', '10000000-0000-4000-8000-000000000005', 'Intervention urgente', 'urgent', 'boolean', 1);
@@ -17,7 +17,13 @@ set local role anon;
 select is((select price_unit from public.get_listing_detail('detail-complet-test')), 'hour'::text, 'la fiche expose l’unité tarifaire');
 select is((select jsonb_array_length(fields) from public.get_listing_detail('detail-complet-test')), 1, 'la fiche expose les champs renseignés');
 select is((select fields -> 0 ->> 'name' from public.get_listing_detail('detail-complet-test')), 'Intervention urgente', 'le libellé du champ est exposé');
+select is((select seller_company_name from public.get_listing_detail('detail-complet-test')), null::text, 'le nom de l’entreprise reste masqué au visiteur');
 select is((select seller_phone from public.get_listing_detail('detail-complet-test')), null::text, 'les coordonnées restent masquées au visiteur');
+reset role;
+
+set local role authenticated;
+select set_config('request.jwt.claim.sub', 'a2000000-0000-4000-8000-000000000001', true);
+select is((select seller_company_name from public.get_listing_detail('detail-complet-test')), 'Garage Dupont'::text, 'le nom de l’entreprise est visible après connexion');
 reset role;
 
 select * from finish();

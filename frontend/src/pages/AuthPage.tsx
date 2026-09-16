@@ -31,7 +31,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     : "/espace/particulier";
   const form = useForm<AuthFormValues>({
     resolver: zodResolver(createAuthSchema(isRegister)),
-    defaultValues: { email: "", password: "", displayName: "" },
+    defaultValues: { email: "", password: "", displayName: "", companyName: "" },
   });
 
   useEffect(() => {
@@ -67,6 +67,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           email: values.email,
           password: values.password,
           displayName: values.displayName.trim(),
+          companyName: values.companyName.trim(),
           accountType,
           redirectPath: accountType === "professional" ? "/abonnement" : "/espace/particulier",
         });
@@ -105,7 +106,15 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
       } else {
         sessionStorage.removeItem("start-auth-admin-intent");
       }
-      await signInWithGoogle(redirect ?? (isRegister ? accountHome : undefined), accountType, isAdminLogin);
+      const registrationIdentity = isRegister && form.getValues("displayName").trim().length >= 2
+        ? { displayName: form.getValues("displayName").trim(), companyName: form.getValues("companyName").trim() }
+        : undefined;
+      const googleDestination = redirect ?? (isRegister ? accountHome : undefined);
+      if (registrationIdentity) {
+        await signInWithGoogle(googleDestination, accountType, isAdminLogin, undefined, registrationIdentity);
+      } else {
+        await signInWithGoogle(googleDestination, accountType, isAdminLogin);
+      }
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "La connexion Google n’a pas abouti.");
       setIsGooglePending(false);
@@ -137,7 +146,8 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
         <div className="my-6 flex items-center gap-4 text-xs font-semibold tracking-[.14em] text-start-cream/35 uppercase"><span className="h-px flex-1 bg-start-cream/10" />ou par e-mail<span className="h-px flex-1 bg-start-cream/10" /></div>
 
         <form className="grid gap-5" noValidate onSubmit={form.handleSubmit(handleEmailSubmit)}>
-          {isRegister && <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Nom complet<input className={fieldClassName} type="text" autoComplete="name" aria-invalid={Boolean(form.formState.errors.displayName)} {...form.register("displayName")} />{form.formState.errors.displayName && <span className="text-xs text-red-300">{form.formState.errors.displayName.message}</span>}</label>}
+          {isRegister && <label className="grid gap-2 text-sm font-semibold text-start-cream/70">{accountType === "professional" ? "Votre nom et prénom" : "Nom complet"}<input className={fieldClassName} type="text" autoComplete="name" aria-invalid={Boolean(form.formState.errors.displayName)} {...form.register("displayName")} />{form.formState.errors.displayName && <span className="text-xs text-red-300">{form.formState.errors.displayName.message}</span>}</label>}
+          {isRegister && accountType === "professional" && <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Nom de l’entreprise <span className="text-xs font-normal text-start-cream/40">(facultatif)</span><input className={fieldClassName} type="text" autoComplete="organization" maxLength={120} {...form.register("companyName")} />{form.formState.errors.companyName && <span className="text-xs text-red-300">{form.formState.errors.companyName.message}</span>}</label>}
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Adresse e-mail<input className={fieldClassName} type="email" autoComplete="email" aria-invalid={Boolean(form.formState.errors.email)} {...form.register("email")} />{form.formState.errors.email && <span className="text-xs text-red-300">{form.formState.errors.email.message}</span>}</label>
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Mot de passe<input className={fieldClassName} type="password" autoComplete={isRegister ? "new-password" : "current-password"} aria-invalid={Boolean(form.formState.errors.password)} {...form.register("password")} />{form.formState.errors.password && <span className="text-xs text-red-300">{form.formState.errors.password.message}</span>}</label>
           <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : isAdminLogin ? "Accéder à l’administration" : "Se connecter"}</button>

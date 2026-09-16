@@ -1,0 +1,37 @@
+name: Recette HTTP après déploiement
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environnement GitHub protégé
+        required: true
+        type: choice
+        options: [staging, production]
+      base_url:
+        description: URL HTTPS à vérifier, sans chemin
+        required: true
+        type: string
+      expect_sitemap:
+        description: Exiger sitemap.xml
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+jobs:
+  smoke:
+    name: Vérifier ${{ inputs.base_url }}
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Vérifier les pages publiques
+        env:
+          START_EXPECT_SITEMAP: ${{ inputs.expect_sitemap && '1' || '0' }}
+        run: node scripts/smoke-deployment.mjs "${{ inputs.base_url }}"

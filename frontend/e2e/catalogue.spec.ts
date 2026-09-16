@@ -17,9 +17,16 @@ test("une annonce Supabase publiée est recherchable et sa fiche publique charge
 
   await expect(page).toHaveURL(/\/annonce\/garagiste-vente-de-vehicule-/);
   await expect(page.getByRole("heading", { level: 1, name: /Garagiste \+ vente de véhicule/i })).toBeVisible();
+  await expect(page.getByRole("link", { name: "Signaler cette annonce" })).toBeVisible();
   const listingImage = page.getByRole("region", { name: "Galerie de l’annonce" }).getByRole("img");
   await expect(listingImage).toBeVisible();
   await expect.poll(() => listingImage.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBeGreaterThan(0);
   await expect(page.getByRole("alert")).toHaveCount(0);
   expect(browserErrors).toEqual([]);
+});
+
+test("le mode Supabase n’expose aucune annonce de démonstration", async ({ page }) => {
+  await page.goto("/annonce/5", { waitUntil: "domcontentloaded" });
+  await expect(page.getByRole("heading", { name: "Annonce introuvable" })).toBeVisible();
+  await expect(page.getByText("Annonce de démonstration")).toHaveCount(0);
 });

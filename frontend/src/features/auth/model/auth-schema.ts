@@ -5,6 +5,7 @@ export function createAuthSchema(isRegister: boolean) {
     email: z.email("Adresse e-mail invalide."),
     password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères."),
     displayName: z.string(),
+    companyName: z.string().trim().max(120, "Le nom d’entreprise ne peut pas dépasser 120 caractères."),
   }).superRefine((value, context) => {
     if (isRegister && value.displayName.trim().length < 2) {
       context.addIssue({

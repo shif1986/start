@@ -75,16 +75,16 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
   }, [listings]);
 
   return (
-    <section className="listings-map relative overflow-hidden rounded-2xl border border-start-gold/25 bg-[#171a21] shadow-[0_28px_80px_rgba(0,0,0,.28)]" aria-label="Carte des annonces disponibles">
-      <div className="absolute top-5 left-5 z-[500] bg-transparent px-4 py-3 text-start-cream opacity-65 [text-shadow:0_1px_4px_rgba(0,0,0,.6)] max-sm:top-3 max-sm:right-14 max-sm:left-3 max-sm:px-3 max-sm:py-2.5">
+    <section className="listings-map relative overflow-hidden rounded-2xl" aria-label="Carte des annonces disponibles">
+      <div className="absolute top-5 left-5 z-[500] rounded-xl bg-[#080c12]/75 px-4 py-3 text-start-cream backdrop-blur-sm [text-shadow:0_1px_4px_rgba(0,0,0,.6)] max-sm:top-3 max-sm:right-14 max-sm:left-3 max-sm:px-3 max-sm:py-2.5">
         <span className="block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">{selectedCountry || "France & Suisse"}</span>
         <strong className="mt-1 block text-sm max-sm:text-xs">{listings.length} annonce{listings.length > 1 ? "s" : ""} sur la carte</strong>
       </div>
 
-      <MapContainer className="h-[clamp(520px,68vh,720px)] w-full max-sm:h-[430px]" center={[46.7, 3]} zoom={6} zoomSnap={0.25} minZoom={4} maxZoom={15} scrollWheelZoom zoomControl={false}>
+      <MapContainer className="relative h-[clamp(520px,68vh,720px)] w-full max-sm:h-[430px]" center={[46.7, 3]} zoom={6} zoomSnap={0.25} minZoom={4} maxZoom={15} scrollWheelZoom zoomControl={false}>
         <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'
+          url="https://tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
         <ZoomControl position="bottomright" />
         <FitListings listings={listings} selectedCountry={selectedCountry} />

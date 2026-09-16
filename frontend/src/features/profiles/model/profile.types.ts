@@ -4,6 +4,7 @@ export type CurrentProfile = {
   id: string;
   username: string;
   displayName: string;
+  companyName: string | null;
   avatarUrl: string | null;
   bio: string | null;
   city: string | null;

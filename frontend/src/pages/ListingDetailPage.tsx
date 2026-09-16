@@ -41,7 +41,7 @@ export default function ListingDetailPage() {
   const profileQuery = useCurrentProfile();
   const dataSource = getDataSource();
   const listingQuery = useListingDetail(slug, { enabled: dataSource === "supabase" });
-  const demoListing = mockListings.find((item) => item.id === slug || item.slug === slug);
+  const demoListing = dataSource === "static" ? mockListings.find((item) => item.id === slug || item.slug === slug) : undefined;
   const listing = dataSource === "supabase" ? listingQuery.data ?? demoListing : demoListing;
   const isSupabaseListing = dataSource === "supabase" && Boolean(listingQuery.data);
   const isAuthenticated = Boolean(session);
@@ -84,7 +84,13 @@ export default function ListingDetailPage() {
 
   return (
     <ThemedPage ambiance="network" className="px-[clamp(12px,5vw,72px)] py-[clamp(20px,3.5vw,52px)]">
-      <div className="flex items-center justify-between gap-4"><Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">← Retour à la recherche</Link><FavoriteButton listing={listing} placement="inline" /></div>
+      <div className="flex flex-wrap items-center justify-between gap-4">
+        <Link to="/annonces" className="inline-flex rounded-xl border-start-cream/20 px-4 py-2.5 font-bold text-start-cream/80 [border-style:solid] [border-width:.5px] hover:border-start-gold hover:text-start-gold">← Retour à la recherche</Link>
+        <div className="flex flex-wrap items-center justify-end gap-3">
+          {isSupabaseListing ? <Link to={`/signaler-un-contenu?listing=${listing.id}`} className="inline-flex min-h-11 items-center rounded-xl border border-network-red/45 px-4 py-2.5 text-sm font-semibold text-red-200 transition hover:bg-network-red/10">Signaler cette annonce</Link> : <span className="rounded-xl border border-start-cream/10 px-4 py-2.5 text-sm text-start-cream/50">Annonce de démonstration</span>}
+          <FavoriteButton listing={listing} placement="inline" />
+        </div>
+      </div>
 
       <div className="mt-6 rounded-2xl border border-start-cream/10 bg-[#121418]/95 px-[clamp(18px,5vw,56px)] py-[clamp(22px,3.5vw,40px)] shadow-[0_26px_80px_rgba(0,0,0,.25)] max-sm:mt-5 max-sm:rounded-none max-sm:border-0 max-sm:bg-transparent max-sm:px-0 max-sm:shadow-none">
         <div className="border-b border-start-cream/10 pb-7">
@@ -129,9 +135,12 @@ export default function ListingDetailPage() {
 
           <aside className="relative isolate h-fit overflow-hidden rounded-2xl border border-start-gold/30 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.11),transparent_42%),#0b0d10] p-6 shadow-[0_20px_60px_rgba(0,0,0,.24)]">
             <BrandPattern variant="nodes" className="-right-24 -bottom-36 -z-10 h-[380px] w-[280px] text-start-cream/[.055] opacity-50 max-sm:opacity-30" />
-            <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">Profil professionnel</span>
-            <h3 className="mt-3">{listing.professional?.username ? <Link className="hover:text-start-gold" to={`/professionnel/${listing.professional.username}`}>{listing.professional.name}</Link> : listing.professional?.name ?? "Professionnel"}</h3>
-            <p className="text-start-cream/65">{listing.professional?.role ?? "Membre du réseau"}</p>
+            <span className="text-xs font-bold tracking-[.18em] text-network-yellow uppercase">{isAuthenticated ? "Profil professionnel" : "Informations privées"}</span>
+            {isAuthenticated && <>
+              <h3 className="mt-3">{listing.professional?.username ? <Link className="hover:text-start-gold" to={`/professionnel/${listing.professional.username}`}>{listing.professional.companyName ?? listing.professional.name}</Link> : listing.professional?.companyName ?? listing.professional?.name ?? "Professionnel"}</h3>
+              {listing.professional?.companyName && <p className="mt-1 font-semibold text-start-cream/75">{listing.professional.name}</p>}
+              <p className="text-start-cream/65">{listing.professional?.role ?? "Membre du réseau"}</p>
+            </>}
             {hasContactAccess && listing.professional ? (
               <>
                 <ul className="my-5 space-y-2 p-0 text-sm text-start-cream/65">
@@ -160,7 +169,7 @@ export default function ListingDetailPage() {
                 </span>
                 <h4 className="mt-4 font-semibold text-start-cream">Coordonnées privées</h4>
                 <p className="mt-2 text-sm leading-6 text-start-cream/60">
-                  Créez un compte particulier gratuit pour voir le téléphone, l’e-mail et, lorsqu’elle est renseignée, l’adresse postale de ce professionnel.
+                  Créez un compte particulier gratuit pour voir l’identité, le profil et les coordonnées de l’annonceur.
                 </p>
                 <Link to={`/inscription?redirect=${encodeURIComponent(`/annonce/${listing.slug ?? listing.id}`)}`} className="mt-5 flex w-full items-center justify-center rounded-xl bg-start-gold px-5 py-3 font-bold text-start-ink transition hover:bg-[#d5b66f]">
                   Créer un compte gratuit
@@ -170,7 +179,6 @@ export default function ListingDetailPage() {
                 </Link>
               </div>
             )}
-            {isSupabaseListing && <Link to={`/signaler-un-contenu?listing=${listing.id}`} className="mt-4 block text-center text-xs text-start-cream/40 underline underline-offset-4 hover:text-network-red">Signaler cette annonce</Link>}
           </aside>
         </div>
       </div>

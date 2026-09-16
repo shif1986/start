@@ -20,6 +20,7 @@ export type Listing = {
   details?: { key: string; label: string; fieldType: string; value: import("../../../lib/supabase/database.types").Json; options: { label: string; value: string }[] }[];
   professional?: {
     name: string;
+    companyName?: string | null;
     username?: string;
     role: string;
     phone: string | null;

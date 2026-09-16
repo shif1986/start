@@ -12,7 +12,7 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
     <article className={`group relative overflow-hidden rounded-xl border bg-[#1d2127] text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.035),0_18px_44px_rgba(0,0,0,.24)] transition hover:-translate-y-1 hover:border-start-gold/70 ${compact ? "border-start-gold/45 shadow-[inset_0_1px_0_rgba(255,255,255,.04),0_18px_46px_rgba(0,0,0,.28),0_0_28px_rgba(199,164,93,.06)]" : "border-start-cream/15"}`}>
       <Link to={detailUrl} className="absolute inset-0 z-0" aria-label={`Voir l'annonce ${listing.title}`} />
       <div className="overflow-hidden">
-        <img src={listing.image} alt="" className={`pointer-events-none w-full object-cover transition duration-500 group-hover:scale-105 ${compact ? "h-40" : "h-52"}`} />
+        <img src={listing.image} alt="" loading="lazy" decoding="async" className={`pointer-events-none w-full object-cover transition duration-500 group-hover:scale-105 ${compact ? "h-40" : "h-52"}`} />
       </div>
       <FavoriteButton listing={listing} />
       <div className={`pointer-events-none relative z-10 ${compact ? "p-4" : "p-5"}`}>

@@ -4,7 +4,7 @@ Ce guide permet de reprendre le frontend dans son état actuel sans supposer que
 
 ## 1. Périmètre et démarrage
 
-Le travail actuel concerne uniquement `frontend/`. Il s'agit d'une maquette React fonctionnelle avec données locales.
+Le frontend fonctionne avec Supabase en environnement connecté et conserve un mode statique uniquement pour les démonstrations locales.
 
 Prérequis : Node.js 22 ou plus récent, npm et Git.
 
@@ -22,7 +22,7 @@ npm run build
 npm run preview
 ```
 
-`frontend/bun.lock` est le lockfile Bun de référence.
+`frontend/package-lock.json` est le lockfile utilisé par les commandes npm documentées.
 
 ## 2. Dépendances actuelles
 
@@ -40,7 +40,7 @@ npm run preview
 | Zod                     | validation de configuration |
 | Vitest / Testing Library | tests unitaires et d'intégration |
 
-React Hook Form, Zustand et shadcn/ui restent à introduire uniquement lorsqu'une tranche fonctionnelle le justifie.
+React Hook Form et Zod sont utilisés pour les formulaires métier. Zustand et shadcn/ui ne sont pas installés et ne doivent être ajoutés que si une tranche fonctionnelle le justifie.
 
 ## 3. Identité visuelle et Design System
 
@@ -97,7 +97,7 @@ background:
 
 ### 3.3 Signature réseau START
 
-Le symbole de nœuds connectés exprime la connexion, la collaboration et la communauté. Le fond de référence est `public/images/backgrounds/contact-network.png`, appliqué avec la classe partagée `discreet-network-background`. Malgré son nom de fichier historique, cet asset constitue désormais la signature générale du site et ne doit pas être considéré comme spécifique à la page Contact.
+Le symbole de nœuds connectés exprime la connexion, la collaboration et la communauté. Le fond servi est `public/images/backgrounds/contact-network.jpg`, appliqué avec la classe partagée `discreet-network-background`. Le PNG historique n’est pas chargé par l’application. Malgré son nom de fichier historique, cet asset constitue désormais la signature générale du site et ne doit pas être considéré comme spécifique à la page Contact.
 
 - le motif reste sombre et très discret sous un voile de 72 % à 82 % en mode sombre, et de 66 % à 78 % en mode clair ;
 - les connexions sont principalement visibles sur les bords, tandis que le centre reste calme pour accueillir le contenu ;
@@ -220,7 +220,7 @@ Chaque icône est un vrai bouton avec nom accessible et `aria-pressed`; la séle
 
 ## 8. Catalogue et URL
 
-Les annonces viennent de `mockListings.ts`. Les filtres restent dans l'URL :
+En mode Supabase, les annonces viennent de la RPC paginée `search_listings_v2`. `mockListings.ts` est réservé au mode statique. Les filtres restent dans l'URL :
 
 ```text
 /annonces?q=...&country=...&department=...&category=...
@@ -266,14 +266,7 @@ Les écrans de compte suivent également ces règles :
 
 ## 11. Évolutions prévues
 
-1. optimiser le GeoJSON et découper le bundle par route ;
-2. régénérer les types depuis Supabase local dès que Docker est disponible ;
-3. valider les migrations et politiques RLS avec pgTAP ;
-4. activer la source Supabase après configuration du projet ;
-5. connecter les données réelles des dashboards ;
-6. ajouter React Hook Form et Zod ;
-7. développer signalements et publication ;
-8. ajouter Stripe, dashboards et modération.
+Les optimisations GeoJSON/bundle, Supabase, les dashboards, React Hook Form/Zod, le signalement, la publication, Stripe et la modération sont déjà implémentés. Le contact avec les professionnels reste volontairement limité au téléphone et à l’e-mail affichés selon les autorisations. L'exploitation de production reste à configurer sur les services externes selon le runbook.
 
 Ne jamais exposer une clé `service_role` et ne jamais compter sur le masquage React comme seule protection.
 
@@ -287,13 +280,11 @@ En production, tous les utilisateurs utiliseront la même connexion. Après auth
 
 Le CTA « Publier une annonce » ouvre `/publier`. Cette page présente le parcours obligatoire : compte professionnel, abonnement actif, puis publication. La création de compte depuis ce parcours présélectionne le type professionnel et conduit à `/abonnement`. Un compte particulier qui serait choisi à la place revient dans son espace et ne peut pas poursuivre vers l'abonnement de publication.
 
-Lorsqu'un professionnel abonné crée une annonce, elle est enregistrée directement avec le statut `pending` afin d'être envoyée à la modération sans étape de brouillon supplémentaire. Les anciens brouillons conservent une action manuelle de soumission.
+Lorsqu'un professionnel abonné crée une annonce, elle est publiée immédiatement après validation du dépôt multi-étapes. Les anciens statuts restent pris en charge par les règles de compatibilité et la modération.
 
 ### 11.2 Stripe — état actuel et branchement futur
 
-`/abonnement` présente les formules professionnelles de 7 € par mois et 84 € par an ainsi qu'un choix visuel entre carte bancaire et Google Pay. Aucun paiement n'est actuellement créé et le bouton de continuation ne débite rien.
-
-La connexion Stripe nécessitera un service serveur pour créer une Checkout Session, conserver la clé secrète, vérifier les webhooks et enregistrer l'état de l'abonnement. Le frontend ne devra recevoir que les identifiants publiables nécessaires. Le droit de publier devra toujours être contrôlé côté serveur à partir d'un abonnement réellement actif, jamais à partir de l'état React ou d'une redirection de succès.
+`/abonnement` présente les formules professionnelles et ouvre une session Stripe Checkout créée par une Edge Function. Les webhooks synchronisent l’abonnement et le portail client permet sa gestion. Le droit de publier reste contrôlé côté serveur à partir de l’abonnement enregistré.
 
 Un compte particulier ne peut pas souscrire : la route frontend et la base le refusent. Il conserve les fonctionnalités gratuites de consultation, favoris, contact, notes et commentaires. Il ne reçoit les coordonnées d'un professionnel que si l'abonnement de ce dernier est actif. À l'échéance, le profil et les annonces déjà publiées du professionnel restent visibles, mais ses coordonnées sont masquées aux particuliers. Un professionnel doit disposer d'un abonnement actif pour créer ou soumettre une nouvelle annonce et pour bénéficier de l'accès professionnel complet.
 
@@ -301,9 +292,7 @@ Le tableau de bord interne `/admin` servira à superviser les comptes, annonces,
 
 ### 11.3 Dons — état actuel
 
-`/don` contient un parcours frontend complet : don ponctuel ou mensuel, montants suggérés, montant personnalisé, informations du donateur, choix Carte bancaire ou Google Pay, consentement et récapitulatif. Le formulaire utilise uniquement un état React local et ne débite aucun moyen de paiement.
-
-La future intégration devra créer une session de paiement côté serveur, vérifier le montant et la fréquence, conserver les secrets Stripe hors du frontend et confirmer le paiement par webhook. Le message de succès définitif et toute émission de reçu ne devront apparaître qu'après confirmation serveur.
+`/don` crée une session Stripe Checkout côté serveur pour un don ponctuel ou mensuel. Le montant, la fréquence et le consentement sont validés côté serveur ; le webhook et la fonction de statut confirment le résultat avant le message définitif.
 
 Responsive : la présentation Impact/Formulaire passe en une colonne sous 1024 px ; les montants restent sur deux colonnes sous 640 px ; identité et moyens de paiement passent sur une colonne ; les champs et CTA conservent une hauteur tactile minimale de 48 px.
 
@@ -317,7 +306,7 @@ git diff --check
 git status --short
 ```
 
-Le build émet actuellement un avertissement de taille de chunk principalement lié au GeoJSON. Il doit être traité avant une production réelle.
+Le build vérifie les cartes générées et `npm run bundle:check` impose les budgets JavaScript documentés dans `docs/PERFORMANCE.md`.
 
 ## 13. Catégories et composants associés
 
@@ -416,4 +405,4 @@ Toutes les pages publiques et toutes les annonces publiées restent consultables
 
 Un membre actif peut commenter une annonce publiée. Un compte suspendu ne peut plus accéder aux coordonnées privées ni créer de commentaire ou d'annonce. L'interface doit présenter cet état sans proposer une nouvelle inscription à un utilisateur déjà connecté. Les administrateurs conservent les accès nécessaires à la consultation des contacts et à la modération des commentaires.
 
-Les écrans actuels sont des maquettes frontend accessibles sans authentification. Cette accessibilité est volontaire pendant la phase de conception et ne constitue pas une sécurité. Les futures permissions devront être appliquées côté serveur et base de données ; React ne doit servir qu'à présenter l'état autorisé reçu du backend.
+Les espaces de compte et d’administration sont protégés côté React selon le profil courant, et les permissions définitives sont appliquées par les politiques RLS et fonctions SQL. Le mode statique reste une démonstration locale et ne constitue jamais une sécurité.

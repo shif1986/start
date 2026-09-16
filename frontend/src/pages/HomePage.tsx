@@ -193,9 +193,7 @@ export default function HomePage() {
     pageSize: 8,
   }, { enabled: dataSource === "supabase" });
   const realListings = listingsQuery.data?.items ?? [];
-  const homeListings = dataSource === "supabase" && (listingsQuery.data?.totalCount ?? 0) > 0
-    ? import.meta.env.DEV ? [...realListings, ...mockListings] : realListings
-    : mockListings;
+  const homeListings = dataSource === "supabase" ? realListings : mockListings;
   const featuredListings = homeListings.slice(0, 8);
 
   function handleDepartmentSelect(department: string) {
