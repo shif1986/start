@@ -25,10 +25,11 @@ export default function EditListingPage() {
     enabled: Boolean(user && listingId),
   });
   const form = useForm<ListingEditValues>({ resolver: zodResolver(listingEditSchema) });
+  const { reset } = form;
 
   useEffect(() => {
-    if (listingQuery.data) form.reset(listingQuery.data);
-  }, [form, listingQuery.data]);
+    if (listingQuery.data) reset(listingQuery.data);
+  }, [listingQuery.data, reset]);
 
   async function submit(values: ListingEditValues) {
     if (!user) return;

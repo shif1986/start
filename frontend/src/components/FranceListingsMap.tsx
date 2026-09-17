@@ -310,7 +310,7 @@ export default function FranceListingsMap({
         className="block h-auto w-full overflow-visible"
         viewBox="0 0 1000 800"
         preserveAspectRatio="xMidYMid meet"
-        role="img"
+        role="group"
         aria-label="Carte des départements français"
       >
         {departmentMap.map(({ name, d, hasListings }) => {
@@ -323,6 +323,7 @@ export default function FranceListingsMap({
               className={`cursor-pointer stroke-start-gold outline-none transition-all duration-200 ${isSelected ? "fill-start-gold/80 [filter:drop-shadow(0_0_10px_rgba(199,164,93,.5))]" : hasListings ? "fill-start-gold/20 hover:fill-start-gold/35" : "fill-start-cream/[.02] hover:fill-start-gold/15"}`}
               onClick={() => onDepartmentSelect(name)}
               style={{ strokeWidth: isSelected ? 2.1 : 1 }}
+              role="button"
               aria-label={name}
               tabIndex={0}
               onKeyDown={(event) => {
@@ -344,6 +345,8 @@ export default function FranceListingsMap({
               key={`marker-${name}`}
               className="cursor-pointer outline-none"
               onClick={() => onDepartmentSelect(name)}
+              role="button"
+              aria-label={`${name} : ${count} annonce${count > 1 ? "s" : ""}`}
               tabIndex={0}
               onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {
