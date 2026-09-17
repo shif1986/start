@@ -25,7 +25,7 @@ export default function ListingCard({ listing, compact = false }: { listing: Lis
             <Link to={`${detailUrl}#avis`} className="pointer-events-auto relative z-20 inline-flex items-center gap-1.5 text-sm text-start-cream/70 transition hover:text-start-gold" aria-label={`${listing.rating} sur 5, ${listing.reviewCount} avis. Voir les avis`}>
               <span className="text-start-gold" aria-hidden="true">★</span>
               <span>{listing.rating.toFixed(1)}</span>
-              <span className="inline-flex items-center gap-1 text-start-cream/45"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z" /></svg>{listing.reviewCount}</span>
+              <span className="inline-flex items-center gap-1 text-start-cream/60"><svg className="size-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true"><path d="M5 5h14v10H9l-4 4z" /></svg>{listing.reviewCount}</span>
             </Link>
           ) : <span className="text-sm text-start-cream/60">Aucun avis</span>}
           <strong className="text-start-cream">{listing.price ? `À partir de ${listing.price} €` : "Prix libre"}</strong>

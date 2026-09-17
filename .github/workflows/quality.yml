@@ -36,6 +36,8 @@ jobs:
   e2e:
     name: Parcours navigateur
     runs-on: ubuntu-latest
+    env:
+      VITE_DATA_SOURCE: static
     defaults:
       run:
         working-directory: frontend

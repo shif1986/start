@@ -100,7 +100,7 @@ export default function SubscriptionPage() {
           <section className="rounded-2xl border border-start-cream/10 bg-[#121418] p-[clamp(18px,3vw,28px)] max-sm:rounded-xl">
             <h2 className="text-2xl font-semibold max-sm:text-xl">Inclus dans votre abonnement</h2>
             <ul className="mt-6 grid gap-4 p-0 max-sm:mt-4 max-sm:gap-3">{features.map((feature) => <li key={feature} className="flex items-start gap-3 text-start-cream/65"><span className="mt-0.5 shrink-0 text-start-gold">✓</span><span>{feature}</span></li>)}</ul>
-            <p className="mt-7 border-t border-start-cream/10 pt-5 text-xs leading-5 text-start-cream/40">L’abonnement autorise la soumission d’annonces. Chaque annonce reste soumise aux règles de validation et de modération de START.</p>
+            <p className="mt-7 border-t border-start-cream/10 pt-5 text-xs leading-5 text-start-cream/60">L’abonnement autorise la soumission d’annonces. Chaque annonce reste soumise aux règles de validation et de modération de START.</p>
           </section>
 
           <aside className="rounded-2xl border border-start-gold/25 bg-[#0b0d10]/90 p-[clamp(18px,3vw,28px)] max-sm:rounded-xl">

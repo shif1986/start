@@ -16,6 +16,7 @@ const publicRoutes = [
   "/espace/particulier",
 ];
 const desktopBreakpoint = 1120;
+const isStatic = process.env.VITE_DATA_SOURCE === "static";
 const browserErrors = new WeakMap<Page, string[]>();
 
 test.beforeEach(({ page }) => {
@@ -31,9 +32,14 @@ test.afterEach(({ page }) => {
   expect(browserErrors.get(page) ?? []).toEqual([]);
 });
 
-test("un visiteur ne peut pas ouvrir le tableau de bord de modération", async ({ page }) => {
+test("le tableau de modération respecte la source de données configurée", async ({ page }) => {
   await page.goto("/admin", { waitUntil: "domcontentloaded" });
-  await expect(page).toHaveURL(/\/connexion\?redirect=%2Fadmin/);
+  if (isStatic) {
+    await expect(page).toHaveURL(/\/admin$/);
+    await expect(page.getByRole("heading", { level: 1, name: "Centre de modération" })).toBeVisible();
+  } else {
+    await expect(page).toHaveURL(/\/connexion\?redirect=%2Fadmin/);
+  }
 });
 
 test("le callback OAuth affiche proprement une erreur fournisseur", async ({ page }) => {
