@@ -8,6 +8,7 @@ const authMocks = vi.hoisted(() => ({
   getDataSource: vi.fn(),
   signInWithEmail: vi.fn(),
   signUpWithEmail: vi.fn(),
+  resendSignupConfirmation: vi.fn(),
   signInWithGoogle: vi.fn(),
   isGoogleAuthEnabled: vi.fn(),
 }));
@@ -33,6 +34,7 @@ describe("AuthPage Supabase", () => {
     authMocks.getDataSource.mockReturnValue("supabase");
     authMocks.signInWithEmail.mockReset().mockResolvedValue({ session: { user: { id: "user-id" } } });
     authMocks.signUpWithEmail.mockReset().mockResolvedValue({ session: null });
+    authMocks.resendSignupConfirmation.mockReset().mockResolvedValue({});
     authMocks.signInWithGoogle.mockReset().mockResolvedValue({});
     authMocks.isGoogleAuthEnabled.mockReset().mockResolvedValue(true);
   });
@@ -62,7 +64,10 @@ describe("AuthPage Supabase", () => {
     await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
     await userEvent.click(screen.getByRole("button", { name: "Créer mon compte et choisir mon abonnement" }));
     expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Jean Dupont", companyName: "Impact Conseil", redirectPath: "/abonnement" }));
-    expect(await screen.findByRole("status")).toHaveTextContent("Vérifiez votre adresse e-mail");
+    expect(await screen.findByRole("status")).toHaveTextContent("Compte créé");
+    await userEvent.click(screen.getByRole("button", { name: "Renvoyer l’e-mail de confirmation" }));
+    expect(authMocks.resendSignupConfirmation).toHaveBeenCalledWith({ email: "pro@example.test", redirectPath: "/abonnement" });
+    expect(await screen.findByRole("status")).toHaveTextContent("Un nouvel e-mail de confirmation");
   });
 
   it("lance Google avec la redirection demandée", async () => {

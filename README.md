@@ -15,6 +15,8 @@ npm run dev
 
 La procédure d'activation de la connexion Google est décrite dans [docs/GOOGLE_OAUTH.md](docs/GOOGLE_OAUTH.md).
 
+La livraison des confirmations d'inscription par e-mail est documentée dans [docs/AUTH_EMAILS.md](docs/AUTH_EMAILS.md).
+
 Le pipeline de qualité et la procédure staging/production, secrets, migrations et rollback sont décrits dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
 Le découpage du bundle, l'optimisation des cartes et la recette Lighthouse sont documentés dans [docs/PERFORMANCE.md](docs/PERFORMANCE.md).

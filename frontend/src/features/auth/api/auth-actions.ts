@@ -15,6 +15,10 @@ type SignUpCredentials = EmailCredentials & {
   redirectPath: string;
 };
 
+type ResendSignupCredentials = Pick<EmailCredentials, "email"> & {
+  redirectPath: string;
+};
+
 function safeRedirectPath(path: string) {
   return path.startsWith("/") && !path.startsWith("//") ? path : "/";
 }
@@ -50,6 +54,23 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
     },
   });
   if (error) throw new Error("Impossible de créer ce compte.", { cause: error });
+  return data;
+}
+
+export async function resendSignupConfirmation(credentials: ResendSignupCredentials, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const emailRedirectTo = new URL(`/auth/callback?next=${encodeURIComponent(safeRedirectPath(credentials.redirectPath))}`, window.location.origin).toString();
+  const { data, error } = await client.auth.resend({
+    type: "signup",
+    email: credentials.email,
+    options: { emailRedirectTo },
+  });
+  if (error?.code === "email_address_not_authorized") {
+    throw new Error("Le service d’e-mail n’est pas encore configuré pour envoyer à cette adresse.", { cause: error });
+  }
+  if (error?.code === "over_email_send_rate_limit" || error?.status === 429) {
+    throw new Error("Trop de demandes ont été envoyées. Patientez quelques minutes avant de réessayer.", { cause: error });
+  }
+  if (error) throw new Error("Impossible de renvoyer l’e-mail de confirmation.", { cause: error });
   return data;
 }
 

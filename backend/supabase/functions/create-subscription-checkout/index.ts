@@ -26,7 +26,7 @@ Deno.serve(async (request) => {
     if (current) return jsonResponse({ error: "Un abonnement existe déjà. Utilisez le portail de gestion." }, 409, headers);
 
     const stripe = createStripeClient();
-    const siteUrl = appUrl();
+    const siteUrl = appUrl(request);
     const session = await stripe.checkout.sessions.create({
       mode: "subscription",
       line_items: [{ price: stripePriceId(plan.code), quantity: 1 }],

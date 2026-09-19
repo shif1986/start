@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import ThemedPage from "../components/ThemedPage";
-import { isGoogleAuthEnabled, signInWithEmail, signInWithGoogle, signUpWithEmail } from "../features/auth/api/auth-actions";
+import { isGoogleAuthEnabled, resendSignupConfirmation, signInWithEmail, signInWithGoogle, signUpWithEmail } from "../features/auth/api/auth-actions";
 import { createAuthSchema, type AuthFormValues } from "../features/auth/model/auth-schema";
 import { getDataSource } from "../lib/data-source";
 
@@ -19,6 +19,8 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const requestedProfessional = isRegister && searchParams.get("type") === "professional";
   const [accountType, setAccountType] = useState<"customer" | "professional">(requestedProfessional ? "professional" : "customer");
   const [feedback, setFeedback] = useState("");
+  const [pendingConfirmation, setPendingConfirmation] = useState<{ email: string; redirectPath: string } | null>(null);
+  const [isResendPending, setIsResendPending] = useState(false);
   const [isGooglePending, setIsGooglePending] = useState(false);
   const [googleEnabled, setGoogleEnabled] = useState<boolean | null>(null);
   const redirect = isAdminLogin ? "/admin" : safeRedirect(searchParams.get("redirect"));
@@ -50,6 +52,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
 
   async function handleEmailSubmit(values: AuthFormValues) {
     setFeedback("");
+    setPendingConfirmation(null);
     if (isAdminLogin) {
       sessionStorage.setItem("start-auth-admin-intent", "true");
     } else {
@@ -72,7 +75,9 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           redirectPath: accountType === "professional" ? "/abonnement" : "/espace/particulier",
         });
         if (!data.session) {
-          setFeedback("Vérifiez votre adresse e-mail pour confirmer votre compte.");
+          const redirectPath = accountType === "professional" ? "/abonnement" : "/espace/particulier";
+          setPendingConfirmation({ email: values.email, redirectPath });
+          setFeedback(`Compte créé. Confirmez l’adresse ${values.email} avec le lien reçu par e-mail, puis connectez-vous.`);
           return;
         }
       } else {
@@ -85,6 +90,20 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
       navigate(requestedPath ? `/auth/callback?next=${encodeURIComponent(requestedPath)}` : "/auth/callback", { replace: true });
     } catch (error) {
       setFeedback(error instanceof Error ? error.message : "L’authentification n’a pas abouti.");
+    }
+  }
+
+  async function handleResendConfirmation() {
+    if (!pendingConfirmation) return;
+    setFeedback("");
+    setIsResendPending(true);
+    try {
+      await resendSignupConfirmation(pendingConfirmation);
+      setFeedback(`Un nouvel e-mail de confirmation a été demandé pour ${pendingConfirmation.email}. Vérifiez aussi les courriers indésirables.`);
+    } catch (error) {
+      setFeedback(error instanceof Error ? error.message : "Impossible de renvoyer l’e-mail de confirmation.");
+    } finally {
+      setIsResendPending(false);
     }
   }
 
@@ -152,7 +171,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Mot de passe<input className={fieldClassName} type="password" autoComplete={isRegister ? "new-password" : "current-password"} aria-invalid={Boolean(form.formState.errors.password)} {...form.register("password")} />{form.formState.errors.password && <span className="text-xs text-red-300">{form.formState.errors.password.message}</span>}</label>
           <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : isAdminLogin ? "Accéder à l’administration" : "Se connecter"}</button>
         </form>
-        {feedback && <p className="mt-5 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm text-start-cream/75" role="status" aria-live="polite">{feedback}</p>}
+        {feedback && <div className="mt-5 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm text-start-cream/75" role="status" aria-live="polite"><p>{feedback}</p>{pendingConfirmation && <button type="button" disabled={isResendPending} onClick={() => void handleResendConfirmation()} className="mt-3 min-h-10 rounded-lg border border-start-gold/35 px-4 py-2 font-semibold text-start-gold transition hover:bg-start-gold/10 disabled:cursor-wait disabled:opacity-60">{isResendPending ? "Envoi…" : "Renvoyer l’e-mail de confirmation"}</button>}</div>}
         <p className="mt-6 text-center text-sm text-start-cream/55">{isRegister ? "Déjà membre ?" : "Pas encore de compte ?"} <Link className="font-semibold text-start-gold" to={isRegister ? loginPath : registerPath}>{isRegister ? "Se connecter" : "Créer un compte gratuit"}</Link></p>
         {!isRegister && <div className="mt-5 border-t border-start-cream/10 pt-5 text-center"><Link className="inline-flex min-h-10 items-center justify-center rounded-lg border border-start-cream/10 px-4 py-2 text-xs font-semibold text-start-cream/45 transition hover:border-start-gold/40 hover:text-start-gold" to={isAdminLogin ? "/connexion" : "/connexion?admin=true&redirect=%2Fadmin"}>{isAdminLogin ? "Retour à la connexion classique" : "Accès administration"}</Link></div>}
       </div>

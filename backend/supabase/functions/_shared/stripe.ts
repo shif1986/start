@@ -17,8 +17,16 @@ export function stripePriceId(planCode: string) {
   return value;
 }
 
-export function appUrl() {
-  const value = Deno.env.get("APP_URL")?.replace(/\/$/, "");
-  if (!value) throw new Error("Configuration serveur APP_URL manquante");
-  return value;
+export function appUrl(request?: Request) {
+  const configured = (Deno.env.get("APP_URLS") ?? Deno.env.get("APP_URL") ?? "")
+    .split(",")
+    .map((value) => value.trim().replace(/\/$/, ""))
+    .filter(Boolean);
+  const origin = request?.headers.get("origin")?.replace(/\/$/, "") ?? "";
+  const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
+  if (origin && (isLocal || configured.includes(origin))) return origin;
+
+  const fallback = Deno.env.get("APP_URL")?.replace(/\/$/, "") ?? configured[0];
+  if (!fallback) throw new Error("Configuration serveur APP_URL manquante");
+  return fallback;
 }

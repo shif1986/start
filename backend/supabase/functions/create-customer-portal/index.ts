@@ -21,7 +21,7 @@ Deno.serve(async (request) => {
 
     const session = await createStripeClient().billingPortal.sessions.create({
       customer: data.provider_customer_id,
-      return_url: `${appUrl()}/espace/professionnel/abonnement`,
+      return_url: `${appUrl(request)}/espace/professionnel/abonnement`,
     });
     return jsonResponse({ url: session.url }, 200, headers);
   } catch (error) {

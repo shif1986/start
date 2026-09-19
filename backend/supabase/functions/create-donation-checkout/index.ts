@@ -34,7 +34,7 @@ Deno.serve(async (request) => {
 
     const recurring = body.frequency === "monthly" ? { interval: "month" as const } : undefined;
     const stripe = createStripeClient();
-    const siteUrl = appUrl();
+    const siteUrl = appUrl(request);
     const metadata = { kind: "donation", donation_id: donationId, frequency: body.frequency };
     const session = await stripe.checkout.sessions.create({
       mode: body.frequency === "monthly" ? "subscription" : "payment",
