@@ -22,6 +22,8 @@ const SubscriptionTermsPage = lazy(() => import("./pages/SubscriptionTermsPage")
 const CookiePolicyPage = lazy(() => import("./pages/CookiePolicyPage"));
 const ReportContentPage = lazy(() => import("./pages/ReportContentPage"));
 const AuthCallbackPage = lazy(() => import("./pages/AuthCallbackPage"));
+const ForgotPasswordPage = lazy(() => import("./pages/ForgotPasswordPage"));
+const ResetPasswordPage = lazy(() => import("./pages/ResetPasswordPage"));
 const CustomerFavoritesPage = lazy(() => import("./pages/CustomerFavoritesPage"));
 const CustomerReviewsPage = lazy(() => import("./pages/CustomerReviewsPage"));
 const ProfessionalSubscriptionPage = lazy(() => import("./pages/ProfessionalSubscriptionPage"));
@@ -59,6 +61,8 @@ function App() {
           <Route path="/connexion" element={<AuthPage mode="login" />} />
           <Route path="/inscription" element={<AuthPage mode="register" />} />
           <Route path="/auth/callback" element={<AuthCallbackPage />} />
+          <Route path="/mot-de-passe-oublie" element={<ForgotPasswordPage />} />
+          <Route path="/auth/reinitialiser-mot-de-passe" element={<ResetPasswordPage />} />
           <Route path="/espace/particulier" element={<ProtectedRoute accountTypes={["customer"]}><AccountDashboardPage role="customer" /></ProtectedRoute>} />
           <Route path="/espace/particulier/favoris" element={<ProtectedRoute accountTypes={["customer"]}><CustomerFavoritesPage /></ProtectedRoute>} />
           <Route path="/espace/particulier/avis" element={<ProtectedRoute accountTypes={["customer"]}><CustomerReviewsPage /></ProtectedRoute>} />

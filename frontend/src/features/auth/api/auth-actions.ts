@@ -74,6 +74,23 @@ export async function resendSignupConfirmation(credentials: ResendSignupCredenti
   return data;
 }
 
+export async function requestPasswordReset(email: string, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const resetPath = "/auth/reinitialiser-mot-de-passe";
+  const redirectTo = new URL(`/auth/callback?next=${encodeURIComponent(resetPath)}`, window.location.origin).toString();
+  const { data, error } = await client.auth.resetPasswordForEmail(email, { redirectTo });
+  if (error?.code === "over_email_send_rate_limit" || error?.status === 429) {
+    throw new Error("Trop de demandes ont été envoyées. Patientez quelques minutes avant de réessayer.", { cause: error });
+  }
+  if (error) throw new Error("Impossible d’envoyer l’e-mail de réinitialisation.", { cause: error });
+  return data;
+}
+
+export async function updatePassword(password: string, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const { data, error } = await client.auth.updateUser({ password });
+  if (error) throw new Error("Impossible de modifier le mot de passe.", { cause: error });
+  return data;
+}
+
 export async function signInWithGoogle(
   redirectPath: string | undefined,
   accountType: Database["public"]["Enums"]["account_type"],

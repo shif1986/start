@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
-import { resendSignupConfirmation, signInWithEmail, signInWithGoogle, signOut, signUpWithEmail } from "./auth-actions";
+import { requestPasswordReset, resendSignupConfirmation, signInWithEmail, signInWithGoogle, signOut, signUpWithEmail, updatePassword } from "./auth-actions";
 
 function createClient() {
   return {
@@ -10,6 +10,8 @@ function createClient() {
       signInWithOAuth: vi.fn().mockResolvedValue({ data: { url: "https://accounts.google.test" }, error: null }),
       signUp: vi.fn().mockResolvedValue({ data: { session: null }, error: null }),
       resend: vi.fn().mockResolvedValue({ data: {}, error: null }),
+      resetPasswordForEmail: vi.fn().mockResolvedValue({ data: {}, error: null }),
+      updateUser: vi.fn().mockResolvedValue({ data: { user: {} }, error: null }),
       signOut: vi.fn().mockResolvedValue({ error: null }),
     },
   } as unknown as SupabaseClient<Database>;
@@ -46,6 +48,20 @@ describe("auth actions", () => {
       email: "pro@example.test",
       options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=%2Fabonnement` },
     });
+  });
+
+  it("envoie la récupération via le callback PKCE existant", async () => {
+    const client = createClient();
+    await requestPasswordReset("user@example.test", client);
+    expect(client.auth.resetPasswordForEmail).toHaveBeenCalledWith("user@example.test", {
+      redirectTo: `${window.location.origin}/auth/callback?next=%2Fauth%2Freinitialiser-mot-de-passe`,
+    });
+  });
+
+  it("met à jour le mot de passe de la session de récupération", async () => {
+    const client = createClient();
+    await updatePassword("nouveau-secret", client);
+    expect(client.auth.updateUser).toHaveBeenCalledWith({ password: "nouveau-secret" });
   });
 
   it("conserve l’identité saisie avant une inscription Google", async () => {

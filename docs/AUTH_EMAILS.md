@@ -24,6 +24,10 @@ Le service SMTP intégré de Supabase est réservé aux essais avec les membres 
 4. Vérifier que `/auth/callback` ouvre le bon espace selon le type de compte.
 5. Tester **Renvoyer l’e-mail de confirmation** sans dépasser les limites configurées.
 
+## Mot de passe oublié
+
+La page `/mot-de-passe-oublie` envoie une demande Supabase sans révéler si l’adresse existe. Le lien reçu repasse par `/auth/callback`, échange le code PKCE contre une session temporaire puis ouvre `/auth/reinitialiser-mot-de-passe`. Le nouveau mot de passe contient au minimum huit caractères et n’est jamais manipulé côté serveur applicatif.
+
 En cas d’échec, consulter d’abord **Supabase → Logs → Auth** puis les journaux de la boîte Infomaniak. Ne jamais désactiver durablement la confirmation e-mail pour contourner un défaut de livraison.
 
 Références : [SMTP Supabase](https://supabase.com/docs/guides/auth/auth-smtp) et [configuration SMTP Infomaniak](https://www.infomaniak.com/en/support/faq/2433/configure-the-mail-app-native-android-application-using-imap-email).
