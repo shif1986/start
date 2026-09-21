@@ -12,7 +12,7 @@ Le projet utilise la boîte Infomaniak de l’organisation :
 - port : `587` avec STARTTLS ;
 - identifiant : l’adresse e-mail complète.
 
-Le mot de passe de la boîte est saisi uniquement dans **Supabase Dashboard → Authentication → Emails → SMTP Settings**. Il ne doit jamais être ajouté au dépôt, à une variable `VITE_`, à une capture d’écran ou à un ticket.
+Le mot de passe SMTP est un **mot de passe d’appareil Infomaniak** dédié à Supabase, et non le mot de passe du compte Manager/kSuite. Il se crée depuis **Manager Infomaniak → Service Mail → domaine → adresse → Appareils → Ajouter un appareil**. Le nommer par exemple `Supabase Auth`, le copier lors de sa création, puis le saisir uniquement dans **Supabase Dashboard → Authentication → Emails → SMTP Settings**. Il ne doit jamais être ajouté au dépôt, à une variable `VITE_`, à une capture d’écran ou à un ticket.
 
 Le service SMTP intégré de Supabase est réservé aux essais avec les membres de l’organisation et ne convient pas aux inscriptions publiques. Le SMTP personnalisé doit donc rester actif pour envoyer vers Gmail, Yahoo et les domaines professionnels.
 
@@ -30,4 +30,4 @@ La page `/mot-de-passe-oublie` envoie une demande Supabase sans révéler si l�
 
 En cas d’échec, consulter d’abord **Supabase → Logs → Auth** puis les journaux de la boîte Infomaniak. Ne jamais désactiver durablement la confirmation e-mail pour contourner un défaut de livraison.
 
-Références : [SMTP Supabase](https://supabase.com/docs/guides/auth/auth-smtp) et [configuration SMTP Infomaniak](https://www.infomaniak.com/en/support/faq/2433/configure-the-mail-app-native-android-application-using-imap-email).
+Références : [SMTP Supabase](https://supabase.com/docs/guides/auth/auth-smtp) et [mot de passe d’appareil Infomaniak](https://www.infomaniak.com/fr/support/faq/1321/ajouter-un-appareil-creer-un-mot-de-passe-mail-depuis-le-service-mail).
