@@ -11,6 +11,22 @@
 
 Le frontend est une application Vite statique. L’hébergeur doit rediriger les routes applicatives vers `index.html` afin que React Router traite les URLs comme `/annonce/...` et `/admin`. Il doit aussi permettre une vraie réponse HTTP 404 pour les URLs inexistantes ; la page 404 React seule ne change pas le statut du fallback SPA.
 
+## Configuration Netlify
+
+Le fichier `netlify.toml` à la racine configure automatiquement :
+
+- `frontend` comme dossier de base ;
+- `npm run build` comme commande de construction ;
+- `frontend/dist` comme dossier publié ;
+- Node.js 24, comme la CI ;
+- le fallback React Router vers `index.html` ;
+- le cache immuable des ressources Vite versionnées et la revalidation de `index.html`, `robots.txt` et `sitemap.xml` ;
+- les en-têtes HTTP de protection compatibles avec Supabase et Stripe.
+
+Dans Netlify, sélectionner `main` comme branche de production. Les déploiements de `develop` doivent rester désactivés ou être réservés au site de staging. Regrouper les changements dans un seul push validé évite de consommer inutilement les déploiements Netlify.
+
+Le fallback SPA standard renvoie un statut HTTP 200 pour une route inconnue, même si React affiche la page « introuvable ». Une vraie réponse HTTP 404 nécessitera ultérieurement une règle serveur ou Edge spécifique ; elle ne doit pas être simulée au risque de casser les routes dynamiques.
+
 ## Variables frontend
 
 Configurer dans chaque environnement d’hébergement :
@@ -20,6 +36,8 @@ Configurer dans chaque environnement d’hébergement :
 - `VITE_SUPABASE_PUBLISHABLE_KEY` ;
 - `VITE_PUBLIC_SITE_URL`, uniquement pour le domaine HTTPS définitif (canoniques et sitemap) ;
 - les éventuels endpoints publics documentés dans `frontend/.env.example`.
+
+Ces variables doivent être ajoutées dans **Netlify → Site configuration → Environment variables**. Elles ne doivent pas être écrites dans `netlify.toml` ni commitées.
 
 Une variable préfixée par `VITE_` est intégrée au JavaScript public. Ne jamais y placer de clé `service_role`, secret Stripe, mot de passe de base ou jeton d’accès.
 
