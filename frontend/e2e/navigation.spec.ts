@@ -44,7 +44,7 @@ test("le tableau de modération respecte la source de données configurée", asy
 
 test("le callback OAuth affiche proprement une erreur fournisseur", async ({ page }) => {
   await page.goto("/auth/callback?error_description=Connexion%20Google%20annulee", { waitUntil: "domcontentloaded" });
-  await expect(page.getByRole("heading", { name: "Connexion non finalisée" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Authentification non finalisée" })).toBeVisible();
   await expect(page.getByRole("alert")).toContainText("Connexion Google annulee");
   await expect(page.getByRole("link", { name: "Revenir à la connexion" })).toBeVisible();
 });
