@@ -15,7 +15,7 @@ export async function getCurrentSubscription(
 
   const { data, error } = await client
     .from("subscriptions")
-    .select("id,status,current_period_end,cancel_at_period_end,subscription_plans(code,name,interval,price_cents,currency)")
+    .select("id,status,current_period_end,cancel_at_period_end,provider_customer_id,subscription_plans(code,name,interval,price_cents,currency)")
     .in("status", ["trialing", "active", "past_due"])
     .eq("user_id", userId)
     .order("current_period_end", { ascending: false })
@@ -32,6 +32,7 @@ export async function getCurrentSubscription(
     status: subscription.status,
     currentPeriodEnd: subscription.current_period_end,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
+    isStripeManaged: subscription.provider_customer_id?.startsWith("cus_") ?? false,
     plan: {
       code: subscription.subscription_plans.code,
       name: subscription.subscription_plans.name,

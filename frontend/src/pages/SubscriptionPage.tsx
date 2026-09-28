@@ -30,6 +30,7 @@ export default function SubscriptionPage() {
   const [plan, setPlan] = useState<Plan>("monthly");
   const [checkoutPending, setCheckoutPending] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const plans = isSupabase ? plansQuery.data ?? [] : previewPlans;
   const selectedPlan = plans.find((candidate) => candidate.interval === plan) ?? plans[0];
   const currentSubscription = subscriptionQuery.data;
@@ -37,7 +38,7 @@ export default function SubscriptionPage() {
   const formatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: selectedPlan?.currency ?? "EUR" });
 
   async function openCheckout() {
-    if (!selectedPlan || isEntitled) return;
+    if (!selectedPlan || isEntitled || !termsAccepted) return;
     setCheckoutPending(true);
     setCheckoutError("");
     try {
@@ -90,7 +91,7 @@ export default function SubscriptionPage() {
             return <button key={candidate.id} type="button" className={`relative rounded-2xl border p-5 text-left transition max-sm:rounded-xl max-sm:p-4 ${selected ? "border-start-gold bg-start-gold/[.08] shadow-[0_20px_60px_rgba(199,164,93,.12)]" : "border-start-cream/10 bg-[#121418] hover:border-start-gold/40"}`} aria-pressed={selected} onClick={() => setPlan(candidate.interval)}>
               <span className={`text-xs font-bold tracking-[.18em] uppercase ${candidate.interval === "monthly" ? "text-network-blue" : "text-network-yellow"}`}>{candidate.interval === "monthly" ? "Mensuel" : "Annuel"}</span>
               <div className="mt-3"><strong className="text-4xl">{new Intl.NumberFormat("fr-FR", { style: "currency", currency: candidate.currency, maximumFractionDigits: 0 }).format(candidate.priceCents / 100)}</strong><span className="text-start-cream/50"> / {candidate.interval === "monthly" ? "mois" : "an"}</span></div>
-              <p className="mt-3 text-sm leading-5 text-start-cream/55">{candidate.interval === "monthly" ? "Paiement mensuel, renouvelable jusqu’à résiliation." : "Un seul paiement pour douze mois d’accès professionnel."}</p>
+              <p className="mt-3 text-sm leading-5 text-start-cream/55">{candidate.interval === "monthly" ? "Paiement mensuel, renouvelable jusqu’à résiliation." : "Paiement annuel, renouvelable chaque année jusqu’à résiliation."}</p>
               <span className={`absolute top-5 right-5 inline-flex size-6 items-center justify-center rounded-full border max-sm:top-4 max-sm:right-4 ${selected ? "border-start-gold bg-start-gold text-start-ink" : "border-start-cream/20"}`}>{selected ? "✓" : ""}</span>
             </button>;
           })}
@@ -107,8 +108,9 @@ export default function SubscriptionPage() {
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Récapitulatif</span>
             {selectedPlan ? <div className="mt-5 flex items-end justify-between gap-4 border-b border-start-cream/10 pb-5 max-sm:items-start"><div><strong className="block">{selectedPlan.name}</strong><span className="text-sm text-start-cream/45">Renouvellement automatique</span></div><strong className="shrink-0 text-2xl text-start-gold">{formatter.format(selectedPlan.priceCents / 100)}</strong></div> : <p className="mt-5 text-sm text-start-cream/50">Sélectionnez une formule disponible.</p>}
             <div className="mt-6 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Le paiement s’ouvre sur la page sécurisée Stripe. Les moyens disponibles, dont Google Pay sur les appareils compatibles, sont proposés directement par Stripe.</div>
+            <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-start-cream/55"><input required checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} type="checkbox" className="mt-1 accent-[#c7a45d]" /><span>J’accepte les <Link to="/conditions-abonnement" className="text-start-gold underline underline-offset-4">conditions de l’abonnement</Link>, notamment son renouvellement automatique et sa résiliation en fin de période.</span></label>
             {checkoutError && <p role="alert" className="mt-4 text-sm text-red-200">{checkoutError}</p>}
-            <button type="button" disabled={!isSupabase || isEntitled || !selectedPlan || checkoutPending} onClick={() => void openCheckout()} className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-55">{isEntitled ? "Abonnement déjà actif" : checkoutPending ? "Ouverture du paiement…" : "Souscrire avec Stripe"}</button>
+            <button type="button" disabled={!isSupabase || isEntitled || !selectedPlan || checkoutPending || !termsAccepted} onClick={() => void openCheckout()} className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-55">{isEntitled ? "Abonnement déjà actif" : checkoutPending ? "Ouverture du paiement…" : "Souscrire avec Stripe"}</button>
             <Link to="/espace/professionnel" className="mt-4 block text-center text-sm text-start-cream/45 hover:text-start-gold">Retour à mon espace professionnel</Link>
           </aside>
         </div>
@@ -175,15 +177,15 @@ export default function SubscriptionPage() {
             <div>
               <article className="border-b border-start-cream/10 py-7 first:pt-0">
                 <h3 className="text-xl font-semibold">Quels abonnements sont proposés ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60"><strong className="text-start-cream/85">Pro mensuel à 7 € :</strong> une formule flexible, renouvelée chaque mois. <strong className="text-start-cream/85">Pro annuel à 84 € :</strong> un paiement unique donnant accès aux services professionnels pendant douze mois.</p>
+                <p className="mt-4 leading-7 text-start-cream/60"><strong className="text-start-cream/85">Pro mensuel à 7 € :</strong> une formule renouvelée chaque mois. <strong className="text-start-cream/85">Pro annuel à 84 € :</strong> une formule renouvelée chaque année. TVA non applicable selon le régime fiscal déclaré par START.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
                 <h3 className="text-xl font-semibold">Que permet l’abonnement professionnel ?</h3>
                 <p className="mt-4 leading-7 text-start-cream/60">Il permet de créer un profil professionnel public, de gérer vos annonces et de les soumettre à START. La publication reste conditionnée à un abonnement actif, à la validation du profil et à la modération de chaque annonce.</p>
               </article>
               <article className="border-b border-start-cream/10 py-7">
-                <h3 className="text-xl font-semibold">Mon abonnement ouvre-t-il droit à une réduction d’impôt de 60 % ?</h3>
-                <p className="mt-4 leading-7 text-start-cream/60">Votre abonnement peut ouvrir droit à une réduction d’impôt de 60 % lorsqu’il remplit les conditions légales du mécénat et qu’un reçu fiscal peut être délivré.</p>
+                <h3 className="text-xl font-semibold">Mon abonnement ouvre-t-il droit à une réduction d’impôt ?</h3>
+                <p className="mt-4 leading-7 text-start-cream/60">Non automatiquement. L’abonnement rémunère l’accès aux services professionnels et aucun reçu fiscal ne doit être promis sans validation préalable de l’éligibilité par START.</p>
               </article>
             </div>
           </div>

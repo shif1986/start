@@ -29,6 +29,7 @@ describe("getCurrentSubscription", () => {
       status: "active",
       current_period_end: "2026-09-28T00:00:00Z",
       cancel_at_period_end: false,
+      provider_customer_id: "cus_live_customer",
       subscription_plans: { code: "pro_monthly", name: "Pro mensuel", interval: "monthly", price_cents: 700, currency: "EUR" },
     });
 
@@ -37,12 +38,26 @@ describe("getCurrentSubscription", () => {
       status: "active",
       currentPeriodEnd: "2026-09-28T00:00:00Z",
       cancelAtPeriodEnd: false,
+      isStripeManaged: true,
       plan: { code: "pro_monthly", name: "Pro mensuel", interval: "monthly", priceCents: 700, currency: "EUR" },
     });
     expect(query.from).toHaveBeenCalledWith("subscriptions");
     expect(query.inStatus).toHaveBeenCalledWith("status", ["trialing", "active", "past_due"]);
     expect(query.eqUser).toHaveBeenCalledWith("user_id", "user-1");
     expect(query.order).toHaveBeenCalledWith("current_period_end", { ascending: false });
+  });
+
+  it("identifie un abonnement interne qui ne doit pas ouvrir Stripe", async () => {
+    const query = createClientResult({
+      id: "subscription-internal",
+      status: "trialing",
+      current_period_end: "2027-03-08T00:00:00Z",
+      cancel_at_period_end: false,
+      provider_customer_id: "manual_test",
+      subscription_plans: { code: "pro_monthly", name: "Pro mensuel", interval: "monthly", price_cents: 700, currency: "EUR" },
+    });
+
+    await expect(getCurrentSubscription("user-1", query.client)).resolves.toMatchObject({ isStripeManaged: false });
   });
 
   it("retourne null lorsqu'aucun abonnement n'existe", async () => {

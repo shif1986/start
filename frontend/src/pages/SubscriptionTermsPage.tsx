@@ -9,7 +9,7 @@ export default function SubscriptionTermsPage() {
       </LegalSection>
 
       <LegalSection title="Formules et prix">
-        <p>START propose une formule mensuelle à 7 € et une formule annuelle à 84 €. Le prix, la fréquence de prélèvement et les éventuels frais sont récapitulés avant la validation du paiement.</p>
+        <p>START propose une formule mensuelle à 7 € et une formule annuelle à 84 €. La mention de TVA correspondant au régime fiscal de START figure sur la facture. Le prix total, la fréquence de prélèvement et les éventuels frais sont récapitulés avant la validation du paiement.</p>
       </LegalSection>
 
       <LegalSection title="Souscription et paiement">
@@ -21,7 +21,7 @@ export default function SubscriptionTermsPage() {
       </LegalSection>
 
       <LegalSection title="Résiliation">
-        <p>Une fonction clairement identifiée permettra de résilier l’abonnement en ligne. La résiliation prendra effet à la fin de la période déjà réglée, sauf disposition impérative ou offre plus favorable. Aucun nouveau prélèvement ne sera effectué après cette échéance.</p>
+        <p>Lorsque la souscription Stripe est activée, le bouton « Gérer mon abonnement » ouvre le portail sécurisé qui permet de demander la résiliation en ligne. La résiliation prend effet à la fin de la période déjà réglée, sauf disposition impérative ou offre plus favorable. Aucun nouveau prélèvement n’est effectué après cette échéance.</p>
       </LegalSection>
 
       <LegalSection title="Accès aux services">
@@ -33,12 +33,17 @@ export default function SubscriptionTermsPage() {
         <p>START peut suspendre une annonce ou un compte en cas d’impayé, de fraude, de risque pour la plateforme ou de non-respect des CGU. La suspension ne supprime pas les obligations déjà nées.</p>
       </LegalSection>
 
+      <LegalSection title="Facturation et retard de paiement">
+        <p>Les factures sont mises à disposition par voie électronique. Le paiement est exigible à la souscription puis à chaque renouvellement. En cas d’échec, l’accès payant peut être suspendu après les éventuelles tentatives de régularisation.</p>
+        <p>Lorsqu’une somme reste due par un professionnel, des pénalités au taux de trois fois le taux d’intérêt légal sont exigibles sans rappel à compter du lendemain de l’échéance, ainsi que l’indemnité forfaitaire légale de 40 € pour frais de recouvrement, sans préjudice d’une indemnisation complémentaire sur justificatifs.</p>
+      </LegalSection>
+
       <LegalSection title="Réduction d’impôt">
-        <p>Un abonnement ne bénéficie pas automatiquement du régime du mécénat. Une réduction d’impôt de 60 % n’est envisageable que si le versement remplit les conditions légales et qu’un reçu fiscal peut valablement être délivré.</p>
+        <p>L’abonnement rémunère l’accès à un service professionnel et ne constitue pas un don. Il n’ouvre donc pas, à ce titre, droit à un reçu fiscal de don.</p>
       </LegalSection>
 
       <LegalSection title="Réclamations et droit applicable">
-        <p>Toute réclamation doit être transmise via le <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">formulaire de contact</Link>. Le contrat est soumis au droit français, sous réserve des règles impératives applicables. Lorsqu’un souscripteur bénéficie légalement du statut de consommateur, les informations relatives au médiateur compétent lui sont communiquées avant la souscription.</p>
+        <p>Toute réclamation doit être transmise via le <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">formulaire de contact</Link> ou à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a>. Le contrat est soumis au droit français, sous réserve des règles impératives applicables. L’abonnement étant réservé à un usage professionnel, les règles propres aux contrats de consommation ne s’appliquent que si une disposition impérative en décide autrement.</p>
       </LegalSection>
     </LegalDocumentPage>
   );

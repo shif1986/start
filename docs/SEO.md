@@ -29,7 +29,7 @@ Après mise en ligne du domaine :
 2. contrôler `/robots.txt` et `/sitemap.xml` ;
 3. vérifier les canoniques sur l’accueil, le catalogue et les pages publiques ;
 4. tester un aperçu de partage social ;
-5. contrôler les codes HTTP réels : le fallback SPA affiche la page 404, mais le serveur d’hébergement doit également pouvoir répondre avec un statut 404 ;
+5. contrôler les codes HTTP réels : Netlify sert `404.html` avec le statut 404 pour un chemin inconnu, tandis que les routes React connues sont explicitement redirigées vers `index.html` ;
 6. soumettre le sitemap aux outils pour webmasters seulement après ces contrôles.
 
-Le SEO côté navigateur ne remplace pas un pré-rendu ou un rendu serveur pour les robots et services de partage qui n’exécutent pas JavaScript. Cette décision dépendra de l’hébergement retenu.
+Les fiches dynamiques valides sont servies par le shell React avec un statut 200. Une fiche dont le slug n’existe pas ne peut pas recevoir un statut 404 déterminé côté serveur sans pré-rendu ou rendu serveur. Le SEO côté navigateur ne remplace pas ce rendu pour les robots et services de partage qui n’exécutent pas JavaScript.

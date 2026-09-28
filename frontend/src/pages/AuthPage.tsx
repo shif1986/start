@@ -23,6 +23,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const [isResendPending, setIsResendPending] = useState(false);
   const [isGooglePending, setIsGooglePending] = useState(false);
   const [googleEnabled, setGoogleEnabled] = useState<boolean | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const redirect = isAdminLogin ? "/admin" : safeRedirect(searchParams.get("redirect"));
   const redirectQuery = redirect ? `?redirect=${encodeURIComponent(redirect)}` : "";
   const loginPath = isAdminLogin ? "/connexion?admin=true&redirect=%2Fadmin" : `/connexion${redirectQuery}`;
@@ -53,6 +54,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   async function handleEmailSubmit(values: AuthFormValues) {
     setFeedback("");
     setPendingConfirmation(null);
+    if (isRegister && !termsAccepted) {
+      setFeedback("Vous devez accepter les CGU et confirmer avoir lu la politique de confidentialité.");
+      return;
+    }
     if (isAdminLogin) {
       sessionStorage.setItem("start-auth-admin-intent", "true");
     } else {
@@ -108,6 +113,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   }
 
   async function handleGoogle() {
+    if (isRegister && !termsAccepted) {
+      setFeedback("Vous devez accepter les CGU et confirmer avoir lu la politique de confidentialité.");
+      return;
+    }
     if (dataSource === "static") {
       setFeedback("La connexion Google est indisponible tant que Supabase n’est pas configuré.");
       return;
@@ -157,7 +166,9 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
 
         {isRegister && <fieldset className="mt-8"><legend className="text-sm font-semibold text-start-cream/75">Type de compte</legend><div className="mt-3 grid grid-cols-2 gap-3 max-sm:grid-cols-1"><label className={`rounded-xl border p-4 ${accountType === "customer" ? "border-start-gold/35 bg-start-gold/[.06]" : "border-start-cream/10 bg-[#0b0d10]"}`}><input type="radio" name="account-type" value="customer" checked={accountType === "customer"} onChange={() => setAccountType("customer")} className="mr-2 accent-[#c7a45d]" /><strong>Particulier</strong><span className="mt-2 block text-xs text-start-cream/50">Gratuit : contact, favoris et avis.</span></label><label className={`rounded-xl border p-4 ${accountType === "professional" ? "border-start-gold/35 bg-start-gold/[.06]" : "border-start-cream/10 bg-[#0b0d10]"}`}><input type="radio" name="account-type" value="professional" checked={accountType === "professional"} onChange={() => setAccountType("professional")} className="mr-2 accent-[#c7a45d]" /><strong>Professionnel</strong><span className="mt-2 block text-xs text-start-cream/50">Profil pro et abonnement pour publier.</span></label></div></fieldset>}
 
-        <button type="button" disabled={googleEnabled !== true || isGooglePending || form.formState.isSubmitting} onClick={() => void handleGoogle()} className="mt-8 flex min-h-13 w-full items-center justify-center gap-3 rounded-xl border border-start-cream/15 bg-start-cream px-5 font-semibold text-start-ink transition hover:-translate-y-0.5 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60">
+        {isRegister && <label className="mt-6 flex items-start gap-3 rounded-xl border border-start-cream/10 p-4 text-xs leading-5 text-start-cream/55"><input required checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} type="checkbox" className="mt-1 accent-[#c7a45d]" /><span>J’accepte les <Link to="/conditions-utilisation" className="text-start-gold underline underline-offset-4">conditions générales d’utilisation</Link> et confirme avoir lu la <Link to="/confidentialite" className="text-start-gold underline underline-offset-4">politique de confidentialité</Link>.</span></label>}
+
+        <button type="button" disabled={googleEnabled !== true || isGooglePending || form.formState.isSubmitting || (isRegister && !termsAccepted)} onClick={() => void handleGoogle()} className="mt-8 flex min-h-13 w-full items-center justify-center gap-3 rounded-xl border border-start-cream/15 bg-start-cream px-5 font-semibold text-start-ink transition hover:-translate-y-0.5 hover:bg-white disabled:cursor-not-allowed disabled:opacity-60">
           <svg className="size-5" viewBox="0 0 24 24" aria-hidden="true"><path fill="#4285F4" d="M21.6 12.23c0-.71-.06-1.4-.18-2.07H12v3.91h5.38a4.6 4.6 0 0 1-2 3.02v2.54h3.24c1.9-1.75 2.98-4.33 2.98-7.4Z" /><path fill="#34A853" d="M12 22c2.7 0 4.97-.9 6.63-2.43l-3.24-2.54c-.9.61-2.05.97-3.39.97-2.61 0-4.82-1.77-5.61-4.14H3.04v2.62A10 10 0 0 0 12 22Z" /><path fill="#FBBC05" d="M6.39 13.86A6 6 0 0 1 6.08 12c0-.65.11-1.28.31-1.86V7.52H3.04A10 10 0 0 0 2 12c0 1.61.38 3.14 1.04 4.48l3.35-2.62Z" /><path fill="#EA4335" d="M12 6c1.47 0 2.79.51 3.83 1.5l2.87-2.88A9.64 9.64 0 0 0 12 2a10 10 0 0 0-8.96 5.52l3.35 2.62C7.18 7.77 9.39 6 12 6Z" /></svg>
           {isGooglePending ? "Redirection…" : googleEnabled === false ? "Google bientôt disponible" : "Continuer avec Google"}
         </button>
@@ -169,7 +180,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
           {isRegister && accountType === "professional" && <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Nom de l’entreprise <span className="text-xs font-normal text-start-cream/40">(facultatif)</span><input className={fieldClassName} type="text" autoComplete="organization" maxLength={120} {...form.register("companyName")} />{form.formState.errors.companyName && <span className="text-xs text-red-300">{form.formState.errors.companyName.message}</span>}</label>}
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Adresse e-mail<input className={fieldClassName} type="email" autoComplete="email" aria-invalid={Boolean(form.formState.errors.email)} {...form.register("email")} />{form.formState.errors.email && <span className="text-xs text-red-300">{form.formState.errors.email.message}</span>}</label>
           <label className="grid gap-2 text-sm font-semibold text-start-cream/70">Mot de passe<input className={fieldClassName} type="password" autoComplete={isRegister ? "new-password" : "current-password"} aria-invalid={Boolean(form.formState.errors.password)} {...form.register("password")} />{form.formState.errors.password && <span className="text-xs text-red-300">{form.formState.errors.password.message}</span>}</label>
-          <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : isAdminLogin ? "Accéder à l’administration" : "Se connecter"}</button>
+          <button className="rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60" disabled={form.formState.isSubmitting || isGooglePending || (isRegister && !termsAccepted)} type="submit">{form.formState.isSubmitting ? "Traitement…" : requestedProfessional ? "Créer mon compte et choisir mon abonnement" : isRegister ? "Créer mon compte" : isAdminLogin ? "Accéder à l’administration" : "Se connecter"}</button>
         </form>
         {feedback && <div className="mt-5 rounded-xl border border-start-gold/20 bg-start-gold/[.05] px-4 py-3 text-sm text-start-cream/75" role="status" aria-live="polite"><p>{feedback}</p>{pendingConfirmation && <button type="button" disabled={isResendPending} onClick={() => void handleResendConfirmation()} className="mt-3 min-h-10 rounded-lg border border-start-gold/35 px-4 py-2 font-semibold text-start-gold transition hover:bg-start-gold/10 disabled:cursor-wait disabled:opacity-60">{isResendPending ? "Envoi…" : "Renvoyer l’e-mail de confirmation"}</button>}</div>}
         {!isRegister && <p className="mt-5 text-center text-sm"><Link className="font-semibold text-start-gold" to="/mot-de-passe-oublie">Mot de passe oublié ?</Link></p>}

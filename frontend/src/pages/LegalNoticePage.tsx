@@ -10,7 +10,8 @@ const legalSections = [
         <div><dt className="font-semibold text-start-cream/85">Forme juridique</dt><dd>Association déclarée régie par la loi du 1er juillet 1901</dd></div>
         <div><dt className="font-semibold text-start-cream/85">Numéro RNA</dt><dd>W842013429</dd></div>
         <div><dt className="font-semibold text-start-cream/85">Siège social</dt><dd>103 rue du Creuset, 84270 Vedène, France</dd></div>
-        <div><dt className="font-semibold text-start-cream/85">Contact</dt><dd><Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">Formulaire de contact</Link></dd></div>
+        <div><dt className="font-semibold text-start-cream/85">Adresse électronique</dt><dd><a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">contact@startreseauchretien.com</a></dd></div>
+        <div><dt className="font-semibold text-start-cream/85">Contact en ligne</dt><dd><Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">Formulaire de contact</Link></dd></div>
       </dl>
     ),
   },
@@ -23,6 +24,7 @@ const legalSections = [
     content: (
       <div className="mt-5 text-sm leading-6 text-start-cream/65">
         <p>Netlify, Inc.<br />101 2nd Street<br />San Francisco, CA 94105<br />États-Unis</p>
+        <p className="mt-3">Contact : <a href="mailto:support@netlify.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">support@netlify.com</a></p>
         <a href="https://www.netlify.com/" target="_blank" rel="noreferrer" className="mt-3 inline-flex text-start-gold underline decoration-start-gold/35 underline-offset-4 hover:decoration-start-gold">www.netlify.com</a>
       </div>
     ),
@@ -73,9 +75,9 @@ export default function LegalNoticePage() {
 
         <section className="mt-8 border-t border-start-cream/10 pt-8 text-center">
           <h2 className="text-xl font-semibold">Nous contacter</h2>
-          <p className="mx-auto mt-3 max-w-2xl leading-7 text-start-cream/60">Pour signaler une information incorrecte ou exercer vos droits, utilisez le formulaire de contact.</p>
+          <p className="mx-auto mt-3 max-w-2xl leading-7 text-start-cream/60">Pour signaler une information incorrecte ou exercer vos droits, écrivez à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a> ou utilisez le formulaire de contact.</p>
           <Link to="/contact" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-xl border border-start-gold/50 px-6 py-3 font-semibold text-start-gold transition hover:bg-start-gold hover:text-start-ink">Accéder au formulaire</Link>
-          <p className="mt-7 text-xs text-start-cream/38">Dernière mise à jour : 26 août 2026</p>
+          <p className="mt-7 text-xs text-start-cream/38">Dernière mise à jour : 27 septembre 2026</p>
         </section>
       </div>
     </ThemedPage>

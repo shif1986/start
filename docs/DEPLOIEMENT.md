@@ -19,13 +19,17 @@ Le fichier `netlify.toml` à la racine configure automatiquement :
 - `npm run build` comme commande de construction ;
 - `frontend/dist` comme dossier publié ;
 - Node.js 24, comme la CI ;
-- le fallback React Router vers `index.html` ;
+- les redirections des routes React connues vers `index.html` et une vraie page HTTP 404 pour les autres chemins ;
 - le cache immuable des ressources Vite versionnées et la revalidation de `index.html`, `robots.txt` et `sitemap.xml` ;
 - les en-têtes HTTP de protection compatibles avec Supabase et Stripe.
 
 Dans Netlify, sélectionner `main` comme branche de production. Les déploiements de `develop` doivent rester désactivés ou être réservés au site de staging. Regrouper les changements dans un seul push validé évite de consommer inutilement les déploiements Netlify.
 
-Le fallback SPA standard renvoie un statut HTTP 200 pour une route inconnue, même si React affiche la page « introuvable ». Une vraie réponse HTTP 404 nécessitera ultérieurement une règle serveur ou Edge spécifique ; elle ne doit pas être simulée au risque de casser les routes dynamiques.
+Déclarer `startreseauchretien.com` comme domaine principal et `www.startreseauchretien.com` comme alias. Attendre que Netlify confirme le certificat TLS avant d’activer les paiements réels. La redirection `www` vers le domaine principal est définie dans `netlify.toml`.
+
+Les routes React connues sont déclarées dans `netlify.toml`. Le dernier fallback sert `frontend/public/404.html` avec un statut HTTP 404. Toute nouvelle route applicative doit donc être ajoutée à la fois dans React et dans `netlify.toml`. Les slugs dynamiques inexistants restent une limite d’une SPA statique : leur statut dépendrait d’un pré-rendu ou d’un rendu serveur connecté aux données.
+
+La commande `npm run check:netlify` contrôle cette correspondance et s’exécute également dans la CI.
 
 ## Variables frontend
 

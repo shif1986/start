@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "npm run maps:check && npm run maps:preview:check",
+    "prebuild": "npm run maps:check && npm run maps:preview:check && npm run maps:home:check",
     "build": "tsc -b && vite build",
     "bundle:check": "node scripts/check-bundle-budget.mjs",
     "lint": "oxlint",
@@ -18,6 +18,8 @@
     "maps:optimize": "node scripts/optimize-geojson.mjs",
     "maps:preview": "node scripts/create-catalogue-map-preview.mjs",
     "maps:preview:check": "node scripts/create-catalogue-map-preview.mjs --check",
+    "maps:home": "node scripts/create-home-map-data.mjs",
+    "maps:home:check": "node scripts/create-home-map-data.mjs --check",
     "preview": "vite preview"
   },
   "dependencies": {

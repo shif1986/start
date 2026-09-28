@@ -9,20 +9,20 @@ export default function CookiePolicyPage() {
       </LegalSection>
 
       <LegalSection title="Cookies strictement nécessaires">
-        <p>Des cookies ou stockages techniques peuvent être nécessaires à l’authentification, à la sécurité, à la prévention de la fraude et à la conservation de la session. Ils sont utilisés uniquement pour fournir le service demandé.</p>
+        <p>Supabase utilise le stockage du navigateur pour conserver la session lorsque l’utilisateur choisit de se connecter. Des paramètres temporaires servent aussi à sécuriser les retours d’authentification, notamment avec Google. Ces éléments sont nécessaires au service demandé et ne sont pas utilisés à des fins publicitaires.</p>
       </LegalSection>
 
       <LegalSection title="Mesure d’audience et publicité">
-        <p>START n’utilise pas de traceur publicitaire. Si un outil de mesure d’audience soumis au consentement est utilisé, un module permet de l’accepter ou de le refuser avec la même facilité.</p>
+        <p>START n’utilise actuellement ni traceur publicitaire ni outil de mesure d’audience. Avant l’activation future d’un traceur non essentiel, le site demandera un consentement libre et permettra de le refuser ou de le retirer aussi facilement.</p>
       </LegalSection>
 
       <LegalSection title="Durée et gestion">
-        <p>La préférence de thème reste enregistrée jusqu’à sa modification ou la suppression des données du navigateur. La durée des autres cookies est indiquée dans l’interface de gestion du consentement lorsqu’elle s’applique.</p>
+        <p>La préférence de thème reste enregistrée jusqu’à sa modification ou la suppression des données du navigateur. Les éléments d’authentification expirent avec la session ou selon la durée de sécurité configurée par le service d’authentification.</p>
         <p>Vous pouvez supprimer les données locales depuis les réglages de votre navigateur. Le blocage de stockages strictement nécessaires peut empêcher certaines fonctions de fonctionner.</p>
       </LegalSection>
 
       <LegalSection title="Prestataires tiers">
-        <p>L’hébergement est assuré par Netlify. Les prestataires nécessaires à l’authentification ou au paiement peuvent utiliser leurs propres technologies strictement nécessaires au fonctionnement et à la sécurité du service.</p>
+        <p>L’hébergement est assuré par Netlify. Supabase gère l’authentification. Google intervient seulement si la connexion Google est choisie. Stripe intervient seulement à l’ouverture de son interface de paiement ou de gestion. La carte charge des ressources techniques OpenStreetMap et peut transmettre à ce service l’adresse IP et les informations techniques nécessaires à leur livraison.</p>
       </LegalSection>
 
       <LegalSection title="En savoir plus">

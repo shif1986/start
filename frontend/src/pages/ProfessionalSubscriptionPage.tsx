@@ -92,10 +92,10 @@ export default function ProfessionalSubscriptionPage() {
               <div className="mt-6 grid gap-3">
                 <Link to="/publier" className="inline-flex min-h-12 items-center justify-center rounded-xl bg-start-gold px-5 font-bold text-start-ink">Créer une annonce</Link>
                 <Link to="/espace/professionnel/annonces" className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-cream/15 px-5 font-semibold text-start-cream/70">Gérer mes annonces</Link>
-                <button type="button" disabled={portalPending} onClick={() => void openPortal()} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-gold/30 px-5 font-semibold text-start-gold disabled:opacity-50">{portalPending ? "Ouverture…" : "Gérer le paiement ou résilier"}</button>
+                {subscription.isStripeManaged && <button type="button" disabled={portalPending} onClick={() => void openPortal()} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-gold/30 px-5 font-semibold text-start-gold disabled:opacity-50">{portalPending ? "Ouverture…" : "Gérer le paiement ou résilier"}</button>}
               </div>
               {portalError && <p role="alert" className="mt-4 text-sm text-red-200">{portalError}</p>}
-              <p className="mt-5 text-xs leading-5 text-start-cream/40">Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe.</p>
+              <p className="mt-5 text-xs leading-5 text-start-cream/40">{subscription.isStripeManaged ? "Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe." : "Votre abonnement d’essai est géré par START. La gestion Stripe n’est pas disponible pour cette période."}</p>
             </aside>
           </div>
         </div>

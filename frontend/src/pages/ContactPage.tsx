@@ -84,7 +84,7 @@ export default function ContactPage() {
             </div>
             <input type="text" name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
             <div className="mt-7 flex items-center justify-between gap-5 max-sm:flex-col max-sm:items-stretch">
-              <p className="max-w-sm text-xs leading-5 text-start-cream/42">En envoyant ce formulaire, vous acceptez que vos informations soient utilisées pour répondre à votre demande.</p>
+              <p className="max-w-sm text-xs leading-5 text-start-cream/42">Les champs obligatoires servent à répondre à votre demande sur la base de mesures précontractuelles ou de notre intérêt légitime à assurer le support. Consultez la <a href="/confidentialite" className="text-start-gold underline underline-offset-4">politique de confidentialité</a>.</p>
               <button type="submit" disabled={isSending} className="inline-flex min-h-12 shrink-0 items-center justify-center gap-2 rounded-xl bg-start-gold px-6 font-bold text-start-ink transition hover:bg-[#d5b66f] focus-visible:outline-2 focus-visible:outline-offset-3 focus-visible:outline-start-gold disabled:cursor-wait disabled:opacity-65 max-sm:w-full">{isSending ? "Envoi en cours…" : "Envoyer le message"}{!isSending && <span aria-hidden="true">→</span>}</button>
             </div>
             {feedback && <div className={`mt-6 rounded-xl border px-4 py-3 text-sm leading-6 ${submissionState === "success" ? "border-emerald-400/25 bg-emerald-400/[.07] text-emerald-200" : "border-network-red/25 bg-network-red/[.07] text-red-200"}`} role={submissionState === "error" ? "alert" : "status"} aria-live="polite">{feedback}</div>}

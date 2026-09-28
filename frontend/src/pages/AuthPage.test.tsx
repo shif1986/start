@@ -62,6 +62,7 @@ describe("AuthPage Supabase", () => {
     await userEvent.type(screen.getByLabelText(/Nom de l’entreprise/), "Impact Conseil");
     await userEvent.type(screen.getByLabelText("Adresse e-mail"), "pro@example.test");
     await userEvent.type(screen.getByLabelText("Mot de passe"), "password123");
+    await userEvent.click(screen.getByRole("checkbox", { name: /J’accepte les conditions générales/ }));
     await userEvent.click(screen.getByRole("button", { name: "Créer mon compte et choisir mon abonnement" }));
     expect(authMocks.signUpWithEmail).toHaveBeenCalledWith(expect.objectContaining({ accountType: "professional", displayName: "Jean Dupont", companyName: "Impact Conseil", redirectPath: "/abonnement" }));
     expect(await screen.findByRole("status")).toHaveTextContent("Compte créé");
@@ -82,6 +83,7 @@ describe("AuthPage Supabase", () => {
     renderAuth("/inscription?type=professional");
     await userEvent.type(screen.getByLabelText("Votre nom et prénom"), "Jean Dupont");
     await userEvent.type(screen.getByLabelText(/Nom de l’entreprise/), "Impact Conseil");
+    await userEvent.click(screen.getByRole("checkbox", { name: /J’accepte les conditions générales/ }));
     const googleButton = screen.getByRole("button", { name: "Continuer avec Google" });
     await waitFor(() => expect(googleButton).toBeEnabled());
     await userEvent.click(googleButton);

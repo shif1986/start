@@ -1,4 +1,4 @@
-import { corsHeaders, jsonResponse, requirePost } from "../_shared/http.ts";
+import { corsHeaders, jsonResponse, requireAllowedOrigin, requirePost } from "../_shared/http.ts";
 import { appUrl, createStripeClient, stripePriceId } from "../_shared/stripe.ts";
 import { createAdminClient, getAuthenticatedUser } from "../_shared/supabase.ts";
 
@@ -6,6 +6,8 @@ const requestIdPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3
 
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
+  const originResponse = requireAllowedOrigin(request, headers);
+  if (originResponse) return originResponse;
   const methodResponse = requirePost(request, headers);
   if (methodResponse) return methodResponse;
 

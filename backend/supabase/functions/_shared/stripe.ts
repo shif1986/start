@@ -1,4 +1,5 @@
 import Stripe from "npm:stripe@22.0.0";
+import { isOriginAllowed } from "./http.ts";
 
 export function createStripeClient() {
   const key = Deno.env.get("STRIPE_SECRET_KEY");
@@ -23,8 +24,7 @@ export function appUrl(request?: Request) {
     .map((value) => value.trim().replace(/\/$/, ""))
     .filter(Boolean);
   const origin = request?.headers.get("origin")?.replace(/\/$/, "") ?? "";
-  const isLocal = /^http:\/\/(localhost|127\.0\.0\.1)(:\d+)?$/.test(origin);
-  if (origin && (isLocal || configured.includes(origin))) return origin;
+  if (origin && isOriginAllowed(origin)) return origin;
 
   const fallback = Deno.env.get("APP_URL")?.replace(/\/$/, "") ?? configured[0];
   if (!fallback) throw new Error("Configuration serveur APP_URL manquante");

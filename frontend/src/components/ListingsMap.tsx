@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { CircleMarker, GeoJSON, MapContainer, Popup, TileLayer, Tooltip, ZoomControl, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
 import type { FeatureCollection } from "geojson";
 import type { Listing } from "../features/listings/model/listing.types";
 import { loadGeoJson, mapDataUrls } from "../features/maps/api/geojson";

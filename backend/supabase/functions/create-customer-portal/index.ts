@@ -1,9 +1,11 @@
-import { corsHeaders, jsonResponse, requirePost } from "../_shared/http.ts";
+import { corsHeaders, jsonResponse, requireAllowedOrigin, requirePost } from "../_shared/http.ts";
 import { appUrl, createStripeClient } from "../_shared/stripe.ts";
 import { createAdminClient, getAuthenticatedUser } from "../_shared/supabase.ts";
 
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
+  const originResponse = requireAllowedOrigin(request, headers);
+  if (originResponse) return originResponse;
   const methodResponse = requirePost(request, headers);
   if (methodResponse) return methodResponse;
   try {
@@ -18,6 +20,9 @@ Deno.serve(async (request) => {
       .maybeSingle();
     if (error) throw error;
     if (!data?.provider_customer_id) return jsonResponse({ error: "Aucun compte de facturation Stripe n’est encore associé." }, 404, headers);
+    if (!data.provider_customer_id.startsWith("cus_")) {
+      return jsonResponse({ error: "Cet abonnement est géré directement par START et ne dispose pas de portail Stripe." }, 409, headers);
+    }
 
     const session = await createStripeClient().billingPortal.sessions.create({
       customer: data.provider_customer_id,

@@ -14,5 +14,6 @@ export type CurrentSubscription = {
   status: Database["public"]["Enums"]["subscription_status"];
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
+  isStripeManaged: boolean;
   plan: Omit<SubscriptionPlan, "id">;
 };

@@ -1,4 +1,4 @@
-import { corsHeaders, jsonResponse, requirePost } from "../_shared/http.ts";
+import { corsHeaders, jsonResponse, requireAllowedOrigin, requirePost } from "../_shared/http.ts";
 import { appUrl, createStripeClient } from "../_shared/stripe.ts";
 import { createAdminClient } from "../_shared/supabase.ts";
 
@@ -7,6 +7,8 @@ const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
+  const originResponse = requireAllowedOrigin(request, headers);
+  if (originResponse) return originResponse;
   const methodResponse = requirePost(request, headers);
   if (methodResponse) return methodResponse;
   try {

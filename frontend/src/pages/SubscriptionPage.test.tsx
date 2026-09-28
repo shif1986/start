@@ -1,4 +1,5 @@
 import { render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import SubscriptionPage from "./SubscriptionPage";
@@ -57,5 +58,15 @@ describe("SubscriptionPage", () => {
 
     expect(screen.getByText("Aucune formule n’est disponible actuellement.")).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /Mensuel.*7/ })).not.toBeInTheDocument();
+  });
+
+  it("exige l’acceptation des conditions avant le paiement", async () => {
+    subscriptionMocks.current.mockReturnValue({ data: null, isPending: false, isError: false });
+    render(<MemoryRouter><SubscriptionPage /></MemoryRouter>);
+
+    const checkoutButton = screen.getByRole("button", { name: "Souscrire avec Stripe" });
+    expect(checkoutButton).toBeDisabled();
+    await userEvent.click(screen.getByRole("checkbox", { name: /J’accepte les conditions de l’abonnement/ }));
+    expect(checkoutButton).toBeEnabled();
   });
 });

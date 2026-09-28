@@ -32,6 +32,8 @@ jobs:
       - run: npm run test:run
       - run: npm run build
       - run: npm run bundle:check
+      - name: Vérifier les routes Netlify
+        run: node ../scripts/check-netlify-routes.mjs
 
   e2e:
     name: Parcours navigateur

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type FormEvent } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import ThemedPage from "../components/ThemedPage";
 import { createDonationCheckout, getDonationStatus, type DonationStatus } from "../features/donations/api/donation-billing";
 
@@ -121,7 +121,7 @@ export default function DonationsPage() {
 
             <label className="mt-6 flex items-start gap-3 text-xs leading-5 text-start-cream/50">
               <input required checked={consent} onChange={(event) => setConsent(event.target.checked)} type="checkbox" className="mt-1 accent-[#c7a45d]" />
-              <span>J’accepte que mes informations soient utilisées pour traiter mon don et recevoir son récapitulatif.</span>
+              <span>J’ai lu la <Link to="/confidentialite" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">politique de confidentialité</Link> et demande le traitement de mes informations pour exécuter le don et recevoir son justificatif de paiement.</span>
             </label>
 
             <div className="mt-7 flex items-end justify-between gap-4 border-t border-start-cream/10 pt-5">
@@ -134,6 +134,13 @@ export default function DonationsPage() {
             {feedbackMessage && <p className="mt-4 rounded-xl border border-network-blue/20 bg-network-blue/[.06] px-4 py-3 text-sm leading-6 text-start-cream/65" role="status" aria-live="polite">{feedbackMessage}</p>}
           </form>
         </div>
+
+        <section className="mx-auto mt-10 max-w-4xl rounded-2xl border border-start-cream/10 bg-[#121418]/92 p-[clamp(22px,3vw,32px)] text-sm leading-7 text-start-cream/60">
+          <h2 className="text-xl font-semibold text-start-cream">Conditions du don</h2>
+          <p className="mt-4">Le don est libre et ne donne droit à aucune contrepartie commerciale. Pour un don mensuel, le montant est prélevé à la fréquence indiquée jusqu’à sa résiliation. La demande de résiliation peut être envoyée à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a> avant la prochaine échéance.</p>
+          <p className="mt-3">Le paiement est traité par Stripe. START ne reçoit pas le numéro complet de la carte. Un justificatif de paiement n’est pas un reçu fiscal. Un reçu fiscal ne peut être délivré que si START remplit les conditions légales applicables au moment du don.</p>
+          <p className="mt-3">En cas d’erreur ou de difficulté, utilisez la page <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">Contact</Link>. Les remboursements sont examinés au cas par cas, sous réserve des règles impératives et des possibilités techniques du prestataire de paiement.</p>
+        </section>
       </div>
     </ThemedPage>
   );

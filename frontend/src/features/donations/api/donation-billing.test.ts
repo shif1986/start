@@ -23,4 +23,19 @@ describe("donation billing", () => {
     invoke.mockResolvedValue({ data: null, error: { message: "failure" } });
     await expect(getDonationStatus("cs_test_invalid")).rejects.toThrow("Impossible de confirmer ce don");
   });
+
+  it("affiche le message métier retourné par la fonction de don", async () => {
+    invoke.mockResolvedValue({
+      data: null,
+      error: {
+        context: new Response(JSON.stringify({ error: "Origine non autorisée." }), {
+          status: 403,
+          headers: { "content-type": "application/json" },
+        }),
+      },
+    });
+
+    await expect(createDonationCheckout({ amountCents: 2500, frequency: "once", firstName: "Ada", lastName: "Test", email: "ada@example.test", consent: true }))
+      .rejects.toThrow("Origine non autorisée.");
+  });
 });

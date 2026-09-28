@@ -6,6 +6,7 @@ type LegalDocumentPageProps = {
   title: string;
   introduction: string;
   children: ReactNode;
+  lastUpdated?: string;
 };
 
 export function LegalSection({ title, children }: { title: string; children: ReactNode }) {
@@ -18,7 +19,7 @@ export function LegalSection({ title, children }: { title: string; children: Rea
   );
 }
 
-export default function LegalDocumentPage({ eyebrow, title, introduction, children }: LegalDocumentPageProps) {
+export default function LegalDocumentPage({ eyebrow, title, introduction, children, lastUpdated = "27 septembre 2026" }: LegalDocumentPageProps) {
   return (
     <ThemedPage ambiance="dark" showPattern={false} className="discreet-network-background px-[clamp(20px,5vw,72px)] py-[clamp(32px,5vw,72px)]">
       <div className="mx-auto max-w-6xl">
@@ -34,7 +35,7 @@ export default function LegalDocumentPage({ eyebrow, title, introduction, childr
           <p className="mx-auto mt-5 max-w-2xl text-[clamp(.9rem,1.2vw,1rem)] leading-7 text-start-cream/62">{introduction}</p>
         </header>
         <div className="mt-[clamp(48px,7vw,80px)] grid gap-5 md:grid-cols-2">{children}</div>
-        <p className="mt-10 text-center text-xs text-start-cream/38">Dernière mise à jour : 26 août 2026</p>
+        <p className="mt-10 text-center text-xs text-start-cream/38">Dernière mise à jour : {lastUpdated}</p>
       </div>
     </ThemedPage>
   );

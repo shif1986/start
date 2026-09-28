@@ -6,17 +6,137 @@
 [build.environment]
   NODE_VERSION = "24"
 
-# React Router traite les routes applicatives côté navigateur.
+# Le domaine www doit être déclaré comme alias du site dans Netlify.
 [[redirects]]
-  from = "/*"
+  from = "https://www.startreseauchretien.com/*"
+  to = "https://startreseauchretien.com/:splat"
+  status = 301
+  force = true
+
+# React Router traite uniquement les routes applicatives connues côté navigateur.
+# Le dernier fallback sert une vraie 404 aux chemins inconnus sans casser les
+# routes dynamiques des annonces, profils et espaces authentifiés.
+[[redirects]]
+  from = "/annonces"
   to = "/index.html"
   status = 200
+
+[[redirects]]
+  from = "/annonce/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/professionnel/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/a-propos"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/don"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/contact"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/publier"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/publier/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/categories"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/connexion"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/inscription"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/auth/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mot-de-passe-oublie"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/espace/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/admin"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/abonnement"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/mentions-legales"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/confidentialite"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/conditions-utilisation"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/conditions-abonnement"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/cookies"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/signaler-un-contenu"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to = "/404.html"
+  status = 404
 
 [[headers]]
   for = "/*"
 
   [headers.values]
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "DENY"
     Permissions-Policy = "camera=(), microphone=()"

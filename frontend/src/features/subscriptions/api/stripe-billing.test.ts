@@ -26,4 +26,23 @@ describe("Stripe billing", () => {
     invoke.mockResolvedValue({ data: { url: "http://example.test" }, error: null });
     await expect(createCustomerPortal()).rejects.toThrow("Adresse de paiement invalide");
   });
+
+  it("affiche le message métier retourné par une Edge Function", async () => {
+    invoke.mockResolvedValue({
+      data: null,
+      error: {
+        context: new Response(JSON.stringify({ error: "Aucun compte de facturation Stripe n’est encore associé." }), {
+          status: 404,
+          headers: { "content-type": "application/json" },
+        }),
+      },
+    });
+
+    await expect(createCustomerPortal()).rejects.toThrow("Aucun compte de facturation Stripe n’est encore associé.");
+  });
+
+  it("conserve un message neutre lorsque la réponse serveur est illisible", async () => {
+    invoke.mockResolvedValue({ data: null, error: { message: "network failure" } });
+    await expect(createCustomerPortal()).rejects.toThrow("Le service de paiement est momentanément indisponible.");
+  });
 });

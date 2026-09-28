@@ -28,7 +28,8 @@ export default function TermsOfUsePage() {
 
       <LegalSection title="Modération et signalement">
         <p>START peut masquer, refuser ou supprimer un contenu et suspendre un compte en cas de violation de la loi ou des présentes CGU. Sauf impossibilité légale ou urgence, la personne concernée est informée du motif et peut présenter ses observations.</p>
-        <p>Tout utilisateur peut utiliser la page <Link to="/signaler-un-contenu" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">Signaler un contenu</Link>.</p>
+        <p>Tout utilisateur peut utiliser la page <Link to="/signaler-un-contenu" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">Signaler un contenu</Link>. Le signalement doit identifier le contenu, expliquer précisément le motif et être effectué de bonne foi. START accuse réception, examine le signalement et informe son auteur de la décision lorsque ses coordonnées le permettent.</p>
+        <p>L’auteur du contenu ou du signalement peut contester une décision motivée en écrivant à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a>. Il doit joindre la référence de la décision et ses observations. Les recours judiciaires ou extrajudiciaires prévus par la loi restent disponibles.</p>
       </LegalSection>
 
       <LegalSection title="Propriété intellectuelle">
@@ -41,11 +42,11 @@ export default function TermsOfUsePage() {
       </LegalSection>
 
       <LegalSection title="Suspension et suppression">
-        <p>Un membre peut demander la suppression de son compte. START peut limiter ou suspendre l’accès pour protéger les utilisateurs, respecter la loi, prévenir la fraude ou faire appliquer les CGU. Les données sont ensuite traitées conformément à la politique de confidentialité.</p>
+        <p>Un membre peut demander la suppression de son compte. START peut limiter ou suspendre l’accès pour protéger les utilisateurs, respecter la loi, prévenir la fraude ou faire appliquer les CGU. Les signalements ou contenus manifestement abusifs et répétés peuvent également entraîner une limitation après avertissement, sauf urgence. Les données sont ensuite traitées conformément à la politique de confidentialité.</p>
       </LegalSection>
 
       <LegalSection title="Droit applicable et contact">
-        <p>Les CGU sont soumises au droit français, sous réserve des règles impératives applicables dans le pays de l’utilisateur. Toute difficulté doit d’abord être adressée à START via le <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">formulaire de contact</Link>.</p>
+        <p>Les CGU sont soumises au droit français, sous réserve des règles impératives applicables dans le pays de l’utilisateur. Toute difficulté doit d’abord être adressée à START via le <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">formulaire de contact</Link> ou à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a>.</p>
       </LegalSection>
     </LegalDocumentPage>
   );

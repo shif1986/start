@@ -17,6 +17,20 @@ on:
         required: true
         default: false
         type: boolean
+      expect_404:
+        description: Exiger une vraie réponse HTTP 404 pour une route inconnue
+        required: true
+        default: false
+        type: boolean
+      expect_security_headers:
+        description: Exiger les en-têtes HTTP de sécurité de production
+        required: true
+        default: false
+        type: boolean
+      canonical_origin:
+        description: Origine HTTPS attendue dans le sitemap (facultatif)
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -34,4 +48,7 @@ jobs:
       - name: Vérifier les pages publiques
         env:
           START_EXPECT_SITEMAP: ${{ inputs.expect_sitemap && '1' || '0' }}
+          START_EXPECT_404: ${{ inputs.expect_404 && '1' || '0' }}
+          START_EXPECT_SECURITY_HEADERS: ${{ inputs.expect_security_headers && '1' || '0' }}
+          START_EXPECT_CANONICAL_ORIGIN: ${{ inputs.canonical_origin }}
         run: node scripts/smoke-deployment.mjs "${{ inputs.base_url }}"
