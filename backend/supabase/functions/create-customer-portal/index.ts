@@ -2,6 +2,21 @@ import { corsHeaders, jsonResponse, requireAllowedOrigin, requirePost } from "..
 import { appUrl, createStripeClient } from "../_shared/stripe.ts";
 import { createAdminClient, getAuthenticatedUser } from "../_shared/supabase.ts";
 
+function customerPortalError(error: unknown) {
+  if (!(error instanceof Error)) return "Impossible d’ouvrir la gestion de l’abonnement.";
+  if (error.message === "Authentification requise") return error.message;
+  if (/no such customer/i.test(error.message)) {
+    return "Le client Stripe associé est introuvable. Vérifiez que l’abonnement et la clé Stripe utilisent le même environnement (test ou réel).";
+  }
+  if (/portal.*configur|configur.*portal/i.test(error.message)) {
+    return "Le portail client Stripe n’est pas encore configuré. Activez-le dans Stripe pour permettre la résiliation.";
+  }
+  if (/configuration serveur stripe manquante/i.test(error.message)) {
+    return "La configuration Stripe du serveur est incomplète.";
+  }
+  return "Impossible d’ouvrir la gestion de l’abonnement.";
+}
+
 Deno.serve(async (request) => {
   const headers = corsHeaders(request);
   const originResponse = requireAllowedOrigin(request, headers);
@@ -30,8 +45,8 @@ Deno.serve(async (request) => {
     });
     return jsonResponse({ url: session.url }, 200, headers);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Erreur de facturation";
+    const message = customerPortalError(error);
     const status = message === "Authentification requise" ? 401 : 500;
-    return jsonResponse({ error: status === 500 ? "Impossible d’ouvrir la gestion de l’abonnement." : message }, status, headers);
+    return jsonResponse({ error: message }, status, headers);
   }
 });
