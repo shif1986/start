@@ -1,0 +1,179 @@
+name: Surveillance de production
+
+on:
+  schedule:
+    - cron: "17,47 * * * *"
+    - cron: "23 4 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: production-monitoring
+  cancel-in-progress: true
+
+jobs:
+  uptime:
+    name: Disponibilité HTTP
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '17,47 * * * *'
+    runs-on: ubuntu-latest
+    env:
+      START_SITE_URL: ${{ vars.PRODUCTION_SITE_URL || 'https://startreseauchretien.netlify.app' }}
+      START_EXPECT_SECURITY_HEADERS: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Vérifier les pages publiques
+        id: smoke
+        continue-on-error: true
+        run: node scripts/smoke-deployment.mjs "$START_SITE_URL"
+      - name: Ouvrir ou actualiser l’alerte
+        if: steps.smoke.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Monitoring] Site de production indisponible';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = issues.find((issue) => issue.title === title && !issue.pull_request);
+            const body = [
+              `La recette HTTP planifiée a échoué le ${new Date().toISOString()}.`,
+              '',
+              `URL contrôlée : ${process.env.START_SITE_URL}`,
+              `Exécution : ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'Aucune donnée personnelle ni aucun secret n’est inclus dans cette alerte.',
+            ].join('\n');
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+      - name: Clore l’alerte après rétablissement
+        if: steps.smoke.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Monitoring] Site de production indisponible';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            for (const issue of issues.filter((item) => item.title === title && !item.pull_request)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Service rétabli lors du contrôle ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+      - name: Échouer le workflow si le site est indisponible
+        if: steps.smoke.outcome == 'failure'
+        run: exit 1
+
+  database:
+    name: Indicateurs opérationnels Supabase
+    if: github.event_name == 'workflow_dispatch' || github.event.schedule == '23 4 * * *'
+    runs-on: ubuntu-latest
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_MONITORING_DB_URL }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installer le client PostgreSQL
+        run: sudo apt-get update && sudo apt-get install --yes postgresql-client
+      - name: Vérifier la configuration
+        run: test -n "$SUPABASE_DB_URL"
+      - name: Contrôler les files et traitements en retard
+        id: database_health
+        continue-on-error: true
+        run: bash scripts/check-operational-health.sh
+      - name: Ouvrir ou actualiser l’alerte Supabase
+        if: steps.database_health.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Monitoring] Alerte opérationnelle Supabase';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = issues.find((issue) => issue.title === title && !issue.pull_request);
+            const body = [
+              `Le contrôle opérationnel Supabase a échoué le ${new Date().toISOString()}.`,
+              '',
+              `Exécution : ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'Consulter les compteurs agrégés du workflow. Ne copier aucune donnée personnelle dans cette issue.',
+            ].join('\n');
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
+      - name: Clore l’alerte Supabase après rétablissement
+        if: steps.database_health.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Monitoring] Alerte opérationnelle Supabase';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            for (const issue of issues.filter((item) => item.title === title && !item.pull_request)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Contrôle Supabase de nouveau nominal : ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+      - name: Échouer le workflow si une alerte Supabase est active
+        if: steps.database_health.outcome == 'failure'
+        run: exit 1

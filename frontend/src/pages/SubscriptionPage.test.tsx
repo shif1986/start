@@ -7,7 +7,10 @@ import SubscriptionPage from "./SubscriptionPage";
 const subscriptionMocks = vi.hoisted(() => ({
   plans: vi.fn(),
   current: vi.fn(),
+  checkout: vi.fn(),
 }));
+
+vi.mock("../features/subscriptions/api/stripe-billing", () => ({ createSubscriptionCheckout: subscriptionMocks.checkout }));
 
 vi.mock("../lib/data-source", () => ({ getDataSource: () => "supabase" }));
 vi.mock("../components/StartNetworkCycle", () => ({ default: () => null }));
@@ -20,6 +23,7 @@ vi.mock("../features/subscriptions/hooks/use-current-subscription", () => ({
 
 describe("SubscriptionPage", () => {
   beforeEach(() => {
+    subscriptionMocks.checkout.mockReset();
     subscriptionMocks.plans.mockReturnValue({
       data: [
         { id: "monthly", code: "pro_monthly", name: "Pro mensuel", interval: "monthly", priceCents: 700, currency: "EUR" },
@@ -64,9 +68,19 @@ describe("SubscriptionPage", () => {
     subscriptionMocks.current.mockReturnValue({ data: null, isPending: false, isError: false });
     render(<MemoryRouter><SubscriptionPage /></MemoryRouter>);
 
-    const checkoutButton = screen.getByRole("button", { name: "Souscrire avec Stripe" });
-    expect(checkoutButton).toBeDisabled();
-    await userEvent.click(screen.getByRole("checkbox", { name: /J’accepte les conditions de l’abonnement/ }));
+    const checkoutButton = screen.getByRole("button", { name: "Souscrire maintenant" });
+    expect(checkoutButton).toBeEnabled();
+    await userEvent.click(checkoutButton);
+    expect(subscriptionMocks.checkout).not.toHaveBeenCalled();
+    expect(screen.getByRole("alert")).toHaveTextContent("Veuillez accepter les conditions");
+    const terms = screen.getByRole("checkbox", { name: /J’accepte les conditions de l’abonnement/ });
+    expect(terms).toHaveFocus();
+    await userEvent.click(terms);
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+    subscriptionMocks.checkout.mockRejectedValue(new Error("Paiement indisponible"));
+    await userEvent.click(checkoutButton);
+    expect(subscriptionMocks.checkout).toHaveBeenCalledWith("pro_monthly");
+    expect(await screen.findByRole("alert")).toHaveTextContent("Paiement indisponible");
     expect(checkoutButton).toBeEnabled();
   });
 });

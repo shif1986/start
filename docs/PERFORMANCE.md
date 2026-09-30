@@ -7,6 +7,7 @@
 - Les GeoJSON ne sont plus incorporés au JavaScript. Ils sont simplifiés, minifiés et servis depuis `public/maps`.
 - Le fond `contact-network` est servi en JPEG optimisé (environ 1,7 Mo en PNG contre 140 Ko en JPEG). Les images de cartes d'annonces et de catégories sous la première vue sont chargées à la demande.
 - Les logos utilisés dans la navigation et le pied de page existent en versions de 616 px (environ 20 Ko au lieu de 52 Ko), avec dimensions explicites ; le logo de navigation est préchargé.
+- Montserrat est auto-hébergée en WOFF2 (environ 38 Ko) et préchargée. Le rendu initial ne dépend plus de Google Fonts et le changement tardif de métriques typographiques ne provoque plus de déplacement de contenu.
 - `npm run maps:check` empêche de construire avec des cartes générées obsolètes.
 - Le catalogue affiche un aperçu SVG statique de la carte dès le premier rendu ; Leaflet et les tuiles arrivent ensuite sans déplacer la page. `npm run maps:preview:check` bloque une construction si cet aperçu est obsolète.
 - La carte interactive de l’accueil charge des tracés SVG pré-calculés d’environ 250 Kio au lieu de télécharger puis projeter environ 1 Mio de GeoJSON. `npm run maps:home:check` bloque la construction si ces tracés ne correspondent plus aux données géographiques.
@@ -36,7 +37,16 @@ Les données cartographiques sont en plus chargées à la demande. La page d'acc
 
 ## Recette Lighthouse
 
-Nouvelle mesure mobile reproductible du 25 septembre 2026, avec une construction de production et la source statique afin d'exclure le réseau Supabase et les images téléversées par les utilisateurs :
+Nouvelle mesure mobile reproductible du 28 septembre 2026, après auto-hébergement de Montserrat, avec une construction de production et la source statique :
+
+| Route | Performance mobile | LCP mobile | CLS mobile | TBT mobile | Accessibilité | Bonnes pratiques | SEO |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Accueil | 88 (84–88) | 3,37 s (3,37–3,96 s) | 0 | 18 ms (17–34 ms) | 96 | 100 | 100 |
+| Catalogue | 86 (86–86) | 3,55 s (3,55–3,56 s) | 0 | 34 ms (30–62 ms) | 96 | 96 | 100 |
+
+Les valeurs centrales sont des médianes et les parenthèses indiquent le minimum et le maximum sur trois passages. Les six rapports respectent les seuils Lighthouse CI et le CLS est nul sur chaque passage.
+
+Mesure précédente du 25 septembre 2026, avec une construction de production et la source statique afin d'exclure le réseau Supabase et les images téléversées par les utilisateurs :
 
 | Route | Performance mobile | LCP mobile | CLS mobile | TBT mobile |
 | --- | ---: | ---: | ---: | ---: |

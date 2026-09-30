@@ -16,7 +16,9 @@
     "backend:test": "npx supabase test db --workdir backend",
     "backend:types": "npx supabase gen types typescript --local --workdir backend > frontend/src/lib/supabase/database.types.ts",
     "check:netlify": "node scripts/check-netlify-routes.mjs",
-    "smoke:deployment": "node scripts/smoke-deployment.mjs"
+    "smoke:deployment": "node scripts/smoke-deployment.mjs",
+    "ops:health": "bash scripts/check-operational-health.sh",
+    "backup:verify": "bash scripts/verify-supabase-backup.sh"
   },
   "devDependencies": {
     "supabase": "^2.113.0"

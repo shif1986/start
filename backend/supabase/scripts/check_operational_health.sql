@@ -3,6 +3,26 @@
 
 with metrics as (
   select
+    'reports_unreviewed_24h'::text as metric,
+    count(*)::bigint as value,
+    0::bigint as warning_threshold
+  from public.reports
+  where status in ('open', 'reviewing')
+    and created_at < now() - interval '24 hours'
+
+  union all
+
+  select
+    'listings_pending_24h',
+    count(*)::bigint,
+    0::bigint
+  from public.listings
+  where status = 'pending'
+    and updated_at < now() - interval '24 hours'
+
+  union all
+
+  select
     'stripe_webhooks_failed'::text as metric,
     count(*)::bigint as value,
     0::bigint as warning_threshold

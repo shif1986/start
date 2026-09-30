@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import StartNetworkCycle from "../components/StartNetworkCycle";
 import ThemedPage from "../components/ThemedPage";
@@ -31,6 +31,7 @@ export default function SubscriptionPage() {
   const [checkoutPending, setCheckoutPending] = useState(false);
   const [checkoutError, setCheckoutError] = useState("");
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const termsInput = useRef<HTMLInputElement>(null);
   const plans = isSupabase ? plansQuery.data ?? [] : previewPlans;
   const selectedPlan = plans.find((candidate) => candidate.interval === plan) ?? plans[0];
   const currentSubscription = subscriptionQuery.data;
@@ -38,7 +39,12 @@ export default function SubscriptionPage() {
   const formatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: selectedPlan?.currency ?? "EUR" });
 
   async function openCheckout() {
-    if (!selectedPlan || isEntitled || !termsAccepted) return;
+    if (!isSupabase || !selectedPlan || isEntitled || checkoutPending) return;
+    if (!termsAccepted) {
+      setCheckoutError("Veuillez accepter les conditions de l’abonnement pour continuer vers Stripe.");
+      termsInput.current?.focus();
+      return;
+    }
     setCheckoutPending(true);
     setCheckoutError("");
     try {
@@ -108,9 +114,9 @@ export default function SubscriptionPage() {
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Récapitulatif</span>
             {selectedPlan ? <div className="mt-5 flex items-end justify-between gap-4 border-b border-start-cream/10 pb-5 max-sm:items-start"><div><strong className="block">{selectedPlan.name}</strong><span className="text-sm text-start-cream/45">Renouvellement automatique</span></div><strong className="shrink-0 text-2xl text-start-gold">{formatter.format(selectedPlan.priceCents / 100)}</strong></div> : <p className="mt-5 text-sm text-start-cream/50">Sélectionnez une formule disponible.</p>}
             <div className="mt-6 rounded-xl border border-start-cream/10 p-4 text-sm leading-6 text-start-cream/55">Le paiement s’ouvre sur la page sécurisée Stripe. Les moyens disponibles, dont Google Pay sur les appareils compatibles, sont proposés directement par Stripe.</div>
-            <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-start-cream/55"><input required checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} type="checkbox" className="mt-1 accent-[#c7a45d]" /><span>J’accepte les <Link to="/conditions-abonnement" className="text-start-gold underline underline-offset-4">conditions de l’abonnement</Link>, notamment son renouvellement automatique et sa résiliation en fin de période.</span></label>
+            <label className="mt-5 flex items-start gap-3 text-xs leading-5 text-start-cream/55"><input ref={termsInput} required checked={termsAccepted} onChange={(event) => { setTermsAccepted(event.target.checked); setCheckoutError(""); }} type="checkbox" className="mt-1 accent-[#c7a45d]" /><span>J’accepte les <Link to="/conditions-abonnement" className="text-start-gold underline underline-offset-4">conditions de l’abonnement</Link>, notamment son renouvellement automatique et sa résiliation en fin de période.</span></label>
             {checkoutError && <p role="alert" className="mt-4 text-sm text-red-200">{checkoutError}</p>}
-            <button type="button" disabled={!isSupabase || isEntitled || !selectedPlan || checkoutPending || !termsAccepted} onClick={() => void openCheckout()} className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-55">{isEntitled ? "Abonnement déjà actif" : checkoutPending ? "Ouverture du paiement…" : "Souscrire avec Stripe"}</button>
+            <button type="button" disabled={!isSupabase || isEntitled || !selectedPlan || checkoutPending} onClick={() => void openCheckout()} className="mt-6 w-full rounded-xl bg-start-gold px-5 py-3.5 font-bold text-start-ink disabled:cursor-not-allowed disabled:opacity-55">{isEntitled ? "Abonnement déjà actif" : checkoutPending ? "Ouverture du paiement…" : "Souscrire maintenant"}</button>
             <Link to="/espace/professionnel" className="mt-4 block text-center text-sm text-start-cream/45 hover:text-start-gold">Retour à mon espace professionnel</Link>
           </aside>
         </div>

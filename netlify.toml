@@ -6,6 +6,11 @@
 [build.environment]
   NODE_VERSION = "24"
 
+# Cette valeur publique n'est injectee que dans le build de production.
+# Les previews et le staging doivent conserver leur propre origine canonique.
+[context.production.environment]
+  VITE_PUBLIC_SITE_URL = "https://startreseauchretien.com"
+
 # Le domaine www doit être déclaré comme alias du site dans Netlify.
 [[redirects]]
   from = "https://www.startreseauchretien.com/*"

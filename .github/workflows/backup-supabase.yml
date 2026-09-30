@@ -1,0 +1,146 @@
+name: Sauvegarde chiffrée Supabase
+
+on:
+  schedule:
+    - cron: "41 2 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: production-backup
+  cancel-in-progress: false
+
+jobs:
+  backup:
+    name: Base et objets Storage
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    env:
+      SUPABASE_DB_URL: ${{ secrets.SUPABASE_BACKUP_DB_URL }}
+      BACKUP_AGE_PUBLIC_KEY: ${{ secrets.BACKUP_AGE_PUBLIC_KEY }}
+      SUPABASE_S3_ENDPOINT: ${{ secrets.SUPABASE_S3_ENDPOINT }}
+      AWS_ACCESS_KEY_ID: ${{ secrets.SUPABASE_S3_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.SUPABASE_S3_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.SUPABASE_S3_REGION }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: supabase/setup-cli@v1
+        with:
+          version: 2.113.0
+      - name: Vérifier la configuration
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -n "$SUPABASE_DB_URL"
+          test -n "$BACKUP_AGE_PUBLIC_KEY"
+          test -n "$SUPABASE_S3_ENDPOINT"
+          test -n "$AWS_ACCESS_KEY_ID"
+          test -n "$AWS_SECRET_ACCESS_KEY"
+          test -n "$AWS_DEFAULT_REGION"
+      - name: Installer age
+        run: sudo apt-get update && sudo apt-get install --yes age
+      - name: Exporter, contrôler et chiffrer la sauvegarde
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          backup_dir="$(mktemp -d)"
+          trap 'rm -rf "$backup_dir" "$RUNNER_TEMP/start-backup.tar.gz"' EXIT
+
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f "$backup_dir/roles.sql" --role-only
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f "$backup_dir/schema.sql"
+          supabase db dump --db-url "$SUPABASE_DB_URL" -f "$backup_dir/data.sql" --use-copy --data-only -x "storage.buckets_vectors" -x "storage.vector_indexes"
+
+          mkdir -p "$backup_dir/storage"
+          bucket_names="$(aws s3api list-buckets --endpoint-url "$SUPABASE_S3_ENDPOINT" --query 'Buckets[].Name' --output text)"
+          for bucket in $bucket_names; do
+            aws s3 sync "s3://$bucket" "$backup_dir/storage/$bucket" --endpoint-url "$SUPABASE_S3_ENDPOINT" --only-show-errors
+          done
+
+          printf '{"created_at":"%s","repository":"%s","commit":"%s","run_id":"%s"}\n' \
+            "$(date -u +%Y-%m-%dT%H:%M:%SZ)" "$GITHUB_REPOSITORY" "$GITHUB_SHA" "$GITHUB_RUN_ID" \
+            > "$backup_dir/metadata.json"
+
+          (
+            cd "$backup_dir"
+            find roles.sql schema.sql data.sql metadata.json storage -type f -print0 \
+              | sort -z \
+              | xargs -0 shasum -a 256 > SHA256SUMS
+          )
+
+          tar -C "$backup_dir" -czf "$RUNNER_TEMP/start-backup.tar.gz" .
+          bash scripts/verify-supabase-backup.sh "$RUNNER_TEMP/start-backup.tar.gz"
+          age --encrypt --recipient "$BACKUP_AGE_PUBLIC_KEY" \
+            --output "$RUNNER_TEMP/start-backup.tar.gz.age" \
+            "$RUNNER_TEMP/start-backup.tar.gz"
+          test -s "$RUNNER_TEMP/start-backup.tar.gz.age"
+      - name: Conserver uniquement l’archive chiffrée
+        uses: actions/upload-artifact@v4
+        with:
+          name: start-supabase-backup-${{ github.run_id }}
+          path: ${{ runner.temp }}/start-backup.tar.gz.age
+          if-no-files-found: error
+          retention-days: 14
+      - name: Clore l’alerte après une sauvegarde réussie
+        if: success()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Sauvegarde] Échec de la sauvegarde Supabase';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            for (const issue of issues.filter((item) => item.title === title && !item.pull_request)) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: `Sauvegarde chiffrée de nouveau réussie : ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}.`,
+              });
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed',
+              });
+            }
+      - name: Ouvrir ou actualiser l’alerte de sauvegarde
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[Sauvegarde] Échec de la sauvegarde Supabase';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const existing = issues.find((issue) => issue.title === title && !issue.pull_request);
+            const body = [
+              `La sauvegarde chiffrée a échoué le ${new Date().toISOString()}.`,
+              '',
+              `Exécution : ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`,
+              '',
+              'Vérifier la configuration et relancer le workflow. Ne publier aucun secret dans cette issue.',
+            ].join('\n');
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body,
+              });
+            }
