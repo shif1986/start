@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createCustomerPortal, createSubscriptionCheckout } from "./stripe-billing";
+import { createCustomerPortal, createSubscriptionCheckout, resetUnmatchedStripeSubscription } from "./stripe-billing";
 
 const invoke = vi.hoisted(() => vi.fn());
 vi.mock("../../../lib/supabase/client", () => ({ getSupabaseClient: () => ({ functions: { invoke } }) }));
@@ -20,6 +20,13 @@ describe("Stripe billing", () => {
     invoke.mockResolvedValue({ data: { url: "https://billing.stripe.test/session" }, error: null });
     await expect(createCustomerPortal()).resolves.toBe("https://billing.stripe.test/session");
     expect(invoke).toHaveBeenCalledWith("create-customer-portal", { body: {} });
+  });
+
+  it("réinitialise uniquement un abonnement Stripe introuvable", async () => {
+    invoke.mockResolvedValue({ data: { reset: true }, error: null });
+
+    await expect(resetUnmatchedStripeSubscription()).resolves.toBeUndefined();
+    expect(invoke).toHaveBeenCalledWith("reset-unmatched-stripe-subscription", { body: {} });
   });
 
   it("refuse une URL non sécurisée", async () => {

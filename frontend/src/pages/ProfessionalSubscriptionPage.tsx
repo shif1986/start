@@ -3,7 +3,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
 import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
-import { createCustomerPortal } from "../features/subscriptions/api/stripe-billing";
+import { createCustomerPortal, resetUnmatchedStripeSubscription } from "../features/subscriptions/api/stripe-billing";
 
 const benefits = [
   "Créer et soumettre vos annonces",
@@ -16,6 +16,7 @@ export default function ProfessionalSubscriptionPage() {
   const [searchParams] = useSearchParams();
   const [portalPending, setPortalPending] = useState(false);
   const [portalError, setPortalError] = useState("");
+  const [resetPending, setResetPending] = useState(false);
   const subscriptionQuery = useCurrentSubscription();
   const subscription = subscriptionQuery.data;
   const expiresAt = subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd) : null;
@@ -36,6 +37,19 @@ export default function ProfessionalSubscriptionPage() {
     setPortalError("");
     try { window.location.assign(await createCustomerPortal()); }
     catch (error) { setPortalError(error instanceof Error ? error.message : "Impossible d’ouvrir la facturation."); setPortalPending(false); }
+  }
+
+  async function resetUnmatchedSubscription() {
+    setResetPending(true);
+    setPortalError("");
+    try {
+      await resetUnmatchedStripeSubscription();
+      await subscriptionQuery.refetch();
+    } catch (error) {
+      setPortalError(error instanceof Error ? error.message : "Impossible de réinitialiser cet abonnement.");
+    } finally {
+      setResetPending(false);
+    }
   }
 
   return (
@@ -95,6 +109,7 @@ export default function ProfessionalSubscriptionPage() {
                 {subscription.isStripeManaged && <button type="button" disabled={portalPending} onClick={() => void openPortal()} className="inline-flex min-h-12 items-center justify-center rounded-xl border border-start-gold/30 px-5 font-semibold text-start-gold disabled:opacity-50">{portalPending ? "Ouverture…" : "Gérer le paiement ou résilier"}</button>}
               </div>
               {portalError && <p role="alert" className="mt-4 text-sm text-red-200">{portalError}</p>}
+              {portalError.startsWith("Le client Stripe associé est introuvable.") && <div className="mt-4 rounded-xl border border-network-yellow/25 bg-network-yellow/[.06] p-4 text-sm leading-6 text-start-cream/70"><p>Cette entrée ne correspond à aucun client dans le compte Stripe actuellement configuré. Vous pouvez retirer cet accès local pour souscrire à nouveau. Cette action ne résilie aucun paiement dans un autre compte Stripe.</p><button type="button" disabled={resetPending} onClick={() => void resetUnmatchedSubscription()} className="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg border border-start-gold/30 px-4 font-semibold text-start-gold disabled:opacity-50">{resetPending ? "Réinitialisation…" : "Réinitialiser cet abonnement inaccessible"}</button></div>}
               <p className="mt-5 text-xs leading-5 text-start-cream/40">{subscription.isStripeManaged ? "Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe." : "Votre abonnement d’essai est géré par START. La gestion Stripe n’est pas disponible pour cette période."}</p>
             </aside>
           </div>
