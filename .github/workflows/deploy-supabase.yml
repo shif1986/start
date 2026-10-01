@@ -8,6 +8,12 @@ on:
         required: true
         type: choice
         options: [staging, production]
+      scope:
+        description: Portée du déploiement
+        required: true
+        default: customer_portal_only
+        type: choice
+        options: [customer_portal_only, full]
 
 permissions:
   contents: read
@@ -29,22 +35,26 @@ jobs:
         with:
           version: 2.113.0
       - name: Relier le projet
+        if: inputs.scope == 'full'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
         run: supabase link --project-ref "$SUPABASE_PROJECT_ID" --workdir backend
       - name: Vérifier les migrations prévues
+        if: inputs.scope == 'full'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: supabase db push --dry-run --workdir backend
       - name: Appliquer les migrations
+        if: inputs.scope == 'full'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
         run: supabase db push --workdir backend
       - name: Déployer les fonctions de facturation
+        if: inputs.scope == 'full'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
         run: |
@@ -53,3 +63,9 @@ jobs:
           supabase functions deploy create-donation-checkout --workdir backend
           supabase functions deploy get-donation-status --workdir backend
           supabase functions deploy stripe-webhook --workdir backend
+      - name: Déployer le portail Stripe uniquement
+        if: inputs.scope == 'customer_portal_only'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: supabase functions deploy create-customer-portal --project-ref "$SUPABASE_PROJECT_ID" --workdir backend
