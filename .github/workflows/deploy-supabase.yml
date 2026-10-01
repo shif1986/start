@@ -67,5 +67,4 @@ jobs:
         if: inputs.scope == 'customer_portal_only'
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-        run: supabase functions deploy create-customer-portal --project-ref "$SUPABASE_PROJECT_ID" --workdir backend
+        run: supabase functions deploy create-customer-portal --project-ref "ybfjjuznkfaftudtysge" --workdir backend
