@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createCustomerPortal, createSubscriptionCheckout, resetUnmatchedStripeSubscription } from "./stripe-billing";
+import { confirmSubscriptionCheckout, createCustomerPortal, createSubscriptionCheckout, resetUnmatchedStripeSubscription } from "./stripe-billing";
 
 const invoke = vi.hoisted(() => vi.fn());
 vi.mock("../../../lib/supabase/client", () => ({ getSupabaseClient: () => ({ functions: { invoke } }) }));
@@ -27,6 +27,13 @@ describe("Stripe billing", () => {
 
     await expect(resetUnmatchedStripeSubscription()).resolves.toBeUndefined();
     expect(invoke).toHaveBeenCalledWith("reset-unmatched-stripe-subscription", { body: {} });
+  });
+
+  it("confirme une session Checkout finalisée", async () => {
+    invoke.mockResolvedValue({ data: { active: true }, error: null });
+
+    await expect(confirmSubscriptionCheckout("cs_test_checkout")).resolves.toBeUndefined();
+    expect(invoke).toHaveBeenCalledWith("confirm-subscription-checkout", { body: { sessionId: "cs_test_checkout" } });
   });
 
   it("refuse une URL non sécurisée", async () => {

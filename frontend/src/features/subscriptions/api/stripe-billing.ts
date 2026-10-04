@@ -21,3 +21,9 @@ export async function resetUnmatchedStripeSubscription() {
   if (error) throw new Error(await getFunctionErrorMessage(error, "Le service de paiement est momentanément indisponible."), { cause: error });
   if (!data?.reset) throw new Error(data?.error ?? "Impossible de réinitialiser cet abonnement.");
 }
+
+export async function confirmSubscriptionCheckout(sessionId: string) {
+  const { data, error } = await getSupabaseClient().functions.invoke<{ active?: boolean; error?: string }>("confirm-subscription-checkout", { body: { sessionId } });
+  if (error) throw new Error(await getFunctionErrorMessage(error, "Le service de paiement est momentanément indisponible."), { cause: error });
+  if (!data?.active) throw new Error(data?.error ?? "Le paiement est encore en cours de confirmation.");
+}

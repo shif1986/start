@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
 import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
-import { createCustomerPortal, resetUnmatchedStripeSubscription } from "../features/subscriptions/api/stripe-billing";
+import { confirmSubscriptionCheckout, createCustomerPortal, resetUnmatchedStripeSubscription } from "../features/subscriptions/api/stripe-billing";
 
 const benefits = [
   "Créer et soumettre vos annonces",
@@ -17,7 +17,12 @@ export default function ProfessionalSubscriptionPage() {
   const [portalPending, setPortalPending] = useState(false);
   const [portalError, setPortalError] = useState("");
   const [resetPending, setResetPending] = useState(false);
+  const [activationPending, setActivationPending] = useState(false);
+  const [activationError, setActivationError] = useState("");
   const subscriptionQuery = useCurrentSubscription();
+  const checkoutSessionId = searchParams.get("session_id");
+  const checkoutSucceeded = searchParams.get("checkout") === "success";
+  const { refetch } = subscriptionQuery;
   const subscription = subscriptionQuery.data;
   const expiresAt = subscription?.currentPeriodEnd ? new Date(subscription.currentPeriodEnd) : null;
   const isCurrent = Boolean(
@@ -31,6 +36,22 @@ export default function ProfessionalSubscriptionPage() {
   const price = subscription
     ? new Intl.NumberFormat("fr-FR", { style: "currency", currency: subscription.plan.currency, maximumFractionDigits: 0 }).format(subscription.plan.priceCents / 100)
     : "—";
+
+  useEffect(() => {
+    if (!checkoutSucceeded || !checkoutSessionId) return;
+    let cancelled = false;
+    setActivationPending(true);
+    setActivationError("");
+    void confirmSubscriptionCheckout(checkoutSessionId)
+      .then(() => refetch())
+      .catch((error) => {
+        if (!cancelled) setActivationError(error instanceof Error ? error.message : "Activation en cours de confirmation.");
+      })
+      .finally(() => {
+        if (!cancelled) setActivationPending(false);
+      });
+    return () => { cancelled = true; };
+  }, [checkoutSessionId, checkoutSucceeded, refetch]);
 
   async function openPortal() {
     setPortalPending(true);
@@ -59,7 +80,7 @@ export default function ProfessionalSubscriptionPage() {
       description="Retrouvez votre formule, sa période de validité et les services disponibles avec votre compte START."
       navigation={[...professionalAccountNavigation]}
     >
-      {searchParams.get("checkout") === "success" && <p role="status" className="mb-6 rounded-xl border border-network-blue/25 bg-network-blue/[.06] p-4 text-network-blue">Paiement reçu par Stripe. L’abonnement apparaîtra actif dès la confirmation du webhook.</p>}
+      {checkoutSucceeded && <p role="status" className="mb-6 rounded-xl border border-network-blue/25 bg-network-blue/[.06] p-4 text-network-blue">{activationPending ? "Paiement reçu. Activation immédiate de votre abonnement…" : activationError ? "Paiement reçu. L’activation est en cours et sera confirmée automatiquement dans quelques instants." : "Paiement confirmé. Votre abonnement est actif."}</p>}
       {subscriptionQuery.isPending && <p className="rounded-2xl border border-start-cream/10 bg-[#121418] p-8 text-start-cream/60" role="status">Chargement de votre abonnement…</p>}
       {subscriptionQuery.isError && <p className="rounded-2xl border border-network-red/25 bg-network-red/[.06] p-6 text-red-200" role="alert">Impossible de charger votre abonnement pour le moment.</p>}
 
