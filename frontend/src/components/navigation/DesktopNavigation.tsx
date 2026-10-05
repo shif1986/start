@@ -23,7 +23,7 @@ function CategoryDropdown({
     <div className="group/category relative py-1.5">
       <NavLink
         to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-        className="whitespace-nowrap text-[.68rem] font-semibold text-start-cream/75 transition hover:text-start-gold group-focus-within/category:text-start-gold"
+        className="whitespace-nowrap text-[.8rem] font-semibold text-start-cream/75 transition hover:text-start-gold group-focus-within/category:text-start-gold"
       >
         {category.shortLabel ?? category.label}
       </NavLink>
@@ -31,7 +31,7 @@ function CategoryDropdown({
         className={`invisible absolute top-full z-50 w-64 translate-y-2 pt-3 opacity-0 transition duration-200 group-hover/category:visible group-hover/category:translate-y-0 group-hover/category:opacity-100 group-focus-within/category:visible group-focus-within/category:translate-y-0 group-focus-within/category:opacity-100 ${align === "right" ? "right-0" : "left-0"}`}
       >
         <div className="overflow-hidden rounded-xl border border-start-cream/12 bg-[#080b10]/72 p-2 shadow-[0_22px_55px_rgba(0,0,0,.38)] backdrop-blur-2xl">
-          <span className="block px-3 pt-2 pb-1 text-[.6rem] font-bold tracking-[.16em] text-start-gold uppercase">
+          <span className="block px-3 pt-2 pb-1 text-[.68rem] font-bold tracking-[.16em] text-start-gold uppercase">
             {category.label}
           </span>
           <ul className="m-0 grid list-none gap-0.5 p-0">
@@ -39,7 +39,7 @@ function CategoryDropdown({
               <li key={subcategory}>
                 <NavLink
                   to={`/annonces?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`}
-                  className="block rounded-lg px-3 py-2 text-xs leading-5 text-start-cream/65 transition hover:bg-start-cream/[.06] hover:text-start-cream focus-visible:bg-start-cream/[.06] focus-visible:text-start-gold focus-visible:outline-none"
+                  className="block rounded-lg px-3 py-2 text-sm leading-5 text-start-cream/65 transition hover:bg-start-cream/[.06] hover:text-start-cream focus-visible:bg-start-cream/[.06] focus-visible:text-start-gold focus-visible:outline-none"
                 >
                   {subcategory}
                 </NavLink>

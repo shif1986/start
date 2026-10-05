@@ -4,6 +4,7 @@ const geoJsonRequests = new Map<string, Promise<FeatureCollection>>();
 
 export type HomeMapDepartment = {
   name: string;
+  country?: "FR" | "CH";
   d: string;
   x: number;
   y: number;
@@ -50,7 +51,7 @@ export function loadHomeMap(url: string = mapDataUrls.franceHome): Promise<HomeM
     .then(async (response) => {
       if (!response.ok) throw new Error(`Impossible de charger la carte (${response.status}).`);
       const payload = await response.json() as HomeMapDepartment[];
-      if (!Array.isArray(payload) || payload.some((item) => !item.name || !item.d || !Number.isFinite(item.x) || !Number.isFinite(item.y))) {
+      if (!Array.isArray(payload) || payload.some((item) => !item.name || (item.country !== undefined && item.country !== "FR" && item.country !== "CH") || !item.d || !Number.isFinite(item.x) || !Number.isFinite(item.y))) {
         throw new Error("Le fichier de la carte d’accueil est invalide.");
       }
       return payload;

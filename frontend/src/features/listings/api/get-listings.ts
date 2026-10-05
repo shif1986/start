@@ -32,3 +32,26 @@ export async function getListings(filters: ListingFilters, client: SupabaseClien
     pageSize: filters.pageSize,
   };
 }
+
+/**
+ * Loads every result matching the supplied filters for maps, which must not be
+ * restricted to the listings currently visible in a paginated grid.
+ */
+export async function getAllListings(
+  filters: Omit<ListingFilters, "page" | "pageSize">,
+  client: SupabaseClient<Database> = getSupabaseClient(),
+): Promise<ListingsPageData["items"]> {
+  const pageSize = 100;
+  const firstPage = await getListings({ ...filters, page: 1, pageSize }, client);
+  const pageCount = Math.ceil(firstPage.totalCount / pageSize);
+
+  if (pageCount <= 1) return firstPage.items;
+
+  const remainingPages = await Promise.all(
+    Array.from({ length: pageCount - 1 }, (_, index) =>
+      getListings({ ...filters, page: index + 2, pageSize }, client),
+    ),
+  );
+
+  return [...firstPage.items, ...remainingPages.flatMap((page) => page.items)];
+}

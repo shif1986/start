@@ -6,7 +6,7 @@ import CategoryCard from "../components/CategoryCard";
 import ListingCard from "../components/ListingCard";
 import StartNetworkCycle from "../components/StartNetworkCycle";
 import ThemeToggle from "../components/ThemeToggle";
-import { useListings } from "../features/listings/hooks/use-listings";
+import { useAllListings } from "../features/listings/hooks/use-all-listings";
 import { getDataSource } from "../lib/data-source";
 import type { Listing } from "../features/listings/model/listing.types";
 
@@ -51,7 +51,7 @@ function SearchByLocation({
           />
         </div>
 
-        <h1 className="mt-9 flex w-[min(100%,370px)] flex-col items-stretch font-hero leading-none max-lg:mt-7 max-lg:w-[min(100%,400px)] max-sm:mt-6 max-sm:w-[min(100%,290px)]">
+        <h1 className="mt-18 flex w-[min(100%,370px)] flex-col items-stretch font-hero leading-none max-lg:mt-14 max-lg:w-[min(100%,400px)] max-sm:mt-11 max-sm:w-[min(100%,290px)]">
           <span className="sr-only">START Réseau Chrétien Professionnel</span>
           <span
             className="flex w-full items-center justify-between text-[clamp(2.25rem,4vw,3.6rem)] font-medium tracking-[.025em] text-[#f5f5f3] max-sm:tracking-0"
@@ -131,13 +131,13 @@ function SearchByLocation({
           </span>
         </h1>
 
-        <p className="mt-12 max-w-[470px] font-hero text-[clamp(.86rem,1.05vw,1.02rem)] leading-[1.65] font-normal text-start-cream/78 max-lg:mt-11 max-lg:text-base max-sm:mt-10 max-sm:max-w-[330px] max-sm:text-sm max-sm:leading-7">
+        <p className="mt-16 max-w-[470px] font-hero text-[clamp(.86rem,1.05vw,1.02rem)] leading-[1.65] font-normal text-start-cream/78 max-lg:mt-14 max-lg:text-base max-sm:mt-12 max-sm:max-w-[330px] max-sm:text-sm max-sm:leading-7">
           Valoriser votre entreprise et{" "}
           <span className="text-start-gold">soutenir l’économie</span>
           <br className="max-sm:hidden" /> qui porte nos valeurs.
         </p>
 
-        <div className="mt-11 flex items-center justify-center gap-4 max-lg:mt-10 max-sm:mt-8 max-sm:w-full max-sm:flex-col">
+        <div className="mt-20 flex items-center justify-center gap-4 max-lg:mt-17 max-sm:mt-14 max-sm:w-full max-sm:flex-col">
           <Link
             to="/publier"
             className="inline-flex min-h-12 items-center justify-center rounded-xl border-start-gold bg-transparent px-5 font-bold text-start-gold [border-style:solid] [border-width:.5px] transition hover:-translate-y-0.5 hover:bg-start-gold/10"
@@ -156,9 +156,9 @@ function SearchByLocation({
         </div>
       </div>
 
-      <div className="relative z-10 mx-auto w-full max-w-[720px] min-w-0 max-lg:order-1 max-lg:max-w-[620px] max-sm:max-w-[430px]">
-        <div className="france-map-shell mx-auto w-[98%] max-sm:w-full">
-          <Suspense fallback={<div className="aspect-[5/4] w-full animate-pulse rounded-2xl bg-start-cream/[.035]" role="status" aria-label="Chargement de la carte de France" />}>
+      <div className="relative z-10 mx-auto w-full max-w-[800px] min-w-0 max-lg:order-1 max-lg:max-w-[680px] max-sm:max-w-[430px]">
+        <div className="france-map-shell mx-auto w-full">
+          <Suspense fallback={<div className="aspect-[5/4] w-full animate-pulse rounded-2xl bg-start-cream/[.035]" role="status" aria-label="Chargement de la carte France et Suisse" />}>
             <FranceListingsMap
               listings={listings}
               selectedDepartment={selectedDepartment}
@@ -184,15 +184,13 @@ function SearchByLocation({
 export default function HomePage() {
   const [selectedDepartment, setSelectedDepartment] = useState("");
   const dataSource = getDataSource();
-  const listingsQuery = useListings({
+  const listingsQuery = useAllListings({
     search: null,
     category: null,
     countryCode: null,
     subdivision: null,
-    page: 1,
-    pageSize: 8,
   }, { enabled: dataSource === "supabase" });
-  const realListings = listingsQuery.data?.items ?? [];
+  const realListings = listingsQuery.data ?? [];
   const homeListings = dataSource === "supabase" ? realListings : mockListings;
   const featuredListings = homeListings.slice(0, 8);
 

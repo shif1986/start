@@ -2,6 +2,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 
 const inputPath = fileURLToPath(new URL("../public/maps/france-departments.min.geojson", import.meta.url));
+const switzerlandInputPath = fileURLToPath(new URL("../public/maps/switzerland.min.geojson", import.meta.url));
 const outputPath = fileURLToPath(new URL("../public/maps/france-home-map.min.json", import.meta.url));
 const checkOnly = process.argv.includes("--check");
 const excludedDepartments = new Set(["Guadeloupe", "Martinique", "Guyane", "La Réunion", "Mayotte", "Nouvelle-Calédonie"]);
@@ -92,14 +93,24 @@ function centroid(geometry, bounds) {
 }
 
 const source = JSON.parse(readFileSync(inputPath, "utf8"));
-const features = source.features.filter((feature) => {
+const franceFeatures = source.features.filter((feature) => {
   const name = feature.properties?.nom ?? feature.properties?.name ?? feature.properties?.nom_complet ?? feature.properties?.code;
   return name && !excludedDepartments.has(name);
 });
-const bounds = projectionBounds(features);
-const departments = features.map((feature) => {
+const switzerlandSource = JSON.parse(readFileSync(switzerlandInputPath, "utf8"));
+const features = [
+  ...franceFeatures.map((feature) => ({ feature, country: "FR" })),
+  ...switzerlandSource.features.map((feature) => ({ feature, country: "CH" })),
+];
+const bounds = projectionBounds(features.map(({ feature }) => feature));
+const departments = features.map(({ feature, country }) => {
   const name = feature.properties?.nom ?? feature.properties?.name ?? feature.properties?.nom_complet ?? feature.properties?.code;
-  return { name, d: geometryPath(feature.geometry, bounds), ...centroid(feature.geometry, bounds) };
+  return {
+    name: country === "CH" ? "Suisse" : name,
+    country,
+    d: geometryPath(feature.geometry, bounds),
+    ...centroid(feature.geometry, bounds),
+  };
 });
 const serialized = `${JSON.stringify(departments)}\n`;
 

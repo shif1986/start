@@ -7,6 +7,7 @@ import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
 import { normalizeListingFilters } from "../features/listings/model/listing-filters";
 import { useListings } from "../features/listings/hooks/use-listings";
+import { useAllListings } from "../features/listings/hooks/use-all-listings";
 import { getDataSource } from "../lib/data-source";
 
 const ListingsMap = lazy(() => import("../components/ListingsMap"));
@@ -67,8 +68,15 @@ export default function ListingsPage() {
     pageSize: LISTINGS_PER_PAGE,
   }), [category, country, department, requestedPage, search]);
   const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
+  const mapListingsQuery = useAllListings({
+    search: listingFilters.search,
+    category: listingFilters.category,
+    countryCode: listingFilters.countryCode,
+    subdivision: listingFilters.subdivision,
+  }, { enabled: dataSource === "supabase" });
   const useDemoCatalog = dataSource === "static";
   const filteredListings = useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
+  const mapListings = useDemoCatalog ? staticFilteredListings : mapListingsQuery.data ?? [];
   const totalCount = useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
 
   const locationOptions = country === "Suisse" ? swissCantons : departments;
@@ -127,7 +135,7 @@ export default function ListingsPage() {
       <div className="relative overflow-hidden rounded-2xl border border-start-gold/25 bg-[#171a21] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
         <img src="/maps/catalogue-preview.svg" alt="" width="1200" height="650" fetchPriority="high" className="pointer-events-none absolute inset-0 size-full object-cover" />
         <Suspense fallback={<div className="relative h-[clamp(520px,68vh,720px)] max-sm:h-[430px]" role="status" aria-label="Chargement de la carte interactive" />}>
-          <ListingsMap listings={filteredListings} selectedCountry={country} />
+          <ListingsMap listings={mapListings} selectedCountry={country} />
         </Suspense>
       </div>
 

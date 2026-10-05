@@ -4,6 +4,7 @@ import { loadHomeMap, type HomeMapDepartment } from "../features/maps/api/geojso
 
 type DepartmentMapItem = {
   name: string;
+  country: "FR" | "CH";
   d: string;
   count: number;
   x: number;
@@ -46,7 +47,10 @@ export default function FranceListingsMap({
     const counts = new Map<string, number>();
 
     listings.forEach((listing) => {
-      counts.set(listing.department, (counts.get(listing.department) ?? 0) + 1);
+      const country = listing.country === "Suisse" ? "CH" : "FR";
+      const area = country === "CH" ? "Suisse" : listing.department;
+      const key = `${country}:${area}`;
+      counts.set(key, (counts.get(key) ?? 0) + 1);
     });
 
     return counts;
@@ -66,19 +70,19 @@ export default function FranceListingsMap({
     if (!departments) {
       return [];
     }
-    return departments.map(({ name, d, x, y }) => {
-      const count = listingCounts.get(name) ?? 0;
-      return { name, d, count, x, y, hasListings: count > 0 };
+    return departments.map(({ name, country = "FR", d, x, y }) => {
+      const count = listingCounts.get(`${country}:${name}`) ?? 0;
+      return { name, country, d, count, x, y, hasListings: count > 0 };
     });
   }, [departments, listingCounts]);
 
   return (
     <section
       className="france-listings-map relative overflow-hidden bg-transparent p-2 max-sm:p-0"
-      aria-label="Carte interactive des départements de France"
+      aria-label="Carte interactive des annonces en France et en Suisse"
     >
       <div className="france-map-summary absolute top-5 left-5 z-10 flex flex-col bg-transparent px-4 py-3 opacity-65 [text-shadow:0_1px_4px_rgba(0,0,0,.55)] max-sm:top-2 max-sm:left-2 max-sm:px-3 max-sm:py-2">
-        <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase max-sm:text-[.6rem]">France</span>
+        <span className="text-xs font-extrabold tracking-[.2em] text-start-gold uppercase max-sm:text-[.6rem]">France &amp; Suisse</span>
         <strong className="text-sm text-start-cream max-sm:text-xs">{listings.length} annonces disponibles</strong>
       </div>
 
@@ -90,16 +94,17 @@ export default function FranceListingsMap({
         viewBox="0 0 1000 800"
         preserveAspectRatio="xMidYMid meet"
         role="group"
-        aria-label="Carte des départements français"
+        aria-label="Carte des départements français et de la Suisse"
       >
-        {departmentMap.map(({ name, d, hasListings }) => {
+        {departmentMap.map(({ name, country, d, hasListings }) => {
           const isSelected = selectedDepartment === name;
+          const borderClass = country === "CH" ? "stroke-network-blue" : "stroke-start-gold";
 
           return (
             <path
-              key={name}
+              key={`${country}-${name}`}
               d={d}
-              className={`cursor-pointer stroke-start-gold outline-none transition-all duration-200 ${isSelected ? "fill-start-gold/80 [filter:drop-shadow(0_0_10px_rgba(199,164,93,.5))]" : hasListings ? "fill-start-gold/20 hover:fill-start-gold/35" : "fill-start-cream/[.02] hover:fill-start-gold/15"}`}
+              className={`cursor-pointer ${borderClass} outline-none transition-all duration-200 ${isSelected ? country === "CH" ? "fill-network-blue/55 [filter:drop-shadow(0_0_10px_rgba(77,163,255,.5))]" : "fill-start-gold/80 [filter:drop-shadow(0_0_10px_rgba(199,164,93,.5))]" : hasListings ? country === "CH" ? "fill-network-blue/20 hover:fill-network-blue/35" : "fill-start-gold/20 hover:fill-start-gold/35" : "fill-start-cream/[.02] hover:fill-start-gold/15"}`}
               onClick={() => onDepartmentSelect(name)}
               style={{ strokeWidth: isSelected ? 2.1 : 1 }}
               role="button"
@@ -115,13 +120,13 @@ export default function FranceListingsMap({
           );
         })}
 
-        {departmentMap.filter(({ count }) => count > 0).map(({ name, count, x, y }) => {
+        {departmentMap.filter(({ count }) => count > 0).map(({ name, country, count, x, y }) => {
           const isSelected = selectedDepartment === name;
-          const markerColor = markerColorsByDepartment.get(name) ?? NETWORK_MARKER_COLORS[0];
+          const markerColor = country === "CH" ? "#4DA3FF" : markerColorsByDepartment.get(`${country}:${name}`) ?? NETWORK_MARKER_COLORS[0];
 
           return (
             <g
-              key={`marker-${name}`}
+              key={`marker-${country}-${name}`}
               className="cursor-pointer outline-none"
               onClick={() => onDepartmentSelect(name)}
               role="button"

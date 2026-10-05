@@ -132,7 +132,7 @@ button {
   display: inline-flex;
   align-items: center;
   color: rgb(244 239 229 / 72%);
-  font-size: clamp(0.58rem, 1.8vw, 0.72rem);
+  font-size: clamp(0.7rem, 2vw, 0.82rem);
   font-weight: 650;
   white-space: nowrap;
 }
@@ -762,7 +762,6 @@ html[data-theme="light"] .start-network-cycle .network-cycle-copy { background: 
 
 html[data-theme="light"] .leaflet-popup-content-wrapper,
 html[data-theme="light"] .leaflet-popup-tip { background: #fffdf8; color: #25241f; }
-html[data-theme="light"] .listings-map .leaflet-tile-pane { filter: brightness(1.08) saturate(.72) contrast(.9); }
 
 @media (max-width: 640px) {
   .theme-toggle { min-width: 44px; padding: 0 12px; }
@@ -831,10 +830,6 @@ html[data-theme="light"] footer input { background: rgb(255 255 255 / 72%) !impo
 
 html[data-theme="light"] .listings-map {
   border-color: rgb(199 164 93 / 28%) !important;
-}
-
-html[data-theme="light"] .listings-map .leaflet-tile-pane {
-  filter: brightness(1.18) saturate(.58) contrast(.94);
 }
 
 /* Restore the two intentional dark brand anchors after normalization. */
@@ -971,8 +966,17 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
 }
 
 .listings-map .leaflet-tile-pane {
-  filter: grayscale(1) invert(.92) contrast(1.18) brightness(.58);
-  opacity: .94;
+  filter: none;
+  opacity: 1;
+}
+
+.listings-map::after {
+  position: absolute;
+  inset: 0;
+  z-index: 350;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgb(5 8 12 / 58%), rgb(9 14 20 / 46%));
+  content: "";
 }
 
 .listings-map .leaflet-container {
