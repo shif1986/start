@@ -3,7 +3,7 @@ import LegalDocumentPage, { LegalSection } from "../components/LegalDocumentPage
 
 export default function TermsOfUsePage() {
   return (
-    <LegalDocumentPage eyebrow="Règles de la plateforme" title="Conditions générales d’utilisation" introduction="Les règles applicables à la consultation du site, aux comptes, aux annonces et aux interactions entre membres.">
+    <LegalDocumentPage eyebrow="Règles de la plateforme" title="Conditions générales d’utilisation">
       <LegalSection title="Objet et acceptation">
         <p>Les présentes CGU encadrent l’accès et l’utilisation de START, plateforme de mise en relation et de diffusion d’annonces. La création d’un compte et la publication impliquent leur acceptation dans leur version en vigueur.</p>
       </LegalSection>

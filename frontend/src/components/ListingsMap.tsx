@@ -143,12 +143,12 @@ function FitListings({ listings, selectedCountry }: { listings: Listing[]; selec
     const updateView = () => {
       const isCompact = map.getSize().x < 700;
       if (selectedCountry === "Suisse") {
-        map.setView([46.82, 8.23], isCompact ? 7.65 : 8.4, { animate: false });
+        map.setView([46.82, 8.23], isCompact ? 7.6 : 8.45, { animate: false });
         return;
       }
       map.setView(
         isCompact ? [46.7, 2.9] : [46.7, 3.8],
-        isCompact ? 6.3 : 6.8,
+        isCompact ? 6.2 : 6.9,
         { animate: false },
       );
     };
@@ -278,11 +278,12 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
         {groups.map(({ position, listings: listingsAtLocation }, index) => {
           const first = listingsAtLocation[0];
           const markerColor = markerColors[index % markerColors.length];
+          const markerRadius = listingsAtLocation.length > 1 ? 20 : 16;
           return (
             <CircleMarker
               key={position.join(",")}
               center={position}
-              radius={listingsAtLocation.length > 1 ? 18 : 14}
+              radius={markerRadius}
               pathOptions={{ color: "#f4efe5a6", fillColor: markerColor, fillOpacity: 0.76, opacity: 0.8, weight: 1 }}
             >
               <Tooltip permanent direction="center" className="start-map-count">

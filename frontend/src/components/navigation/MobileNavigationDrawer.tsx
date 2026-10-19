@@ -1,5 +1,5 @@
 import { useEffect, useRef, type RefObject } from "react";
-import { NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { navigationCategories } from "../../data/categories";
 import NavigationLink from "./NavigationLink";
 import NavigationLogo from "./NavigationLogo";
@@ -25,6 +25,7 @@ type MobileNavigationDrawerProps = {
 export default function MobileNavigationDrawer({ accountAction, isOpen, onClose, triggerRef }: MobileNavigationDrawerProps) {
   const drawerRef = useRef<HTMLElement>(null);
   const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!isOpen) return;
@@ -138,16 +139,30 @@ export default function MobileNavigationDrawer({ accountAction, isOpen, onClose,
             ))}
           </nav>
 
-          <nav className="mobile-drawer-submenu" aria-label="Catégories d’annonces">
+          <div className="mobile-drawer-submenu" role="group" aria-label="Filtrer les annonces par catégorie">
             {navigationCategories.slice(0, 4).map((category) => (
-              <NavLink key={category.id} to={`/annonces?category=${encodeURIComponent(category.slug)}`} onClick={onClose}>
+              <button
+                key={category.id}
+                type="button"
+                onClick={() => {
+                  navigate(`/annonces?category=${encodeURIComponent(category.slug)}`);
+                  onClose();
+                }}
+              >
                 {category.shortLabel ?? category.label}
-              </NavLink>
+              </button>
             ))}
-            <NavLink className="mobile-drawer-submenu-all" to="/categories" onClick={onClose}>
+            <button
+              type="button"
+              className="mobile-drawer-submenu-all"
+              onClick={() => {
+                navigate("/categories");
+                onClose();
+              }}
+            >
               Toutes
-            </NavLink>
-          </nav>
+            </button>
+          </div>
 
         </div>
 

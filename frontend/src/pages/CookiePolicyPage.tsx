@@ -3,7 +3,7 @@ import LegalDocumentPage, { LegalSection } from "../components/LegalDocumentPage
 
 export default function CookiePolicyPage() {
   return (
-    <LegalDocumentPage eyebrow="Traceurs et préférences" title="Politique relative aux cookies" introduction="Les technologies utilisées par START et les choix proposés aux visiteurs en matière de cookies et de traceurs.">
+    <LegalDocumentPage eyebrow="Traceurs et préférences" title="Politique relative aux cookies">
       <LegalSection title="Préférence d’affichage">
         <p>START mémorise la préférence de thème clair ou sombre dans le stockage local du navigateur sous la clé <code className="rounded bg-black/20 px-1.5 py-0.5 text-start-gold">start-theme</code>. Cette préférence ne sert ni à la publicité ni au suivi entre plusieurs sites.</p>
       </LegalSection>

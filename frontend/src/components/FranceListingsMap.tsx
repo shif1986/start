@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import type { Listing } from "../features/listings/model/listing.types";
 import { loadHomeMap, type HomeMapDepartment } from "../features/maps/api/geojson";
 
@@ -76,6 +77,23 @@ export default function FranceListingsMap({
     });
   }, [departments, listingCounts]);
 
+  const selectedArea = departmentMap.find(({ name }) => name === selectedDepartment) ?? null;
+  const selectedListings = useMemo(() => {
+    if (!selectedArea) return [];
+    return listings.filter((listing) => (
+      selectedArea.country === "CH"
+        ? listing.country === "Suisse"
+        : (listing.country ?? "France") === "France" && listing.department === selectedArea.name
+    ));
+  }, [listings, selectedArea]);
+  const selectedAreaSearch = selectedArea
+    ? new URLSearchParams(
+      selectedArea.country === "CH"
+        ? { country: "Suisse" }
+        : { country: "France", department: selectedArea.name },
+    ).toString()
+    : "";
+
   return (
     <section
       className="france-listings-map relative overflow-hidden bg-transparent p-2 max-sm:p-0"
@@ -91,7 +109,7 @@ export default function FranceListingsMap({
 
       <svg
         className="block h-auto w-full overflow-visible"
-        viewBox="0 0 1000 800"
+        viewBox="0 0 1000 900"
         preserveAspectRatio="xMidYMid meet"
         role="group"
         aria-label="Carte des départements français et de la Suisse"
@@ -167,6 +185,45 @@ export default function FranceListingsMap({
           );
         })}
       </svg>
+
+      {selectedArea && selectedListings.length > 0 && (
+        <aside
+          className="absolute right-4 bottom-4 z-20 w-[min(330px,calc(100%-2rem))] rounded-2xl border border-start-gold/35 bg-[#101318]/95 p-4 text-start-cream shadow-[0_16px_40px_rgba(0,0,0,.38)] backdrop-blur-md max-sm:right-2 max-sm:bottom-2 max-sm:w-[calc(100%-1rem)] max-sm:p-3"
+          aria-live="polite"
+        >
+          <button
+            type="button"
+            onClick={() => onDepartmentSelect(selectedArea.name)}
+            className="absolute top-2 right-2 grid size-8 place-items-center rounded-full text-lg leading-none text-start-cream/65 transition hover:bg-start-cream/10 hover:text-start-cream"
+            aria-label="Fermer les annonces"
+          >
+            ×
+          </button>
+          <span className="block pr-8 text-[.65rem] font-bold tracking-[.18em] text-start-gold uppercase">
+            {selectedArea.country === "CH" ? "Suisse" : selectedArea.name}
+          </span>
+          <strong className="mt-1 block pr-8 text-sm">
+            {selectedListings.length} annonce{selectedListings.length > 1 ? "s" : ""} disponible{selectedListings.length > 1 ? "s" : ""}
+          </strong>
+          <div className="mt-3 grid gap-2">
+            {selectedListings.slice(0, 2).map((listing) => (
+              <Link
+                key={listing.id}
+                to={`/annonce/${listing.slug ?? listing.id}`}
+                className="rounded-lg border border-start-cream/10 bg-start-cream/[.045] px-3 py-2 text-sm font-semibold text-start-cream transition hover:border-start-gold/50 hover:text-start-gold"
+              >
+                {listing.title}
+              </Link>
+            ))}
+          </div>
+          <Link
+            to={`/annonces?${selectedAreaSearch}`}
+            className="mt-3 inline-flex text-sm font-semibold text-start-gold transition hover:text-start-cream"
+          >
+            Voir toutes les annonces <span className="ml-2" aria-hidden="true">→</span>
+          </Link>
+        </aside>
+      )}
     </section>
   );
 }

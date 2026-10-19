@@ -3,7 +3,7 @@ import LegalDocumentPage, { LegalSection } from "../components/LegalDocumentPage
 
 export default function SubscriptionTermsPage() {
   return (
-    <LegalDocumentPage eyebrow="Services professionnels" title="Conditions de l’abonnement" introduction="Les conditions contractuelles des formules professionnelles START, à consulter avant toute souscription.">
+    <LegalDocumentPage eyebrow="Services professionnels" title="Conditions de l’abonnement">
       <LegalSection title="Souscripteurs">
         <p>L’abonnement est exclusivement destiné aux comptes professionnels agissant dans le cadre de leur activité. Un compte particulier ne peut pas souscrire. START peut demander les informations nécessaires à la vérification du profil et de l’activité avant d’autoriser la publication.</p>
       </LegalSection>
@@ -38,8 +38,8 @@ export default function SubscriptionTermsPage() {
         <p>Lorsqu’une somme reste due par un professionnel, des pénalités au taux de trois fois le taux d’intérêt légal sont exigibles sans rappel à compter du lendemain de l’échéance, ainsi que l’indemnité forfaitaire légale de 40 € pour frais de recouvrement, sans préjudice d’une indemnisation complémentaire sur justificatifs.</p>
       </LegalSection>
 
-      <LegalSection title="Réduction d’impôt">
-        <p>L’abonnement rémunère l’accès à un service professionnel et ne constitue pas un don. Il n’ouvre donc pas, à ce titre, droit à un reçu fiscal de don.</p>
+      <LegalSection title="Réduction d’impôt et reçu fiscal">
+        <p>Le don de soutien professionnel, mensuel ou annuel, donne lieu à la délivrance d’un reçu fiscal. Pour les entreprises, il peut ouvrir droit à une réduction d’impôt pouvant atteindre 60 %, selon les conditions et limites prévues par l’article 238 bis du Code général des impôts.</p>
       </LegalSection>
 
       <LegalSection title="Réclamations et droit applicable">

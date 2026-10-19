@@ -59,7 +59,6 @@ export default function ContactPage() {
             Une question, un projet ?
             <span className="mt-1 block text-start-gold">Échangeons ensemble.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-[clamp(.9rem,1.2vw,1rem)] leading-7 text-start-cream/62">Une question sur START, votre compte ou le réseau ? Écrivez-nous : notre équipe prendra le temps de vous répondre.</p>
         </header>
 
         <div className="mt-[clamp(48px,7vw,80px)] grid gap-7 lg:grid-cols-[.72fr_1.28fr]">

@@ -17,7 +17,6 @@ export default function CategoriesPage() {
       <header className="relative mx-auto mb-[clamp(48px,7vw,80px)] max-w-3xl text-center">
         <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Explorez le réseau</span>
         <h1 className="mt-3 text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em] text-start-cream">Toutes les catégories</h1>
-        <p className="mt-4 text-start-cream/60">Découvrez les activités, opportunités et initiatives proposées au sein de START Réseau Chrétien.</p>
       </header>
       {dataSource === "supabase" && categoriesQuery.isPending ? (
         <div className="relative grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-x-7 gap-y-12 max-sm:gap-y-8" role="status" aria-label="Chargement des catégories">

@@ -3,7 +3,7 @@ import LegalDocumentPage, { LegalSection } from "../components/LegalDocumentPage
 
 export default function PrivacyPolicyPage() {
   return (
-    <LegalDocumentPage eyebrow="Protection des données" title="Politique de confidentialité" introduction="Comment START RESEAU CHRETIEN collecte, utilise et protège les données des visiteurs, particuliers et professionnels.">
+    <LegalDocumentPage eyebrow="Protection des données" title="Politique de confidentialité">
       <LegalSection title="Responsable du traitement">
         <p>START RESEAU CHRETIEN, association loi 1901 enregistrée sous le numéro RNA W842013429, dont le siège est situé 103 rue du Creuset, 84270 Vedène, France.</p>
         <p>Les demandes relatives aux données personnelles peuvent être adressées à <a href="mailto:contact@startreseauchretien.com" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">contact@startreseauchretien.com</a> ou depuis le <Link to="/contact" className="text-start-gold underline decoration-start-gold/35 underline-offset-4">formulaire de contact</Link>.</p>

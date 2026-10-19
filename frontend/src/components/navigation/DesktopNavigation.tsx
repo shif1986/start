@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { navigationCategories, type Category } from "../../data/categories";
 import NavigationLink from "./NavigationLink";
 import NavigationLogo from "./NavigationLogo";
@@ -19,14 +19,17 @@ function CategoryDropdown({
   category: Category;
   align?: "left" | "right";
 }) {
+  const navigate = useNavigate();
+
   return (
     <div className="group/category relative py-1.5">
-      <NavLink
-        to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-        className="whitespace-nowrap text-[.8rem] font-semibold text-start-cream/75 transition hover:text-start-gold group-focus-within/category:text-start-gold"
+      <button
+        type="button"
+        onClick={() => navigate(`/annonces?category=${encodeURIComponent(category.slug)}`)}
+        className="border-0 bg-transparent p-0 whitespace-nowrap text-[.8rem] font-semibold text-start-cream/75 transition hover:text-start-gold group-focus-within/category:text-start-gold"
       >
         {category.shortLabel ?? category.label}
-      </NavLink>
+      </button>
       <div
         className={`invisible absolute top-full z-50 w-64 translate-y-2 pt-3 opacity-0 transition duration-200 group-hover/category:visible group-hover/category:translate-y-0 group-hover/category:opacity-100 group-focus-within/category:visible group-focus-within/category:translate-y-0 group-focus-within/category:opacity-100 ${align === "right" ? "right-0" : "left-0"}`}
       >
@@ -37,12 +40,13 @@ function CategoryDropdown({
           <ul className="m-0 grid list-none gap-0.5 p-0">
             {category.subcategories.map((subcategory) => (
               <li key={subcategory}>
-                <NavLink
-                  to={`/annonces?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`}
-                  className="block rounded-lg px-3 py-2 text-sm leading-5 text-start-cream/65 transition hover:bg-start-cream/[.06] hover:text-start-cream focus-visible:bg-start-cream/[.06] focus-visible:text-start-gold focus-visible:outline-none"
+                <button
+                  type="button"
+                  onClick={() => navigate(`/annonces?category=${encodeURIComponent(category.slug)}&subcategory=${encodeURIComponent(subcategory)}`)}
+                  className="block w-full border-0 bg-transparent rounded-lg px-3 py-2 text-left text-sm leading-5 text-start-cream/65 transition hover:bg-start-cream/[.06] hover:text-start-cream focus-visible:bg-start-cream/[.06] focus-visible:text-start-gold focus-visible:outline-none"
                 >
                   {subcategory}
-                </NavLink>
+                </button>
               </li>
             ))}
           </ul>
@@ -87,11 +91,11 @@ export default function DesktopNavigation({ accountAction }: { accountAction: Na
       </div>
 
       <div className="desktop-navigation-discovery">
-        <nav className="desktop-category-links desktop-category-links-left" aria-label="Catégories principales, première partie">
+        <div className="desktop-category-links desktop-category-links-left" role="group" aria-label="Filtrer les annonces par catégorie, première partie">
           {categoryLinksLeft.map((category) => (
             <CategoryDropdown key={category.id} category={category} />
           ))}
-        </nav>
+        </div>
 
         <form className="navigation-search" role="search" onSubmit={handleSearch}>
           <input
@@ -109,11 +113,11 @@ export default function DesktopNavigation({ accountAction }: { accountAction: Na
           </button>
         </form>
 
-        <nav className="desktop-category-links desktop-category-links-right" aria-label="Catégories principales, seconde partie">
+        <div className="desktop-category-links desktop-category-links-right" role="group" aria-label="Filtrer les annonces par catégorie, seconde partie">
           {categoryLinksRight.map((category) => (
             <CategoryDropdown key={category.id} category={category} align="right" />
           ))}
-        </nav>
+        </div>
 
       </div>
     </div>

@@ -6,6 +6,8 @@ const switzerlandInputPath = fileURLToPath(new URL("../public/maps/switzerland.m
 const outputPath = fileURLToPath(new URL("../public/maps/france-home-map.min.json", import.meta.url));
 const checkOnly = process.argv.includes("--check");
 const excludedDepartments = new Set(["Guadeloupe", "Martinique", "Guyane", "La Réunion", "Mayotte", "Nouvelle-Calédonie"]);
+const viewBoxWidth = 1000;
+const viewBoxHeight = 900;
 
 function polygons(geometry) {
   return geometry.type === "Polygon" ? [geometry.coordinates] : geometry.coordinates;
@@ -15,20 +17,25 @@ function allPoints(features) {
   return features.flatMap((feature) => polygons(feature.geometry).flatMap((polygon) => polygon.flat()));
 }
 
+function mercatorLatitude(latitude) {
+  const radians = (latitude * Math.PI) / 180;
+  return Math.log(Math.tan(Math.PI / 4 + radians / 2));
+}
+
 function projectionBounds(features) {
   const points = allPoints(features);
   return {
     minLng: Math.min(...points.map(([lng]) => lng)),
     maxLng: Math.max(...points.map(([lng]) => lng)),
-    minLat: Math.min(...points.map(([, lat]) => lat)),
-    maxLat: Math.max(...points.map(([, lat]) => lat)),
+    minY: Math.min(...points.map(([, lat]) => mercatorLatitude(lat))),
+    maxY: Math.max(...points.map(([, lat]) => mercatorLatitude(lat))),
   };
 }
 
 function project([lng, lat], bounds) {
   return [
-    ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng || 1)) * 1000,
-    ((bounds.maxLat - lat) / (bounds.maxLat - bounds.minLat || 1)) * 800,
+    ((lng - bounds.minLng) / (bounds.maxLng - bounds.minLng || 1)) * viewBoxWidth,
+    ((bounds.maxY - mercatorLatitude(lat)) / (bounds.maxY - bounds.minY || 1)) * viewBoxHeight,
   ];
 }
 

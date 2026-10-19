@@ -15,9 +15,9 @@ const iconClass = "size-7 sm:size-8";
 const networkSteps: NetworkStep[] = [
   {
     id: "tax",
-    title: "Réduction d’impôt 60 %",
+    title: "Don de soutien à START : déduction d’impôt jusqu’à 60 %",
     description:
-      "Recevez une facture pour votre abonnement et bénéficiez, lorsque les conditions légales sont remplies, du dispositif fiscal applicable.",
+      "Les dons de mécénat éligibles peuvent ouvrir droit à une réduction d’impôt, selon les conditions prévues par la loi.",
     color: "#e6b83f",
     position: { x: 50, y: 8 },
     icon: <svg className={iconClass} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v5h4M8 12h4M8 16h3M15 13l3 5M18 13l-3 5" /></svg>,
@@ -69,6 +69,40 @@ const networkSteps: NetworkStep[] = [
   },
 ];
 
+const detailedDescriptions: Record<NetworkStep["id"], string> = {
+  tax:
+    "Votre abonnement professionnel est un don de soutien à START. Un reçu fiscal vous est délivré : pour les entreprises, ce don peut ouvrir droit à une réduction d’impôt pouvant atteindre 60 %, selon les conditions et limites prévues par l’article 238 bis du Code général des impôts.",
+  professionals:
+    "Présentez votre savoir-faire à une communauté engagée, gagnez en visibilité et développez des relations professionnelles fondées sur des valeurs partagées.",
+  individuals:
+    "Trouvez plus facilement des professionnels chrétiens de confiance pour vos projets et vos besoins du quotidien, dans un esprit d'entraide et de proximité.",
+  development:
+    "Votre don de soutien mensuel ou annuel participe au développement et à la maintenance du site et de l’application START : création de nouvelles fonctionnalités, amélioration continue de l’expérience, sécurité, corrections et accompagnement de la communauté.",
+  mission:
+    "Une part des ressources aide à porter l'Évangile de Jésus, soutenir des missions et encourager des actions concrètes auprès de celles et ceux qui en ont besoin.",
+  training:
+    "Participez à une dynamique de croissance grâce à des formations et des conférences consacrées à l'entrepreneuriat, au business et à la foi.",
+};
+
+type NetworkBenefit = Pick<NetworkStep, "id" | "title" | "color" | "icon"> & {
+  detailedDescription: string;
+};
+
+const subscriptionBenefits: NetworkBenefit[] = [
+  ...networkSteps.slice(0, 4).map((step) => ({
+    ...step,
+    detailedDescription: detailedDescriptions[step.id],
+  })),
+  {
+    id: "mission-training",
+    title: "Mission & formation",
+    color: "#e6b83f",
+    icon: networkSteps[4].icon,
+    detailedDescription:
+      "Soutenez les missions, les actions humanitaires, les formations et les conférences qui font grandir le réseau.",
+  },
+];
+
 const getConnectionEnd = (position: NetworkStep["position"]) => {
   const dx = position.x - 50;
   const dy = position.y - 50;
@@ -82,7 +116,56 @@ const getConnectionEnd = (position: NetworkStep["position"]) => {
   };
 };
 
-export default function StartNetworkCycle() {
+type StartNetworkCycleProps = {
+  variant?: "diagram" | "list";
+};
+
+export default function StartNetworkCycle({ variant = "diagram" }: StartNetworkCycleProps) {
+  return variant === "list" ? <NetworkBenefitsList /> : <NetworkCycleDiagram />;
+}
+
+function NetworkBenefitsList() {
+  return (
+    <section className="start-network-benefits relative overflow-hidden border-y border-start-gold/30 bg-[radial-gradient(circle_at_12%_0%,rgba(199,164,93,.34),transparent_38%),radial-gradient(circle_at_88%_100%,rgba(77,163,255,.14),transparent_34%),linear-gradient(135deg,#282116_0%,#1b1b19_48%,#11191c_100%)]" aria-labelledby="network-benefits-title">
+      <div className="relative z-10 mx-auto max-w-[1120px] px-[clamp(18px,5vw,72px)] py-[clamp(64px,8vw,110px)]">
+        <header className="mx-auto max-w-3xl text-center">
+          <p className="flex items-center justify-center gap-3 text-[.66rem] font-bold tracking-[.24em] text-start-gold uppercase sm:text-xs"><span className="h-px w-10 bg-gradient-to-r from-transparent to-start-gold" />Votre don de soutien en action<span className="h-px w-10 bg-gradient-to-l from-transparent to-start-gold" /></p>
+          <h2 id="network-benefits-title" className="mx-auto mt-4 max-w-3xl text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.1] font-bold tracking-[-.04em] text-start-cream">Pourquoi rejoindre <span className="text-start-gold">START Réseau Chrétien&nbsp;?</span></h2>
+          <p className="mx-auto mt-5 max-w-2xl text-sm leading-7 text-start-cream/65 sm:text-base">Votre don de soutien mensuel ou annuel fait grandir un réseau utile, vivant et tourné vers les autres. Découvrez concrètement ce qu’il permet de faire grandir.</p>
+        </header>
+
+        <div className="mx-auto mt-14 max-w-4xl space-y-4 sm:mt-16 sm:space-y-5">
+          {subscriptionBenefits.map((step, index) => (
+            <article key={step.id} className="group relative grid gap-5 rounded-3xl border border-start-cream/10 bg-[#0d1117]/70 px-6 py-8 shadow-[0_18px_45px_rgba(0,0,0,.18)] transition duration-300 hover:-translate-y-0.5 hover:border-start-cream/20 sm:grid-cols-[auto_1fr_auto] sm:items-center sm:gap-7 sm:px-9 sm:py-9">
+              <span className="flex size-16 shrink-0 items-center justify-center rounded-2xl border bg-[#090c11] transition duration-300 group-hover:scale-105" style={{ color: step.color, borderColor: `${step.color}80`, boxShadow: `0 0 28px ${step.color}1f` }}>
+                {step.icon}
+              </span>
+              <div>
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  <span className="text-[.62rem] font-bold tracking-[.16em] text-start-cream/35">{String(index + 1).padStart(2, "0")} / 05</span>
+                  <h3 className="text-sm font-extrabold tracking-[.06em] uppercase sm:text-base" style={{ color: step.color }}>{step.title}</h3>
+                </div>
+                <p className="mt-3 max-w-2xl text-sm leading-7 text-start-cream/70 sm:text-[.95rem]">{step.detailedDescription}</p>
+              </div>
+              <span className="hidden h-10 w-px bg-gradient-to-b from-transparent via-start-gold/70 to-transparent sm:block" aria-hidden="true" />
+            </article>
+          ))}
+        </div>
+
+        <footer className="mx-auto mt-12 max-w-3xl text-center sm:mt-16">
+          <svg className="mx-auto size-9 text-start-gold" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.3" aria-hidden="true"><path d="m3 7 4 5 5-8 5 8 4-5-2 12H5z" /></svg>
+          <h3 className="mt-3 text-lg font-bold tracking-[.2em] text-start-gold uppercase sm:text-xl">L’argent du Royaume</h3>
+          <p className="mt-4 text-sm leading-7 text-start-cream/65 sm:text-base">Faire circuler les ressources au sein du corps du Christ, soutenir son développement et les missions, permettre aux enfants de Dieu de grandir et de prospérer, afin de porter davantage de lumière dans le monde.</p>
+          <Link to="/a-propos" className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full border border-start-gold/60 px-6 py-3 text-xs font-bold tracking-[.1em] text-start-gold uppercase transition duration-300 hover:border-start-gold hover:bg-start-gold hover:text-[#090c11] focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-start-gold sm:text-sm">
+            Découvrir notre vision
+          </Link>
+        </footer>
+      </div>
+    </section>
+  );
+}
+
+function NetworkCycleDiagram() {
   const sectionRef = useRef<HTMLElement>(null);
   const interactionTimerRef = useRef<number | null>(null);
   const entranceTimerRef = useRef<number | null>(null);

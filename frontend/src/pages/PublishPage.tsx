@@ -16,7 +16,6 @@ export default function PublishPage() {
       <div className="mx-auto max-w-6xl">
       <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Rejoindre le réseau</span>
       <h1 className="mt-3 max-w-4xl text-[clamp(1.65rem,3vw,2.8rem)] font-bold tracking-[-.035em]">Publier une annonce</h1>
-      <p className="mt-5 max-w-2xl text-lg leading-8 text-start-cream/65">La publication est réservée aux professionnels disposant d’un abonnement START actif.</p>
 
       {isSupabase && subscriptionQuery.isPending && <p className="mt-6 rounded-xl border border-start-cream/10 px-4 py-3 text-sm text-start-cream/60" role="status">Vérification de votre abonnement…</p>}
       {isSupabase && subscriptionQuery.isError && <p className="mt-6 rounded-xl border border-network-red/25 bg-network-red/[.06] px-4 py-3 text-sm text-red-200" role="alert">Impossible de vérifier votre abonnement pour le moment.</p>}

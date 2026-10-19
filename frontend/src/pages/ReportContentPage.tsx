@@ -74,7 +74,6 @@ export default function ReportContentPage() {
           <span className="mx-auto mt-6 flex w-fit items-center gap-3" aria-hidden="true"><span className="size-2 rounded-full bg-network-blue" /><span className="size-2 rounded-full bg-network-yellow" /><span className="size-2 rounded-full bg-network-red" /></span>
           <span className="mt-5 block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">Sécurité de la plateforme</span>
           <h1 className="mt-6 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">Signaler un contenu</h1>
-          <p className="mx-auto mt-5 max-w-2xl leading-7 text-start-cream/62">Signalez une annonce ou un contenu que vous estimez illégal, frauduleux ou contraire aux règles de START.</p>
         </header>
 
         <div className="mt-[clamp(48px,7vw,80px)] grid items-start gap-7 lg:grid-cols-[.72fr_1.28fr]">

@@ -74,7 +74,7 @@ function App() {
           <Route path="/espace/professionnel/avis" element={<ProtectedRoute accountTypes={["professional"]}><CustomerReviewsPage accountType="professional" /></ProtectedRoute>} />
           <Route path="/espace/professionnel/abonnement" element={<ProtectedRoute accountTypes={["professional"]}><ProfessionalSubscriptionPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute roles={["moderator", "admin"]}><AdminDashboardPage /></ProtectedRoute>} />
-          <Route path="/abonnement" element={<ProtectedRoute accountTypes={["professional"]}><SubscriptionPage /></ProtectedRoute>} />
+          <Route path="/abonnement" element={<SubscriptionPage />} />
           <Route path="/mentions-legales" element={<LegalNoticePage />} />
           <Route path="/confidentialite" element={<PrivacyPolicyPage />} />
           <Route path="/conditions-utilisation" element={<TermsOfUsePage />} />

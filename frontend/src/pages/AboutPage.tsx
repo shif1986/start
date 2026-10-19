@@ -22,11 +22,6 @@ export default function AboutPage() {
             Une foi qui rassemble.<br />
             <span className="text-start-gold">Un réseau qui agit.</span>
           </h1>
-          <p className="mx-auto mt-5 max-w-2xl text-[clamp(.92rem,1.3vw,1.05rem)] leading-7 text-start-cream/62">
-            START met en relation les professionnels, les familles et les
-            institutions chrétiennes pour servir la communauté avec
-            bienveillance, proximité et excellence.
-          </p>
         </header>
 
         <section className="cyril-profile relative mt-[clamp(48px,7vw,80px)] overflow-hidden rounded-2xl border border-start-cream/10 bg-[radial-gradient(circle_at_10%_15%,rgba(199,164,93,.08),transparent_30%),#14171d] p-[clamp(24px,4vw,52px)] shadow-[0_28px_80px_rgba(0,0,0,.28)]">
@@ -36,11 +31,22 @@ export default function AboutPage() {
               <span className="absolute -top-3 -right-3 h-28 w-28 rounded-tr-3xl border-t border-r border-start-gold/50" aria-hidden="true" />
               <span className="absolute -bottom-3 -left-3 h-20 w-20 rounded-bl-3xl border-b border-l border-network-blue/35" aria-hidden="true" />
               <div className="relative aspect-[4/5] overflow-hidden rounded-[1rem_2.5rem_1rem_1rem] bg-[#090b0f] shadow-[0_26px_70px_rgba(0,0,0,.38)]">
-                <img
-                  src="/images/team/cyril-cerdan.png"
-                  alt="Portrait de Cyril Cerdan, président de START Réseau Chrétien"
-                  className="size-full object-cover object-[51%_center]"
-                />
+                <picture className="block size-full">
+                  <source
+                    srcSet="/images/team/cyril-cerdan-768.jpg 768w, /images/team/cyril-cerdan-1038.jpg 1038w"
+                    sizes="(max-width: 699px) calc(100vw - 80px), (max-width: 1200px) 40vw, 480px"
+                    type="image/jpeg"
+                  />
+                  <img
+                    src="/images/team/cyril-cerdan-1038.jpg"
+                    width="1038"
+                    height="1515"
+                    alt="Portrait de Cyril Cerdan, président de START Réseau Chrétien"
+                    className="size-full object-cover object-[51%_center]"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                </picture>
                 <div className="absolute inset-0 bg-[linear-gradient(180deg,transparent_72%,rgba(7,9,12,.5)_100%)]" aria-hidden="true" />
               </div>
             </figure>

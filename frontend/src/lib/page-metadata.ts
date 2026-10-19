@@ -10,7 +10,7 @@ export type PageMetadata = {
   canonicalPath: string | null;
 };
 
-const privateRoute = /^\/(admin|espace|auth|connexion|inscription|publier|abonnement)(\/|$)/;
+const privateRoute = /^\/(admin|espace|auth|connexion|inscription|publier)(\/|$)/;
 
 const publicPages: Record<string, Omit<PageMetadata, "canonicalPath">> = {
   "/": {
@@ -41,6 +41,11 @@ const publicPages: Record<string, Omit<PageMetadata, "canonicalPath">> = {
   "/contact": {
     title: `Contact — ${SITE_NAME}`,
     description: "Contactez l’équipe de START Réseau Chrétien.",
+    robots: "index,follow",
+  },
+  "/abonnement": {
+    title: `Abonnement professionnel — ${SITE_NAME}`,
+    description: "Découvrez les formules professionnelles START pour publier vos annonces et développer votre réseau.",
     robots: "index,follow",
   },
   "/mentions-legales": { title: `Mentions légales — ${SITE_NAME}`, description: "Consultez les mentions légales de START Réseau Chrétien.", robots: "index,follow" },

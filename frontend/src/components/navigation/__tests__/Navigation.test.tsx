@@ -53,6 +53,14 @@ describe("Navigation", () => {
     expect(within(mainNavigation).getByRole("link", { name: "Annonce" })).toHaveAttribute("aria-current", "page");
   });
 
+  it("présente les catégories comme des filtres et non comme une navigation", () => {
+    renderNavigation();
+
+    expect(screen.queryByRole("navigation", { name: /catégories/i })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("group", { name: /filtrer les annonces par catégorie/i })).toHaveLength(2);
+    expect(screen.getAllByRole("button", { name: "Véhicules" }).length).toBeGreaterThan(0);
+  });
+
   it("affiche les actions prévues pour un utilisateur déconnecté", () => {
     renderNavigation();
 

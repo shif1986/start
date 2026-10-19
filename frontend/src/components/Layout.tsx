@@ -20,34 +20,51 @@ export default function Layout({ children }: LayoutProps) {
     const main = mainRef.current;
     if (!main) return;
 
-    const elements = Array.from(
-      main.querySelectorAll<HTMLElement>("h1, h2, h3, p"),
-    ).filter((element) => !element.closest("[data-no-scroll-reveal]"));
-
-    elements.forEach((element, index) => {
-      element.dataset.scrollReveal = "";
-      element.style.setProperty("--reveal-delay", `${(index % 5) * 70}ms`);
-    });
-
-    if (!("IntersectionObserver" in window)) {
-      elements.forEach((element) => element.classList.add("is-visible"));
-      return;
+    let observer: IntersectionObserver | null = null;
+    if ("IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (!entry.isIntersecting) return;
+            entry.target.classList.add("is-visible");
+            observer?.unobserve(entry.target);
+          });
+        },
+        { rootMargin: "0px 0px -8%", threshold: 0.08 },
+      );
     }
+    const animationFrames = new Set<number>();
+    let revealIndex = 0;
 
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (!entry.isIntersecting) return;
-          entry.target.classList.add("is-visible");
-          observer.unobserve(entry.target);
-        });
-      },
-      { rootMargin: "0px 0px -8%", threshold: 0.08 },
-    );
+    const registerNewElements = () => {
+      const elements = Array.from(
+        main.querySelectorAll<HTMLElement>("h1, h2, h3, p"),
+      ).filter((element) => !element.closest("[data-no-scroll-reveal]") && !element.hasAttribute("data-scroll-reveal"));
 
-    elements.forEach((element) => observer.observe(element));
+      elements.forEach((element, index) => {
+        element.dataset.scrollReveal = "";
+        element.style.setProperty("--reveal-delay", `${((revealIndex + index) % 5) * 70}ms`);
+        if (!observer) element.classList.add("is-visible");
+      });
+      revealIndex += elements.length;
 
-    return () => observer.disconnect();
+      if (!observer || elements.length === 0) return;
+      const animationFrame = window.requestAnimationFrame(() => {
+        animationFrames.delete(animationFrame);
+        elements.forEach((element) => observer.observe(element));
+      });
+      animationFrames.add(animationFrame);
+    };
+
+    registerNewElements();
+    const mutationObserver = new MutationObserver(registerNewElements);
+    mutationObserver.observe(main, { childList: true, subtree: true });
+
+    return () => {
+      animationFrames.forEach((animationFrame) => window.cancelAnimationFrame(animationFrame));
+      mutationObserver.disconnect();
+      observer?.disconnect();
+    };
   }, [pathname]);
 
   return (
@@ -68,6 +85,7 @@ export default function Layout({ children }: LayoutProps) {
             aria-label="Ressources du pied de page"
           >
             <NavLink to="/contact">Contact</NavLink>
+            <NavLink to="/categories">Catégories</NavLink>
             <NavLink to="/don">Faire un don</NavLink>
             <NavLink to="/contact">Support</NavLink>
             <NavLink to="/signaler-un-contenu">Signaler un contenu</NavLink>

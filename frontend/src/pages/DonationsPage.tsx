@@ -52,14 +52,11 @@ export default function DonationsPage() {
   return (
     <ThemedPage ambiance="dark" showPattern={false} className="!bg-[radial-gradient(circle_at_50%_0%,rgba(199,164,93,.09),transparent_30%),linear-gradient(145deg,#191914_0%,#101319_48%,#090c12_100%)] px-[clamp(16px,5vw,72px)] py-[clamp(28px,5vw,72px)]">
       <div className="mx-auto max-w-6xl">
-        <header data-no-scroll-reveal className="mx-auto max-w-3xl text-center">
+        <header className="mx-auto max-w-3xl text-center">
           <span className="mx-auto block h-px w-24 bg-start-gold/70" aria-hidden="true" />
           <span className="mx-auto mt-6 flex w-fit items-center gap-3" aria-hidden="true"><span className="size-2 rounded-full bg-network-blue" /><span className="size-2 rounded-full bg-network-yellow" /><span className="size-2 rounded-full bg-network-red" /></span>
           <span className="mt-5 block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">Soutenir la mission</span>
           <h1 className="mt-6 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">Faire un don</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-[clamp(.92rem,1.3vw,1.05rem)] leading-7 text-start-cream/62">
-            Votre soutien aide START à accompagner les initiatives locales, développer les outils du réseau et favoriser des projets porteurs de sens.
-          </p>
         </header>
 
         {searchParams.get("checkout") === "cancelled" && <p role="status" className="mx-auto mt-8 max-w-3xl rounded-xl border border-start-gold/25 p-4 text-center text-start-cream/65">Le paiement a été annulé. Aucun don n’a été confirmé.</p>}

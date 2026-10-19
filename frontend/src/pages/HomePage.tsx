@@ -36,7 +36,6 @@ function SearchByLocation({
       <ThemeToggle />
 
       <div
-        data-no-scroll-reveal
         className="relative z-10 flex w-full max-w-[520px] min-w-0 flex-col items-center justify-self-center text-center max-lg:order-2 max-lg:max-w-[560px]"
       >
         <div className="flex w-full items-center gap-4 font-hero text-[clamp(.62rem,.8vw,.84rem)] font-medium tracking-[.08em] text-start-gold uppercase max-sm:gap-3 max-sm:text-[.58rem] max-sm:tracking-[.07em]">
@@ -240,7 +239,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-categories-section discreet-network-background relative overflow-hidden border-t border-start-cream/10 px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
+      <section className="home-categories-section relative overflow-hidden border-t border-start-cream/10 px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
         <div className="home-categories-header relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.22em] text-network-yellow uppercase"><span className="size-1.5 rounded-full bg-network-yellow" aria-hidden="true" />

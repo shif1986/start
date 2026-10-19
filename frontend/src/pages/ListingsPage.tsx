@@ -1,19 +1,18 @@
 import { lazy, Suspense, useEffect, useMemo } from "react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { mockListings } from "../data/mockListings";
 import { categories } from "../data/categories";
 import { departments, swissCantons } from "../data/departments";
 import ListingCard from "../components/ListingCard";
 import ThemedPage from "../components/ThemedPage";
 import { normalizeListingFilters } from "../features/listings/model/listing-filters";
-import { useListings } from "../features/listings/hooks/use-listings";
 import { useAllListings } from "../features/listings/hooks/use-all-listings";
 import { getDataSource } from "../lib/data-source";
 
 const ListingsMap = lazy(() => import("../components/ListingsMap"));
 
 const filterControlClass =
-  "h-12 w-full box-border rounded-xl border border-start-cream/15 bg-[#080c12] px-4 py-0 text-start-cream outline-none transition focus:border-start-gold max-sm:h-14";
+  "h-12 w-full box-border rounded-xl border border-start-cream/15 bg-[#080c12] px-4 py-0 text-[.95rem] text-start-cream outline-none transition focus:border-start-gold max-sm:h-14 max-sm:text-base";
 const LISTINGS_PER_PAGE = 4;
 
 function SelectChevron() {
@@ -67,7 +66,6 @@ export default function ListingsPage() {
     page: requestedPage,
     pageSize: LISTINGS_PER_PAGE,
   }), [category, country, department, requestedPage, search]);
-  const listingsQuery = useListings(listingFilters, { enabled: dataSource === "supabase" });
   const mapListingsQuery = useAllListings({
     search: listingFilters.search,
     category: listingFilters.category,
@@ -75,9 +73,10 @@ export default function ListingsPage() {
     subdivision: listingFilters.subdivision,
   }, { enabled: dataSource === "supabase" });
   const useDemoCatalog = dataSource === "static";
-  const filteredListings = useDemoCatalog ? staticFilteredListings : listingsQuery.data?.items ?? [];
-  const mapListings = useDemoCatalog ? staticFilteredListings : mapListingsQuery.data ?? [];
-  const totalCount = useDemoCatalog ? staticFilteredListings.length : listingsQuery.data?.totalCount ?? 0;
+  const filteredListings = useDemoCatalog ? staticFilteredListings : mapListingsQuery.data ?? [];
+  const mapListings = filteredListings;
+  const totalCount = filteredListings.length;
+  const isCatalogCountPending = dataSource === "supabase" && mapListingsQuery.isPending;
 
   const locationOptions = country === "Suisse" ? swissCantons : departments;
 
@@ -91,12 +90,12 @@ export default function ListingsPage() {
     );
 
   useEffect(() => {
-    if (requestedPage === currentPage) return;
+    if (isCatalogCountPending || requestedPage === currentPage) return;
     const next = new URLSearchParams(searchParams);
     if (currentPage === 1) next.delete("page");
     else next.set("page", currentPage.toString());
     setSearchParams(next, { replace: true });
-  }, [currentPage, requestedPage, searchParams, setSearchParams]);
+  }, [currentPage, isCatalogCountPending, requestedPage, searchParams, setSearchParams]);
 
   function updateParam(key: string, value: string) {
     const next = new URLSearchParams(searchParams);
@@ -141,11 +140,11 @@ export default function ListingsPage() {
 
       <section className="relative z-10 mx-auto mt-10 mb-16 w-[min(94%,1120px)] rounded-2xl border border-start-gold/25 bg-[#121418]/95 p-5 shadow-[0_22px_65px_rgba(0,0,0,.35)] backdrop-blur-xl max-md:mt-7 max-md:mb-12 max-md:w-full max-sm:p-4">
         <div className="grid grid-cols-[1.25fr_1fr_.8fr_1fr_auto] items-end gap-3 max-xl:grid-cols-2 max-sm:grid-cols-1">
-          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+          <label className="flex flex-col gap-2 text-sm font-semibold tracking-wide text-start-cream/60 uppercase">
             Recherche
             <input className={`${filterControlClass} placeholder:text-start-cream/30`} type="search" placeholder="Métier, service, annonce..." value={search} onChange={(event) => updateParam("q", event.target.value)} />
           </label>
-          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+          <label className="flex flex-col gap-2 text-sm font-semibold tracking-wide text-start-cream/60 uppercase">
             Catégorie
             <span className="relative block">
               <select className={`${filterControlClass} appearance-none pr-12`} value={category} onChange={(event) => updateParam("category", event.target.value)}>
@@ -155,7 +154,7 @@ export default function ListingsPage() {
               <SelectChevron />
             </span>
           </label>
-          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+          <label className="flex flex-col gap-2 text-sm font-semibold tracking-wide text-start-cream/60 uppercase">
             Pays
             <span className="relative block">
               <select className={`${filterControlClass} appearance-none pr-12`} value={country} onChange={(event) => updateCountry(event.target.value)}>
@@ -166,7 +165,7 @@ export default function ListingsPage() {
               <SelectChevron />
             </span>
           </label>
-          <label className="flex flex-col gap-2 text-xs font-semibold tracking-wide text-start-cream/60 uppercase">
+          <label className="flex flex-col gap-2 text-sm font-semibold tracking-wide text-start-cream/60 uppercase">
             {country === "Suisse" ? "Canton" : "Département"}
             <span className="relative block">
               <select className={`${filterControlClass} appearance-none pr-12`} value={department} onChange={(event) => updateParam("department", event.target.value)}>
@@ -180,6 +179,12 @@ export default function ListingsPage() {
             Réinitialiser
           </button>
         </div>
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-start-cream/10 pt-4 text-sm text-start-cream/55">
+          <span>Vous ne savez pas dans quelle catégorie chercher&nbsp;?</span>
+          <Link to="/categories" className="font-semibold text-start-gold transition hover:text-start-cream">
+            Parcourir toutes les catégories <span className="ml-1" aria-hidden="true">→</span>
+          </Link>
+        </div>
       </section>
 
       <section id="annonces-results" className="scroll-mt-28">
@@ -190,9 +195,9 @@ export default function ListingsPage() {
           </div>
         </div>
         <div className="grid grid-cols-[repeat(auto-fit,minmax(260px,1fr))] gap-x-5 gap-y-12 max-md:gap-y-9 max-sm:gap-y-7">
-          {dataSource === "supabase" && listingsQuery.isPending ? (
+          {dataSource === "supabase" && mapListingsQuery.isPending ? (
             Array.from({ length: LISTINGS_PER_PAGE }, (_, index) => <span key={index} className="h-[390px] animate-pulse rounded-xl border border-start-cream/10 bg-start-cream/[.04]" aria-hidden="true" />)
-          ) : dataSource === "supabase" && listingsQuery.isError ? (
+          ) : dataSource === "supabase" && mapListingsQuery.isError ? (
             <div className="rounded-2xl border border-network-red/30 bg-network-red/[.06] p-10 text-center text-start-cream" role="alert">Impossible de charger les annonces. Veuillez réessayer dans quelques instants.</div>
           ) : totalCount > 0 ? (
             visibleListings.map((listing) => <ListingCard key={listing.id} listing={listing} />)

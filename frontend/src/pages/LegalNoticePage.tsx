@@ -60,7 +60,6 @@ export default function LegalNoticePage() {
           </span>
           <span className="mt-5 block text-[.65rem] font-bold tracking-[.2em] text-start-gold uppercase">Informations juridiques</span>
           <h1 className="mt-6 text-[clamp(1.65rem,3vw,2.8rem)] leading-[1.08] font-bold tracking-[-.035em]">Mentions légales</h1>
-          <p className="mx-auto mt-5 max-w-2xl text-[clamp(.9rem,1.2vw,1rem)] leading-7 text-start-cream/62">Informations relatives à l’édition, l’hébergement et l’utilisation du site START Réseau Chrétien.</p>
         </header>
 
         <div className="mt-[clamp(48px,7vw,80px)] grid gap-5 md:grid-cols-2">

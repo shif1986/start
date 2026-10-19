@@ -34,7 +34,6 @@ export default function ProfessionalAccountRequiredPage() {
       <div className="mx-auto max-w-4xl">
         <span className="text-xs font-bold tracking-[.22em] text-start-gold uppercase">Publication professionnelle</span>
         <h1 className="mt-4 text-[clamp(1.65rem,3vw,2.8rem)] leading-tight font-semibold tracking-[-.035em]">La publication d’annonces est réservée aux comptes professionnels.</h1>
-        <p className="mt-6 max-w-2xl text-lg leading-8 text-start-cream/60">Votre compte particulier reste gratuit pour consulter les annonces, enregistrer des favoris, contacter les professionnels et publier des avis.</p>
 
         <section className="mt-10 grid grid-cols-[1.1fr_.9fr] overflow-hidden rounded-3xl border border-start-gold/25 bg-[#121418]/95 shadow-[0_30px_90px_rgba(0,0,0,.3)] max-md:grid-cols-1">
           <div className="p-[clamp(24px,5vw,48px)]">

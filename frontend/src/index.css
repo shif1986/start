@@ -127,11 +127,15 @@ button {
   border-top: 1px solid rgb(244 239 229 / 8%);
 }
 
-.mobile-drawer-submenu a {
+.mobile-drawer-submenu button {
   min-height: 32px;
   display: inline-flex;
   align-items: center;
+  border: 0;
+  background: transparent;
+  padding: 0;
   color: rgb(244 239 229 / 72%);
+  font: inherit;
   font-size: clamp(0.7rem, 2vw, 0.82rem);
   font-weight: 650;
   white-space: nowrap;
@@ -144,8 +148,8 @@ button {
   color: #c7a45d;
 }
 
-.mobile-drawer-submenu a:hover,
-.mobile-drawer-submenu a.is-active {
+.mobile-drawer-submenu button:hover,
+.mobile-drawer-submenu button:focus-visible {
   color: #c7a45d;
 }
 
@@ -747,15 +751,17 @@ html[data-theme="light"] .mobile-navigation-drawer {
   color: #25241f;
 }
 html[data-theme="light"] .mobile-drawer-link,
-html[data-theme="light"] .mobile-drawer-submenu a { color: rgb(37 36 31 / 76%); }
+html[data-theme="light"] .mobile-drawer-submenu button { color: rgb(37 36 31 / 76%); }
 html[data-theme="light"] .mobile-drawer-footer { border-color: rgb(34 34 30 / 10%); background: rgb(240 235 225 / 80%); }
 
 /* The Hero and network diagram remain dark identity anchors in both modes. */
 html[data-theme="light"] .home-hero { background: #171a21 !important; color: #f4efe5; }
 html[data-theme="light"] .home-hero [class*="text-start-cream"],
-html[data-theme="light"] .start-network-cycle [class*="text-start-cream"] { color: rgb(244 239 229 / 78%) !important; }
+html[data-theme="light"] .start-network-cycle [class*="text-start-cream"],
+html[data-theme="light"] .start-network-benefits [class*="text-start-cream"] { color: rgb(244 239 229 / 78%) !important; }
 html[data-theme="light"] .home-hero [class*="bg-[#111419]"] { background: rgb(17 20 25 / 55%) !important; }
 html[data-theme="light"] .start-network-cycle { color: #f4efe5; }
+html[data-theme="light"] .start-network-benefits { color: #f4efe5; }
 html[data-theme="light"] .start-network-cycle .network-cycle-logo,
 html[data-theme="light"] .start-network-cycle .network-node,
 html[data-theme="light"] .start-network-cycle .network-cycle-copy { background: #0b0e13 !important; }
@@ -917,34 +923,22 @@ html[data-theme="light"] .category-card h3 { color: #25241f !important; }
 html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rgb(37 36 31 / 66%) !important; }
 
 [data-scroll-reveal] {
+  /* Titles remain stable and readable while pages load. */
   opacity: 1;
-  transform: translate3d(0, 22px, 0);
-  filter: blur(3px);
-  transition:
-    transform 950ms cubic-bezier(0.16, 1, 0.3, 1) var(--reveal-delay, 0ms),
-    filter 780ms ease-out var(--reveal-delay, 0ms);
-  will-change: opacity, transform, filter;
+  transform: none;
+  transition: none;
+  will-change: auto;
 }
 
 [data-scroll-reveal].is-visible {
   opacity: 1;
-  transform: translate3d(0, 0, 0);
-  filter: blur(0);
-}
-
-@media (max-width: 640px) {
-  [data-scroll-reveal] {
-    transform: translate3d(0, 14px, 0);
-    filter: none;
-    transition-duration: 720ms;
-  }
+  transform: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
   [data-scroll-reveal] {
     opacity: 1;
     transform: none;
-    filter: none;
     transition: none;
   }
 }
@@ -966,7 +960,7 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
 }
 
 .listings-map .leaflet-tile-pane {
-  filter: none;
+  filter: contrast(1.18) saturate(.82);
   opacity: 1;
 }
 
@@ -975,7 +969,7 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
   inset: 0;
   z-index: 350;
   pointer-events: none;
-  background: linear-gradient(135deg, rgb(5 8 12 / 58%), rgb(9 14 20 / 46%));
+  background: linear-gradient(135deg, rgb(5 8 12 / 40%), rgb(9 14 20 / 30%));
   content: "";
 }
 
@@ -1005,6 +999,19 @@ html[data-theme="light"] .category-card p[class*="text-start-cream"] { color: rg
   background-position: center top !important;
   background-repeat: no-repeat !important;
   background-size: cover !important;
+}
+
+.home-categories-section {
+  background:
+    radial-gradient(circle at 88% 12%, rgb(77 163 255 / 12%), transparent 29%),
+    radial-gradient(circle at 12% 90%, rgb(199 164 93 / 30%), transparent 38%),
+    radial-gradient(circle at 62% 8%, rgb(213 182 111 / 16%), transparent 30%),
+    linear-gradient(135deg, #3c402f 0%, #2d382f 47%, #1b2d30 100%);
+}
+
+.home-categories-section .category-card {
+  border-color: rgb(244 239 229 / 34%);
+  box-shadow: 0 20px 48px rgb(4 12 18 / 42%);
 }
 
 @media (max-width: 640px) {
