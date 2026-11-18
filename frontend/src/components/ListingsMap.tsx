@@ -163,6 +163,32 @@ function FitListings({ listings, selectedCountry }: { listings: Listing[]; selec
   return null;
 }
 
+function AccessibleMapCounts() {
+  const map = useMap();
+
+  useEffect(() => {
+    const describeCount = (tooltip: Element) => {
+      const count = [...tooltip.classList]
+        .find((className) => className.startsWith("start-map-count--"))
+        ?.replace("start-map-count--", "");
+      if (!count) return;
+
+      tooltip.setAttribute("aria-label", `${count} annonce${count === "1" ? "" : "s"} dans cette zone`);
+    };
+    const describeAllCounts = () => {
+      map.getContainer().querySelectorAll(".start-map-count").forEach(describeCount);
+    };
+
+    describeAllCounts();
+    const observer = new MutationObserver(describeAllCounts);
+    observer.observe(map.getContainer(), { childList: true, subtree: true });
+
+    return () => observer.disconnect();
+  }, [map]);
+
+  return null;
+}
+
 export default function ListingsMap({ listings, selectedCountry = "" }: { listings: Listing[]; selectedCountry?: string }) {
   const [franceDepartmentsGeoJson, setFranceDepartmentsGeoJson] = useState<FeatureCollection | null>(null);
   const [switzerlandGeoJson, setSwitzerlandGeoJson] = useState<FeatureCollection | null>(null);
@@ -241,6 +267,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
         />
         <ZoomControl position="bottomright" />
         <FitListings listings={listings} selectedCountry={selectedCountry} />
+        <AccessibleMapCounts />
         {franceDepartmentsGeoJson && <GeoJSON
           data={franceDepartmentsGeoJson}
           interactive={false}
@@ -286,7 +313,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
               radius={markerRadius}
               pathOptions={{ color: "#f4efe5a6", fillColor: markerColor, fillOpacity: 0.76, opacity: 0.8, weight: 1 }}
             >
-              <Tooltip permanent direction="center" className="start-map-count">
+              <Tooltip permanent direction="center" className={`start-map-count start-map-count--${listingsAtLocation.length}`}>
                 {listingsAtLocation.length}
               </Tooltip>
               <Popup minWidth={230}>

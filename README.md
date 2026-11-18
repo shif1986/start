@@ -19,6 +19,8 @@ La livraison des confirmations d'inscription par e-mail est documentée dans [do
 
 Le pipeline de qualité et la procédure staging/production, secrets, migrations et rollback sont décrits dans [docs/DEPLOIEMENT.md](docs/DEPLOIEMENT.md).
 
+Les règles produit et le contrat à conserver pour la future application mobile sont centralisés dans [docs/FONCTIONNEMENT_PRODUIT_ET_MOBILE.md](docs/FONCTIONNEMENT_PRODUIT_ET_MOBILE.md).
+
 Le découpage du bundle, l'optimisation des cartes et la recette Lighthouse sont documentés dans [docs/PERFORMANCE.md](docs/PERFORMANCE.md).
 
 Les métadonnées, la page 404, `robots.txt`, le sitemap et la configuration du domaine sont documentés dans [docs/SEO.md](docs/SEO.md).

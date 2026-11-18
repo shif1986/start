@@ -84,7 +84,7 @@ export default function SubscriptionPage() {
             </h1>
           </header>
 
-          {isSupabase && subscriptionQuery.isPending && <p className="mt-6 rounded-xl border border-start-cream/10 px-4 py-3 text-sm text-start-cream/60" aria-live="polite">Chargement de votre don de soutien…</p>}
+          <p className="mt-6 rounded-xl border border-start-gold/25 bg-start-gold/[.06] px-4 py-3 text-sm leading-6 text-start-cream/75"><strong className="text-start-gold">Pour présenter vos services professionnels sur START,</strong> un abonnement professionnel est nécessaire. Il est activé par votre don de soutien, au choix mensuel ou annuel.</p>
           {isSupabase && subscriptionQuery.isError && <p className="mt-6 rounded-xl border border-network-red/25 bg-network-red/[.06] px-4 py-3 text-sm text-red-200" role="alert">Impossible de vérifier votre don de soutien pour le moment.</p>}
           {isSupabase && currentSubscription && <div className="mt-6 rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-3 text-sm leading-6 text-start-cream/70"><strong className="text-start-cream">{isEntitled ? "Don de soutien actif" : "Paiement à régulariser"}</strong> · {currentSubscription.plan.name}{currentSubscription.currentPeriodEnd ? ` jusqu’au ${new Intl.DateTimeFormat("fr-FR").format(new Date(currentSubscription.currentPeriodEnd))}` : ""}{currentSubscription.cancelAtPeriodEnd ? " · Renouvellement arrêté en fin de période" : ""}</div>}
           {!isSupabase && <div className="mt-6 rounded-xl border border-network-blue/20 bg-network-blue/[.055] px-4 py-2.5 text-sm leading-6 text-start-cream/65 max-sm:mt-4 max-sm:text-xs max-sm:leading-5">Aperçu frontend — aucun paiement ne sera débité.</div>}
