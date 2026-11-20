@@ -40,7 +40,7 @@ export default function SubscriptionPage() {
   const selectedPlan = plans.find((candidate) => candidate.interval === plan) ?? plans[0];
   const currentSubscription = subscriptionQuery.data;
   const isEntitled = currentSubscription?.status === "active" || currentSubscription?.status === "trialing";
-  const isProfessional = profileQuery.data?.accountType === "professional";
+  const isProfessional = (profileQuery.data?.accountTypes ?? (profileQuery.data ? [profileQuery.data.accountType] : [])).includes("professional");
   const formatter = new Intl.NumberFormat("fr-FR", { style: "currency", currency: selectedPlan?.currency ?? "EUR" });
 
   async function openCheckout() {

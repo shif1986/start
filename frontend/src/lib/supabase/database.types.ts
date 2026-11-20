@@ -25,6 +25,7 @@ export type Database = {
         Row: {
           account_status: Database["public"]["Enums"]["account_status"];
           account_type: Database["public"]["Enums"]["account_type"];
+          account_types: Database["public"]["Enums"]["account_type"][];
           avatar_url: string | null;
           bio: string | null;
           city: string | null;
@@ -40,6 +41,7 @@ export type Database = {
         Insert: {
           account_status?: Database["public"]["Enums"]["account_status"];
           account_type?: Database["public"]["Enums"]["account_type"];
+          account_types?: Database["public"]["Enums"]["account_type"][];
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
@@ -55,6 +57,7 @@ export type Database = {
         Update: {
           account_status?: Database["public"]["Enums"]["account_status"];
           account_type?: Database["public"]["Enums"]["account_type"];
+          account_types?: Database["public"]["Enums"]["account_type"][];
           avatar_url?: string | null;
           bio?: string | null;
           city?: string | null;
@@ -432,6 +435,10 @@ export type Database = {
       moderate_report: { Args: { p_report_id: string; p_status: Database["public"]["Enums"]["report_status"]; p_reason: string }; Returns: undefined };
       moderate_review: { Args: { p_review_id: string; p_action: string; p_reason: string }; Returns: undefined };
       complete_google_account_type: {
+        Args: { requested_account_type: Database["public"]["Enums"]["account_type"] };
+        Returns: undefined;
+      };
+      enable_my_account_type: {
         Args: { requested_account_type: Database["public"]["Enums"]["account_type"] };
         Returns: undefined;
       };

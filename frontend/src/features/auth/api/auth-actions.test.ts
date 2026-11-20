@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
-import { requestPasswordReset, resendSignupConfirmation, signInWithEmail, signInWithGoogle, signOut, signUpWithEmail, updatePassword } from "./auth-actions";
+import { deleteCurrentAccount, requestPasswordReset, resendSignupConfirmation, signInWithEmail, signInWithGoogle, signOut, signUpWithEmail, updateAccountEmail, updatePassword } from "./auth-actions";
 
 function createClient() {
   return {
@@ -13,6 +13,9 @@ function createClient() {
       resetPasswordForEmail: vi.fn().mockResolvedValue({ data: {}, error: null }),
       updateUser: vi.fn().mockResolvedValue({ data: { user: {} }, error: null }),
       signOut: vi.fn().mockResolvedValue({ error: null }),
+    },
+    functions: {
+      invoke: vi.fn().mockResolvedValue({ data: { deleted: true }, error: null }),
     },
   } as unknown as SupabaseClient<Database>;
 }
@@ -64,6 +67,12 @@ describe("auth actions", () => {
     expect(client.auth.updateUser).toHaveBeenCalledWith({ password: "nouveau-secret" });
   });
 
+  it("demande la confirmation de changement d’adresse e-mail à Supabase", async () => {
+    const client = createClient();
+    await updateAccountEmail("Nouveau@Example.test", client);
+    expect(client.auth.updateUser).toHaveBeenCalledWith({ email: "nouveau@example.test" });
+  });
+
   it("conserve l’identité saisie avant une inscription Google", async () => {
     const client = createClient();
     await signInWithGoogle("/abonnement", "professional", false, client, { displayName: "Jean Dupont", companyName: "Impact Conseil" });
@@ -106,5 +115,11 @@ describe("auth actions", () => {
     const client = createClient();
     await signOut(client);
     expect(client.auth.signOut).toHaveBeenCalledTimes(1);
+  });
+
+  it("demande la suppression au service protégé", async () => {
+    const client = createClient();
+    await deleteCurrentAccount(client);
+    expect(client.functions.invoke).toHaveBeenCalledWith("delete-account", { body: {} });
   });
 });

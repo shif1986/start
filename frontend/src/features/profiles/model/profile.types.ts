@@ -10,6 +10,7 @@ export type CurrentProfile = {
   city: string | null;
   role: Database["public"]["Enums"]["user_role"];
   accountType: Database["public"]["Enums"]["account_type"];
+  accountTypes: Database["public"]["Enums"]["account_type"][];
   accountStatus: Database["public"]["Enums"]["account_status"];
   isVerified: boolean;
 };

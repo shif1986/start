@@ -35,7 +35,8 @@ export default function ProtectedRoute({ children, roles, accountTypes, unauthor
   }
 
   const profile = profileQuery.data;
-  if (!profile || (roles && !roles.includes(profile.role)) || (accountTypes && !accountTypes.includes(profile.accountType))) {
+  const profileAccountTypes = profile?.accountTypes ?? (profile ? [profile.accountType] : []);
+  if (!profile || (roles && !roles.includes(profile.role)) || (accountTypes && !accountTypes.some((accountType) => profileAccountTypes.includes(accountType)))) {
     return <Navigate to={unauthorizedTo} replace />;
   }
 

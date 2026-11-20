@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
 import { getSupabaseClient } from "../../../lib/supabase/client";
 import { getSupabaseEnv } from "../../../lib/supabase/env";
+import { getFunctionErrorMessage } from "../../../lib/supabase/function-error";
 
 type EmailCredentials = {
   email: string;
@@ -53,6 +54,9 @@ export async function signUpWithEmail(credentials: SignUpCredentials, client: Su
       },
     },
   });
+  if (error?.code === "user_already_exists" || /already registered|already exists/i.test(error?.message ?? "")) {
+    throw new Error("Cette adresse e-mail est déjà associée à un compte. Connectez-vous, puis activez votre second espace dans Paramètres.", { cause: error });
+  }
   if (error) throw new Error("Impossible de créer ce compte.", { cause: error });
   return data;
 }
@@ -91,6 +95,11 @@ export async function updatePassword(password: string, client: SupabaseClient<Da
   return data;
 }
 
+export async function updateAccountEmail(email: string, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const { error } = await client.auth.updateUser({ email: email.trim().toLowerCase() });
+  if (error) throw new Error("Impossible de modifier l’adresse e-mail.", { cause: error });
+}
+
 export async function signInWithGoogle(
   redirectPath: string | undefined,
   accountType: Database["public"]["Enums"]["account_type"],
@@ -127,4 +136,10 @@ export async function signInWithGoogle(
 export async function signOut(client: SupabaseClient<Database> = getSupabaseClient()) {
   const { error } = await client.auth.signOut();
   if (error) throw new Error("Impossible de vous déconnecter.", { cause: error });
+}
+
+export async function deleteCurrentAccount(client: SupabaseClient<Database> = getSupabaseClient()) {
+  const { data, error } = await client.functions.invoke<{ deleted?: boolean; error?: string }>("delete-account", { body: {} });
+  if (error) throw new Error(await getFunctionErrorMessage(error, "La suppression du compte est momentanément indisponible."), { cause: error });
+  if (!data?.deleted) throw new Error(data?.error ?? "La suppression du compte n’a pas abouti.");
 }

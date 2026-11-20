@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import AccountShell from "../components/AccountShell";
-import { signOut } from "../features/auth/api/auth-actions";
+import { deleteCurrentAccount, signOut } from "../features/auth/api/auth-actions";
+import DeleteAccountSection from "../features/auth/components/DeleteAccountSection";
 import { useCurrentProfile } from "../features/profiles/hooks/use-current-profile";
 import { customerAccountNavigation, professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { useCurrentSubscription } from "../features/subscriptions/hooks/use-current-subscription";
@@ -91,6 +92,17 @@ export default function AccountDashboardPage({ role }: { role: AccountRole }) {
     }
   }
 
+  async function handleDeleteAccount() {
+    try {
+      await deleteCurrentAccount();
+      queryClient.clear();
+      await signOut().catch(() => undefined);
+      navigate("/", { replace: true });
+    } catch (error) {
+      throw error instanceof Error ? error : new Error("La suppression du compte n’a pas abouti.");
+    }
+  }
+
   return (
     <AccountShell
       eyebrow={content.eyebrow}
@@ -116,6 +128,7 @@ export default function AccountDashboardPage({ role }: { role: AccountRole }) {
         </section>
         <aside className="rounded-2xl border border-start-gold/20 bg-[radial-gradient(circle_at_top,rgba(199,164,93,.1),transparent_45%),#121418] p-6"><span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Prochaine étape</span><h2 className="mt-3 text-xl font-semibold">{role === "professional" ? "Compléter votre profil" : role === "admin" ? "Vérifier les signalements" : "Découvrir des professionnels"}</h2><p className="mt-3 text-sm leading-6 text-start-cream/55">{isSupabase ? "Les prochaines actions seront proposées à partir de vos données réelles." : "Les actions seront connectées aux données réelles lors de l’intégration du backend."}</p>{role === "admin" && <a className="mt-4 block break-all text-sm font-semibold text-start-gold underline decoration-start-gold/35 underline-offset-4" href={`mailto:${CONTACT_EMAIL}`}>{CONTACT_EMAIL}</a>}</aside>
       </div>
+      {isSupabase && role !== "admin" && profileQuery.data?.role === "user" && <DeleteAccountSection accountType={role} disabled={!user} onDelete={handleDeleteAccount} />}
     </AccountShell>
   );
 }

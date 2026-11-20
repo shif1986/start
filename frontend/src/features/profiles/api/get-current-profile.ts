@@ -6,7 +6,7 @@ import type { CurrentProfile } from "../model/profile.types";
 export async function getCurrentProfile(userId: string, client: SupabaseClient<Database> = getSupabaseClient()): Promise<CurrentProfile> {
   const currentResult = await client
     .from("profiles")
-    .select("id,username,display_name,company_name,avatar_url,bio,city,role,account_type,account_status,is_verified")
+    .select("id,username,display_name,company_name,avatar_url,bio,city,role,account_type,account_types,account_status,is_verified")
     .eq("id", userId)
     .single();
 
@@ -22,13 +22,15 @@ export async function getCurrentProfile(userId: string, client: SupabaseClient<D
       city: data.city,
       role: data.role,
       accountType: data.account_type,
+      accountTypes: data.account_types,
       accountStatus: data.account_status,
       isVerified: data.is_verified,
     };
   }
 
   const isMissingAccountStatus = currentResult.error.code === "42703"
-    || currentResult.error.message.includes("account_status");
+    || currentResult.error.message.includes("account_status")
+    || currentResult.error.message.includes("account_types");
 
   if (!isMissingAccountStatus) {
     throw new Error("Impossible de charger votre profil.", { cause: currentResult.error });
@@ -55,6 +57,7 @@ export async function getCurrentProfile(userId: string, client: SupabaseClient<D
     city: data.city,
     role: data.role,
     accountType: data.account_type,
+    accountTypes: [data.account_type],
     accountStatus: "active",
     isVerified: data.is_verified,
   };

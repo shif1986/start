@@ -63,4 +63,11 @@ describe("ProtectedRoute", () => {
     renderRoute(<ProtectedRoute roles={["admin", "moderator"]}><div>Administration</div></ProtectedRoute>);
     expect(screen.getByText("Administration")).toBeInTheDocument();
   });
+
+  it("autorise l’espace professionnel d’une identité qui cumule les deux espaces", () => {
+    useAuthMock.mockReturnValue({ session: { user: { id: "dual-user-id" } }, isLoading: false });
+    useCurrentProfileMock.mockReturnValue({ data: { role: "user", accountType: "customer", accountTypes: ["customer", "professional"] }, isPending: false });
+    renderRoute(<ProtectedRoute accountTypes={["professional"]}><div>Espace professionnel</div></ProtectedRoute>);
+    expect(screen.getByText("Espace professionnel")).toBeInTheDocument();
+  });
 });

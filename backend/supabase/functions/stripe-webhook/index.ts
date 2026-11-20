@@ -52,6 +52,9 @@ Deno.serve(async (request) => {
     const userId = subscription.metadata.user_id || existing.data?.user_id;
     const planId = subscription.metadata.plan_id || existing.data?.plan_id;
     if (!userId || !planId) throw new Error("Métadonnées d’abonnement Stripe incomplètes");
+    const profile = await admin.from("profiles").select("id").eq("id", userId).maybeSingle();
+    if (profile.error) throw profile.error;
+    if (!profile.data) return;
     const firstItem = subscription.items.data[0];
     const periodStart = (subscription as Stripe.Subscription & { current_period_start?: number }).current_period_start ?? firstItem?.current_period_start;
     const periodEnd = (subscription as Stripe.Subscription & { current_period_end?: number }).current_period_end ?? firstItem?.current_period_end;

@@ -45,8 +45,8 @@ export default function ListingDetailPage() {
   const listing = dataSource === "supabase" ? listingQuery.data ?? demoListing : demoListing;
   const isSupabaseListing = dataSource === "supabase" && Boolean(listingQuery.data);
   const isAuthenticated = Boolean(session);
-  const canReview = (profileQuery.data?.accountType === "customer" || profileQuery.data?.accountType === "professional")
-    && profileQuery.data.accountStatus === "active"
+  const canReview = (profileQuery.data?.accountTypes ?? (profileQuery.data ? [profileQuery.data.accountType] : [])).length > 0
+    && profileQuery.data?.accountStatus === "active"
     && listing?.ownerId !== session?.user.id;
   const hasDemoContactAccess = dataSource === "supabase" && !isSupabaseListing && isAuthenticated;
   const hasContactAccess = (isSupabaseListing || hasDemoContactAccess)

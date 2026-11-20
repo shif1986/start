@@ -4,6 +4,7 @@ export const professionalAccountNavigation = [
   { label: "Mes favoris", to: "/espace/professionnel/favoris" },
   { label: "Mes avis", to: "/espace/professionnel/avis" },
   { label: "Mon profil", to: "/espace/professionnel/profil" },
+  { label: "Paramètres", to: "/espace/professionnel/parametres" },
   { label: "Abonnement", to: "/espace/professionnel/abonnement" },
 ] as const;
 
@@ -11,4 +12,5 @@ export const customerAccountNavigation = [
   { label: "Vue d’ensemble", to: "/espace/particulier" },
   { label: "Mes favoris", to: "/espace/particulier/favoris" },
   { label: "Mes avis", to: "/espace/particulier/avis" },
+  { label: "Paramètres", to: "/espace/particulier/parametres" },
 ] as const;

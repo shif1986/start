@@ -2,29 +2,32 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BrandPattern from "../components/BrandPattern";
 import ThemedPage from "../components/ThemedPage";
-import { signOut } from "../features/auth/api/auth-actions";
 import { useAuth } from "../features/auth/context/use-auth";
+import { enableAccountType } from "../features/profiles/api/enable-account-type";
+import { profileKeys } from "../features/profiles/model/profile-keys";
 import { queryClient } from "../lib/query-client";
 
 export default function ProfessionalAccountRequiredPage() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const isAuthenticated = Boolean(session);
-  const [isSigningOut, setIsSigningOut] = useState(false);
+  const [isActivating, setIsActivating] = useState(false);
   const [error, setError] = useState("");
 
-  async function startProfessionalRegistration() {
-    setIsSigningOut(true);
+  async function startProfessionalSpace() {
+    setIsActivating(true);
     setError("");
     try {
       if (isAuthenticated) {
-        await signOut();
-        queryClient.clear();
+        await enableAccountType("professional");
+        await queryClient.invalidateQueries({ queryKey: profileKeys.all });
+        navigate("/abonnement", { replace: true });
+        return;
       }
       navigate("/inscription?type=professional&redirect=/abonnement", { replace: true });
     } catch {
-      setError("Impossible de vous déconnecter pour le moment.");
-      setIsSigningOut(false);
+      setError("Impossible d’activer l’espace professionnel pour le moment.");
+      setIsActivating(false);
     }
   }
 
@@ -47,8 +50,8 @@ export default function ProfessionalAccountRequiredPage() {
           </div>
           <aside className="border-l border-start-cream/10 bg-[#0b0d10] p-[clamp(24px,5vw,48px)] max-md:border-t max-md:border-l-0">
             <span className="text-xs font-bold tracking-[.18em] text-start-gold uppercase">Passer à l’étape suivante</span>
-            <p className="mt-4 text-sm leading-6 text-start-cream/55">{isAuthenticated ? "La création d’un compte professionnel nécessite de quitter votre session particulière actuelle." : "Créez un compte professionnel, puis activez un abonnement pour pouvoir soumettre vos annonces."}</p>
-            <button type="button" onClick={() => void startProfessionalRegistration()} disabled={isSigningOut} className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-start-gold px-5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60">{isSigningOut ? "Déconnexion…" : "Créer un compte professionnel"}</button>
+            <p className="mt-4 text-sm leading-6 text-start-cream/55">{isAuthenticated ? "Activez votre espace professionnel avec la même adresse e-mail, sans quitter votre compte particulier." : "Créez un compte professionnel, puis activez un abonnement pour pouvoir soumettre vos annonces."}</p>
+            <button type="button" onClick={() => void startProfessionalSpace()} disabled={isActivating} className="mt-6 inline-flex min-h-12 w-full items-center justify-center rounded-xl bg-start-gold px-5 font-bold text-start-ink disabled:cursor-wait disabled:opacity-60">{isActivating ? "Activation…" : isAuthenticated ? "Activer mon espace professionnel" : "Créer un compte professionnel"}</button>
             <Link to={isAuthenticated ? "/espace/particulier" : "/connexion?redirect=%2Fpublier"} className="mt-3 inline-flex min-h-12 w-full items-center justify-center rounded-xl border border-start-cream/15 px-5 text-center font-semibold text-start-cream/65">{isAuthenticated ? "Retour à mon espace" : "J’ai déjà un compte professionnel"}</Link>
             {error && <p className="mt-4 text-sm text-red-200" role="alert">{error}</p>}
           </aside>

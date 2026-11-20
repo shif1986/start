@@ -31,6 +31,7 @@ const ProfessionalAccountRequiredPage = lazy(() => import("./pages/ProfessionalA
 const AdminDashboardPage = lazy(() => import("./pages/AdminDashboardPage"));
 const EditListingPage = lazy(() => import("./pages/EditListingPage"));
 const EditProfessionalProfilePage = lazy(() => import("./pages/EditProfessionalProfilePage"));
+const AccountSettingsPage = lazy(() => import("./pages/AccountSettingsPage"));
 const PublicProfessionalProfilePage = lazy(() => import("./pages/PublicProfessionalProfilePage"));
 const NotFoundPage = lazy(() => import("./pages/NotFoundPage"));
 
@@ -66,12 +67,14 @@ function App() {
           <Route path="/espace/particulier" element={<ProtectedRoute accountTypes={["customer"]}><AccountDashboardPage role="customer" /></ProtectedRoute>} />
           <Route path="/espace/particulier/favoris" element={<ProtectedRoute accountTypes={["customer"]}><CustomerFavoritesPage /></ProtectedRoute>} />
           <Route path="/espace/particulier/avis" element={<ProtectedRoute accountTypes={["customer"]}><CustomerReviewsPage /></ProtectedRoute>} />
+          <Route path="/espace/particulier/parametres" element={<ProtectedRoute accountTypes={["customer"]}><AccountSettingsPage accountType="customer" /></ProtectedRoute>} />
           <Route path="/espace/professionnel" element={<ProtectedRoute accountTypes={["professional"]}><AccountDashboardPage role="professional" /></ProtectedRoute>} />
           <Route path="/espace/professionnel/annonces" element={<ProtectedRoute accountTypes={["professional"]}><ProfessionalListingsPage /></ProtectedRoute>} />
           <Route path="/espace/professionnel/annonces/:listingId/modifier" element={<ProtectedRoute accountTypes={["professional"]}><EditListingPage /></ProtectedRoute>} />
           <Route path="/espace/professionnel/profil" element={<ProtectedRoute accountTypes={["professional"]}><EditProfessionalProfilePage /></ProtectedRoute>} />
           <Route path="/espace/professionnel/favoris" element={<ProtectedRoute accountTypes={["professional"]}><CustomerFavoritesPage accountType="professional" /></ProtectedRoute>} />
           <Route path="/espace/professionnel/avis" element={<ProtectedRoute accountTypes={["professional"]}><CustomerReviewsPage accountType="professional" /></ProtectedRoute>} />
+          <Route path="/espace/professionnel/parametres" element={<ProtectedRoute accountTypes={["professional"]}><AccountSettingsPage accountType="professional" /></ProtectedRoute>} />
           <Route path="/espace/professionnel/abonnement" element={<ProtectedRoute accountTypes={["professional"]}><ProfessionalSubscriptionPage /></ProtectedRoute>} />
           <Route path="/admin" element={<ProtectedRoute roles={["moderator", "admin"]}><AdminDashboardPage /></ProtectedRoute>} />
           <Route path="/abonnement" element={<SubscriptionPage />} />

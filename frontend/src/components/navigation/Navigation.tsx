@@ -20,8 +20,9 @@ export default function Navigation() {
   const closeMenu = useCallback(() => setIsMenuOpen(false), []);
   const navigationState: NavigationState = isMenuOpen ? "menu-open" : displayState;
   const accountType = profileQuery.data?.accountType ?? user?.user_metadata.account_type;
+  const accountTypes = profileQuery.data?.accountTypes ?? (accountType ? [accountType] : []);
   const role = profileQuery.data?.role;
-  const accountPath = accountType === "professional"
+  const accountPath = accountTypes.includes("professional")
     ? "/espace/professionnel"
     : role === "admin" || role === "moderator"
       ? "/admin"
