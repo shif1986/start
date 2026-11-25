@@ -4,6 +4,7 @@ values
   ('10000000-0000-4000-8000-000000000002', null, 'Immobilier', 'immobilier', 'house', 20),
   ('10000000-0000-4000-8000-000000000003', null, 'Maison', 'maison', 'armchair', 30),
   ('10000000-0000-4000-8000-000000000004', null, 'Électronique', 'electronique', 'laptop', 40),
+  ('10000000-0000-4000-8000-000000000016', null, 'Informatique', 'informatique', 'computer', 45),
   ('10000000-0000-4000-8000-000000000005', null, 'Services', 'services', 'wrench', 50),
   ('10000000-0000-4000-8000-000000000006', '10000000-0000-4000-8000-000000000001', 'Vélos', 'velos', 'bike', 10)
 on conflict (id) do nothing;

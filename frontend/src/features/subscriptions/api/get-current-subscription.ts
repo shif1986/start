@@ -24,7 +24,27 @@ export async function getCurrentSubscription(
   if (error) {
     throw new Error("Impossible de charger votre abonnement.", { cause: error });
   }
-  if (!data) return null;
+  if (!data) {
+    const { data: grants, error: grantError } = await client.rpc("get_my_professional_access_grant");
+    if (grantError) throw new Error("Impossible de charger votre accès professionnel offert.", { cause: grantError });
+    const grant = grants[0];
+    if (!grant) return null;
+    return {
+      id: grant.grant_id,
+      status: "active",
+      currentPeriodEnd: grant.ends_at,
+      cancelAtPeriodEnd: false,
+      isStripeManaged: false,
+      source: "grant",
+      plan: {
+        code: "professional_access_grant",
+        name: grant.duration === "lifetime" ? "Accès professionnel offert à vie" : "Accès professionnel offert",
+        interval: "yearly",
+        priceCents: 0,
+        currency: "EUR",
+      },
+    };
+  }
 
   const subscription = data as unknown as SubscriptionResult;
   return {
@@ -33,6 +53,7 @@ export async function getCurrentSubscription(
     currentPeriodEnd: subscription.current_period_end,
     cancelAtPeriodEnd: subscription.cancel_at_period_end,
     isStripeManaged: subscription.provider_customer_id?.startsWith("cus_") ?? false,
+    source: "subscription",
     plan: {
       code: subscription.subscription_plans.code,
       name: subscription.subscription_plans.name,

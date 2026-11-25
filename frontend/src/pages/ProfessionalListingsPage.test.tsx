@@ -8,6 +8,7 @@ const listingMocks = vi.hoisted(() => ({ own: vi.fn() }));
 vi.mock("../lib/data-source", () => ({ getDataSource: () => "supabase" }));
 vi.mock("../features/listings/hooks/use-owner-listings", () => ({ useOwnerListings: listingMocks.own }));
 vi.mock("../features/listings/components/SubmitListingButton", () => ({ default: () => <button type="button">Soumettre</button> }));
+vi.mock("../features/listings/components/DeleteListingButton", () => ({ default: () => <button type="button">Supprimer</button> }));
 
 describe("ProfessionalListingsPage", () => {
   beforeEach(() => {
@@ -38,6 +39,7 @@ describe("ProfessionalListingsPage", () => {
     expect(screen.getByRole("heading", { name: "Mes annonces" })).toBeInTheDocument();
     expect(screen.getByText("Service professionnel")).toBeInTheDocument();
     expect(screen.getByText("Brouillon")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Supprimer" })).toBeInTheDocument();
   });
 
   it("propose une action claire lorsque la liste est vide", () => {

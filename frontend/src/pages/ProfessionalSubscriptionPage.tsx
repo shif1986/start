@@ -30,7 +30,9 @@ export default function ProfessionalSubscriptionPage() {
     && (subscription.status === "active" || subscription.status === "trialing")
     && (!expiresAt || expiresAt.getTime() > Date.now()),
   );
-  const formattedEndDate = expiresAt
+  const formattedEndDate = subscription?.source === "grant" && !expiresAt
+    ? "À vie"
+    : expiresAt
     ? new Intl.DateTimeFormat("fr-FR", { dateStyle: "long" }).format(expiresAt)
     : "Non renseignée";
   const price = subscription
@@ -104,12 +106,12 @@ export default function ProfessionalSubscriptionPage() {
                   {isCurrent ? "Abonnement actif" : "Abonnement inactif"}
                 </span>
                 <h2 className="mt-6 text-[clamp(1.65rem,3vw,2.5rem)] font-semibold tracking-[-.035em]">{subscription.plan.name}</h2>
-                <p className="mt-3 text-start-cream/55">{subscription.plan.interval === "monthly" ? "Formule mensuelle" : "Formule annuelle"} · {price}</p>
+                <p className="mt-3 text-start-cream/55">{subscription.source === "grant" ? "Accès accordé par START · gratuit" : `${subscription.plan.interval === "monthly" ? "Formule mensuelle" : "Formule annuelle"} · ${price}`}</p>
               </div>
               <div className="min-w-64 rounded-2xl border border-start-cream/10 bg-black/20 p-5 max-sm:w-full">
                 <span className="text-xs font-bold tracking-[.15em] text-start-cream/40 uppercase">Valable jusqu’au</span>
                 <strong className="mt-3 block text-2xl text-start-gold">{formattedEndDate}</strong>
-                <p className="mt-3 text-sm leading-6 text-start-cream/50">{subscription.cancelAtPeriodEnd ? "La résiliation est prévue à cette date." : subscription.status === "trialing" ? "Période de test actuellement active." : "Renouvellement prévu en fin de période."}</p>
+                <p className="mt-3 text-sm leading-6 text-start-cream/50">{subscription.source === "grant" ? (expiresAt ? "Cet accès offert expirera à cette date." : "Cet accès offert n’a pas de date d’expiration.") : subscription.cancelAtPeriodEnd ? "La résiliation est prévue à cette date." : subscription.status === "trialing" ? "Période de test actuellement active." : "Renouvellement prévu en fin de période."}</p>
               </div>
             </div>
           </section>
@@ -131,7 +133,7 @@ export default function ProfessionalSubscriptionPage() {
               </div>
               {portalError && <p role="alert" className="mt-4 text-sm text-red-200">{portalError}</p>}
               {portalError.startsWith("Le client Stripe associé est introuvable.") && <div className="mt-4 rounded-xl border border-network-yellow/25 bg-network-yellow/[.06] p-4 text-sm leading-6 text-start-cream/70"><p>Cette entrée ne correspond à aucun client dans le compte Stripe actuellement configuré. Vous pouvez retirer cet accès local pour souscrire à nouveau. Cette action ne résilie aucun paiement dans un autre compte Stripe.</p><button type="button" disabled={resetPending} onClick={() => void resetUnmatchedSubscription()} className="mt-3 inline-flex min-h-10 items-center justify-center rounded-lg border border-start-gold/30 px-4 font-semibold text-start-gold disabled:opacity-50">{resetPending ? "Réinitialisation…" : "Réinitialiser cet abonnement inaccessible"}</button></div>}
-              <p className="mt-5 text-xs leading-5 text-start-cream/40">{subscription.isStripeManaged ? "Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe." : "Votre abonnement d’essai est géré par START. La gestion Stripe n’est pas disponible pour cette période."}</p>
+              <p className="mt-5 text-xs leading-5 text-start-cream/40">{subscription.source === "grant" ? "Cet accès offert est géré par START. Aucun paiement n’est prélevé." : subscription.isStripeManaged ? "Les moyens de paiement, factures et résiliations sont gérés dans le portail sécurisé Stripe." : "Votre abonnement d’essai est géré par START. La gestion Stripe n’est pas disponible pour cette période."}</p>
             </aside>
           </div>
         </div>

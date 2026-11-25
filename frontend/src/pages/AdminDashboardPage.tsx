@@ -6,6 +6,7 @@ import PendingListingCard from "../features/admin/components/PendingListingCard"
 import AdminReviewCard from "../features/admin/components/AdminReviewCard";
 import AdminProfileCard from "../features/admin/components/AdminProfileCard";
 import AdminReportCard from "../features/admin/components/AdminReportCard";
+import ProfessionalAccessGrantsPanel from "../features/admin/components/ProfessionalAccessGrantsPanel";
 import { useAdminDashboard } from "../features/admin/hooks/use-admin-dashboard";
 import { getDataSource } from "../lib/data-source";
 import { queryClient } from "../lib/query-client";
@@ -14,6 +15,7 @@ const navigation = [
   { label: "Vue globale", to: "/admin" },
   { label: "Annonces à valider", to: "/admin#annonces-a-valider" },
   { label: "Utilisateurs", to: "/admin#utilisateurs" },
+  { label: "Accès offerts", to: "/admin#acces-offerts" },
   { label: "Signalements", to: "/admin#signalements" },
   { label: "Avis", to: "/admin#avis" },
 ];
@@ -67,6 +69,7 @@ export default function AdminDashboardPage() {
           <section id="utilisateurs" className="scroll-mt-36 rounded-2xl border border-start-cream/10 bg-[#121418] p-6"><span className="text-xs font-bold tracking-[.16em] text-network-blue uppercase">Utilisateurs</span><h2 className="mt-3 text-xl font-semibold">Profils à contrôler</h2>{data?.profiles?.length ? <div className="mt-5 grid gap-4">{data.profiles.map((profile) => <AdminProfileCard key={profile.id} profile={profile} />)}</div> : <p className="mt-3 text-sm text-start-cream/55">Aucun profil à contrôler.</p>}</section>
           <section id="signalements" className="scroll-mt-36 rounded-2xl border border-start-cream/10 bg-[#121418] p-6"><span className="text-xs font-bold tracking-[.16em] text-network-red uppercase">Signalements</span><h2 className="mt-3 text-xl font-semibold">Contenus signalés</h2>{data?.reports?.length ? <div className="mt-5 grid gap-4">{data.reports.map((report) => <AdminReportCard key={report.id} report={report} />)}</div> : <p className="mt-3 text-sm text-start-cream/55">Aucun signalement à traiter.</p>}</section>
         </div>
+        <ProfessionalAccessGrantsPanel />
         <section id="avis" className="mt-8 scroll-mt-36 rounded-2xl border border-start-cream/10 bg-[#121418] p-6"><span className="text-xs font-bold tracking-[.16em] text-start-gold uppercase">Modération</span><h2 className="mt-3 text-xl font-semibold">Avis de la communauté</h2>{data?.reviews.length ? <div className="mt-5 grid gap-4">{data.reviews.map((review) => <AdminReviewCard key={review.id} review={review} />)}</div> : <p className="mt-4 text-sm text-start-cream/50">Aucun avis à modérer.</p>}</section>
         <section className="mt-8 rounded-2xl border border-start-cream/10 bg-[#121418] p-6"><span className="text-xs font-bold tracking-[.16em] text-network-blue uppercase">Traçabilité</span><h2 className="mt-3 text-xl font-semibold">Journal d’audit</h2>{data?.auditLog?.length ? <div className="mt-5 grid gap-3">{data.auditLog.map((entry) => <article key={entry.id} className="rounded-xl border border-start-cream/10 p-4"><strong>{entry.action}</strong><p className="mt-1 text-sm text-start-cream/55">{entry.moderatorName} · {entry.targetType} · {entry.reason}</p><time className="mt-1 block text-xs text-start-cream/35">{new Date(entry.createdAt).toLocaleString("fr-FR")}</time></article>)}</div> : <p className="mt-3 text-sm text-start-cream/55">Aucune action enregistrée.</p>}</section>
       </>}

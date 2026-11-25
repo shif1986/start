@@ -454,6 +454,14 @@ export type Database = {
         Args: Record<PropertyKey, never>;
         Returns: boolean;
       };
+      get_my_professional_access_grant: {
+        Args: Record<PropertyKey, never>;
+        Returns: {
+          grant_id: string;
+          ends_at: string | null;
+          duration: Database["public"]["Enums"]["professional_access_duration"];
+        }[];
+      };
       search_listings_v2: {
         Args: {
           category_slug?: string | null;
@@ -542,6 +550,7 @@ export type Database = {
       user_role: "user" | "moderator" | "admin";
       subscription_interval: "monthly" | "yearly";
       subscription_status: "incomplete" | "trialing" | "active" | "past_due" | "canceled" | "unpaid";
+      professional_access_duration: "one_year" | "lifetime";
     };
     CompositeTypes: Record<string, never>;
   };

@@ -30,8 +30,8 @@ describe("ListingCreationForm", () => {
 
     await user.selectOptions(screen.getByLabelText("Catégorie"), "category-id");
     await user.click(screen.getByRole("button", { name: "Continuer" }));
-    await user.type(screen.getByLabelText("Titre"), "Conseil aux entrepreneurs");
-    await user.type(screen.getByLabelText("Description"), "Une description suffisamment complète pour être acceptée.");
+    await user.type(screen.getByLabelText("Titre de votre service"), "Conseil aux entrepreneurs");
+    await user.type(screen.getByLabelText("Description de votre service"), "Une description suffisamment complète pour être acceptée.");
     await user.click(screen.getByRole("button", { name: "Continuer" }));
     await user.type(screen.getByLabelText("Ville"), "Paris");
     await user.type(screen.getByLabelText("Téléphone"), "0600000000");

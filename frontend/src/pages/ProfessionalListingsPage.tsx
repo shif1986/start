@@ -3,6 +3,7 @@ import AccountShell from "../components/AccountShell";
 import { useOwnerListings } from "../features/listings/hooks/use-owner-listings";
 import type { DatabaseListingStatus } from "../features/listings/model/listing.types";
 import SubmitListingButton from "../features/listings/components/SubmitListingButton";
+import DeleteListingButton from "../features/listings/components/DeleteListingButton";
 import { professionalAccountNavigation } from "../features/profiles/model/account-navigation";
 import { getDataSource } from "../lib/data-source";
 
@@ -66,6 +67,7 @@ export default function ProfessionalListingsPage() {
                 {listing.status === "draft" && <SubmitListingButton listingId={listing.id} />}
                 <Link to={`/espace/professionnel/annonces/${listing.id}/modifier`} className="inline-flex min-h-11 items-center justify-center rounded-xl bg-start-gold px-4 text-sm font-bold text-start-ink">Modifier</Link>
                 <Link to={`/annonce/${listing.slug}`} className="inline-flex min-h-11 items-center justify-center rounded-xl border border-start-cream/15 px-4 text-sm font-semibold text-start-cream/70 hover:border-start-gold hover:text-start-gold">Voir</Link>
+                <DeleteListingButton listingId={listing.id} />
               </div>
             </article>
           ))}

@@ -81,7 +81,7 @@ export default function AccountSettingsPage({ accountType }: { accountType: Acco
 
   const inputClass = "min-h-11 rounded-xl border border-start-cream/15 bg-[#0b0d10] px-4 py-3 text-start-cream outline-none focus:border-start-gold";
   const fields: { name: keyof ProfileFormValues; label: string; type?: string; wide?: boolean }[] = [
-    { name: "username", label: "Nom d’utilisateur" }, { name: "displayName", label: "Nom et prénom" }, { name: "avatarUrl", label: "Adresse HTTPS de la photo", type: "url", wide: true }, { name: "city", label: "Ville" },
+    { name: "displayName", label: "Nom et prénom" }, { name: "username", label: "Nom de profil" }, { name: "avatarUrl", label: "Adresse HTTPS de la photo", type: "url", wide: true }, { name: "city", label: "Ville" },
     ...(isProfessional ? [{ name: "companyName" as const, label: "Nom de l’entreprise" }, { name: "phone" as const, label: "Téléphone professionnel", type: "tel" }, { name: "publicEmail" as const, label: "E-mail professionnel public", type: "email" }, { name: "postalAddress" as const, label: "Adresse postale", wide: true }] : []),
   ];
   const otherLabel = isProfessional ? "particulier" : "professionnel";

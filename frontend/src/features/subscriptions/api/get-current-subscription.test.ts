@@ -3,7 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
 import { getCurrentSubscription } from "./get-current-subscription";
 
-function createClientResult(data: unknown, error: unknown = null) {
+function createClientResult(data: unknown, error: unknown = null, grants: unknown[] = []) {
   const maybeSingle = vi.fn().mockResolvedValue({ data, error });
   const order = vi.fn().mockReturnValue({ maybeSingle });
   const eqUser = vi.fn().mockReturnValue({ order });
@@ -12,7 +12,7 @@ function createClientResult(data: unknown, error: unknown = null) {
   const from = vi.fn().mockReturnValue({ select });
 
   return {
-    client: { from } as unknown as SupabaseClient<Database>,
+    client: { from, rpc: vi.fn().mockResolvedValue({ data: grants, error: null }) } as unknown as SupabaseClient<Database>,
     from,
     select,
     inStatus,
@@ -39,6 +39,7 @@ describe("getCurrentSubscription", () => {
       currentPeriodEnd: "2026-09-28T00:00:00Z",
       cancelAtPeriodEnd: false,
       isStripeManaged: true,
+      source: "subscription",
       plan: { code: "pro_monthly", name: "Pro mensuel", interval: "monthly", priceCents: 700, currency: "EUR" },
     });
     expect(query.from).toHaveBeenCalledWith("subscriptions");
@@ -62,6 +63,14 @@ describe("getCurrentSubscription", () => {
 
   it("retourne null lorsqu'aucun abonnement n'existe", async () => {
     await expect(getCurrentSubscription("user-1", createClientResult(null).client)).resolves.toBeNull();
+  });
+
+  it("retourne un accès offert actif lorsqu’aucun abonnement payant n’existe", async () => {
+    const query = createClientResult(null, null, [{ grant_id: "grant-1", ends_at: null, duration: "lifetime" }]);
+    await expect(getCurrentSubscription("user-1", query.client)).resolves.toMatchObject({
+      id: "grant-1", status: "active", source: "grant", currentPeriodEnd: null,
+      plan: { code: "professional_access_grant", priceCents: 0 },
+    });
   });
 
   it("refuse un identifiant utilisateur vide", async () => {

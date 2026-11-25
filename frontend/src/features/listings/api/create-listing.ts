@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "../../../lib/supabase/database.types";
 import { getSupabaseClient } from "../../../lib/supabase/client";
+import { geocodeFrenchLocation } from "../../maps/api/geocode-listing-location";
 
 export type CreateListingInput = {
   ownerId: string;
@@ -34,6 +35,10 @@ function listingSlug(title: string) {
 }
 
 export async function createListing(input: CreateListingInput, client: SupabaseClient<Database> = getSupabaseClient()) {
+  const location = input.countryCode === "FR"
+    ? await geocodeFrenchLocation(input.city, input.postalCode).catch(() => null)
+    : null;
+
   const { data, error } = await client
     .from("listings")
     .insert({
@@ -44,8 +49,10 @@ export async function createListing(input: CreateListingInput, client: SupabaseC
       description: input.description.trim(),
       city: input.city.trim(),
       postal_code: input.postalCode.trim() || null,
-      subdivision_code: input.subdivisionCode.trim() || null,
-      subdivision_name: input.subdivisionName.trim() || null,
+      subdivision_code: location?.subdivisionCode ?? (input.subdivisionCode.trim() || null),
+      subdivision_name: location?.subdivisionName ?? (input.subdivisionName.trim() || null),
+      latitude: location?.latitude ?? null,
+      longitude: location?.longitude ?? null,
       price: input.price,
       price_unit: input.priceUnit,
       currency: "EUR",

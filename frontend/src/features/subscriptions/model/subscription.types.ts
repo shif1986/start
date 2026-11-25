@@ -15,5 +15,6 @@ export type CurrentSubscription = {
   currentPeriodEnd: string | null;
   cancelAtPeriodEnd: boolean;
   isStripeManaged: boolean;
+  source?: "subscription" | "grant";
   plan: Omit<SubscriptionPlan, "id">;
 };

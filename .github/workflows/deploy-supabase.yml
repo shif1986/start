@@ -49,6 +49,7 @@ jobs:
           supabase functions deploy create-subscription-checkout --workdir backend
           supabase functions deploy create-customer-portal --workdir backend
           supabase functions deploy delete-account --workdir backend
+          supabase functions deploy manage-professional-access --workdir backend
           supabase functions deploy create-donation-checkout --workdir backend
           supabase functions deploy get-donation-status --workdir backend
           supabase functions deploy stripe-webhook --workdir backend
