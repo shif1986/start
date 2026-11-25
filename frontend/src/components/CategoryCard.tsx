@@ -5,7 +5,17 @@ import CategoryIcon from "./CategoryIcon";
 const blueCategories = new Set(["services", "real-estate", "vehicles", "multimedia", "business", "agriculture"]);
 const redCategories = new Set(["jobs", "home-garden", "fashion-accessories", "animals", "construction-industry", "other-listings"]);
 
-export default function CategoryCard({ category, count, compact = false, featured = false }: { category: Category; count?: number; compact?: boolean; featured?: boolean }) {
+type HomeLayout = "spotlight" | "rail";
+
+type CategoryCardProps = {
+  category: Category;
+  count?: number;
+  compact?: boolean;
+  featured?: boolean;
+  homeLayout?: HomeLayout;
+};
+
+export default function CategoryCard({ category, count, compact = false, featured = false, homeLayout }: CategoryCardProps) {
   const accent = blueCategories.has(category.id) ? "blue" : redCategories.has(category.id) ? "red" : "gold";
   const iconAccent = accent === "blue"
     ? "border-network-blue/70 bg-network-blue shadow-[0_10px_28px_rgba(77,163,255,.22)]"
@@ -14,10 +24,52 @@ export default function CategoryCard({ category, count, compact = false, feature
       : "border-start-gold/70 bg-start-gold shadow-[0_10px_28px_rgba(199,164,93,.2)]";
   const textAccent = accent === "blue" ? "text-network-blue" : accent === "red" ? "text-network-red" : "text-network-yellow";
 
+  if (compact) {
+    const isSpotlight = homeLayout === "spotlight";
+
+    return (
+      <Link
+        to={`/annonces?category=${encodeURIComponent(category.slug)}`}
+        className={`home-category-card home-category-card--${accent} home-category-card--${homeLayout ?? "rail"} group relative isolate overflow-hidden`}
+      >
+        <div className="home-category-card__image" aria-hidden="true">
+          {category.image && (
+            <img
+              src={category.image}
+              alt=""
+              loading="lazy"
+              decoding="async"
+            />
+          )}
+        </div>
+        <div className="home-category-card__content">
+          <div className="home-category-card__topline">
+            <span className="home-category-card__icon">
+              <CategoryIcon name={category.icon} className="size-5" />
+            </span>
+            <span className="home-category-card__eyebrow">
+              {isSpotlight ? "À découvrir" : "Catégorie"}
+            </span>
+          </div>
+          <div className="home-category-card__copy">
+            <h3>{category.shortLabel ?? category.label}</h3>
+            <p>{category.description}</p>
+          </div>
+          <div className="home-category-card__footer">
+            <span>{count ?? 0} annonce{count === 1 ? "" : "s"}</span>
+            <span className="home-category-card__arrow" aria-hidden="true">
+              {isSpotlight ? "Découvrir ↗" : "↗"}
+            </span>
+          </div>
+        </div>
+      </Link>
+    );
+  }
+
   return (
     <Link
       to={`/annonces?category=${encodeURIComponent(category.slug)}`}
-      className={`category-card group relative isolate overflow-hidden rounded-2xl border-start-cream/25 bg-[#14171d] shadow-[0_14px_35px_rgba(34,34,30,.12)] transition duration-300 [border-style:solid] [border-width:.5px] hover:-translate-y-1 hover:border-start-gold/65 ${compact ? "min-h-52" : "min-h-72"} ${featured ? "row-span-2 min-h-[432px] max-lg:row-span-1 max-lg:min-h-64" : ""}`}
+      className={`category-card group relative isolate overflow-hidden rounded-2xl border-start-cream/25 bg-[#14171d] shadow-[0_14px_35px_rgba(34,34,30,.12)] transition duration-300 [border-style:solid] [border-width:.5px] hover:-translate-y-1 hover:border-start-gold/65 min-h-72 ${featured ? "row-span-2 min-h-[432px] max-lg:row-span-1 max-lg:min-h-64" : ""}`}
     >
       {category.image && <img src={category.image} alt="" loading="lazy" decoding="async" className="category-card-image absolute inset-0 size-full object-cover brightness-[.92] saturate-[.9] transition duration-500 group-hover:scale-105 group-hover:brightness-100" />}
       <span className="category-card-overlay absolute inset-0 bg-[linear-gradient(to_top,rgba(11,14,19,.94)_0%,rgba(11,14,19,.68)_24%,rgba(11,14,19,.16)_58%,rgba(11,14,19,.04)_100%)]" />

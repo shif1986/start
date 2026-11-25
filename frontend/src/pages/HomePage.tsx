@@ -263,13 +263,24 @@ export default function HomePage() {
             </span>
           </Link>
         </div>
-        <div className="relative z-10 grid grid-cols-[1.4fr_repeat(3,1fr)] gap-x-6 gap-y-12 max-lg:grid-cols-2 max-lg:gap-y-10 max-sm:grid-cols-1 max-sm:gap-y-8">
-          {homeCategories.map((category, index) => (
+        <div className="home-category-explorer relative z-10">
+          <CategoryCard
+            category={homeCategories[0]}
+            compact
+            homeLayout="spotlight"
+            count={
+              homeListings.filter(
+                (listing) => listing.categorySlug === homeCategories[0].slug,
+              ).length
+            }
+          />
+          <div className="home-category-rail">
+          {homeCategories.slice(1).map((category) => (
             <CategoryCard
               key={category.id}
               category={category}
               compact
-              featured={index === 0}
+              homeLayout="rail"
               count={
                 homeListings.filter(
                   (listing) => listing.categorySlug === category.slug,
@@ -277,6 +288,7 @@ export default function HomePage() {
               }
             />
           ))}
+          </div>
         </div>
       </section>
 
