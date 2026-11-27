@@ -17,3 +17,6 @@ Images téléchargées depuis Pexels et utilisées conformément à la [licence 
 | `evenements.webp` | Événements | This And No Internet 25 | https://www.pexels.com/photo/professional-conference-with-audience-listening-to-speaker-35335992/ |
 | `entraide.webp` | Associations & Entraide | Pexels contributor | https://www.pexels.com/photo/volunteers-giving-donations-6646924/ |
 | `communaute.webp` | Églises & Communautés | Caleb Oquendo | https://www.pexels.com/photo/vivid-church-service-with-worship-atmosphere-34516689/ |
+| `commerce-entreprise.jpg` | Commerce & Entreprise | Image générée | OpenAI Image Generation |
+| `agriculture.jpg` | Agriculture | Image générée | OpenAI Image Generation |
+| `btp-industrie.jpg` | BTP & Industrie | Image générée | OpenAI Image Generation |

@@ -163,32 +163,6 @@ function FitListings({ listings, selectedCountry }: { listings: Listing[]; selec
   return null;
 }
 
-function AccessibleMapCounts() {
-  const map = useMap();
-
-  useEffect(() => {
-    const describeCount = (tooltip: Element) => {
-      const count = [...tooltip.classList]
-        .find((className) => className.startsWith("start-map-count--"))
-        ?.replace("start-map-count--", "");
-      if (!count) return;
-
-      tooltip.setAttribute("aria-label", `${count} annonce${count === "1" ? "" : "s"} dans cette zone`);
-    };
-    const describeAllCounts = () => {
-      map.getContainer().querySelectorAll(".start-map-count").forEach(describeCount);
-    };
-
-    describeAllCounts();
-    const observer = new MutationObserver(describeAllCounts);
-    observer.observe(map.getContainer(), { childList: true, subtree: true });
-
-    return () => observer.disconnect();
-  }, [map]);
-
-  return null;
-}
-
 export default function ListingsMap({ listings, selectedCountry = "" }: { listings: Listing[]; selectedCountry?: string }) {
   const [franceDepartmentsGeoJson, setFranceDepartmentsGeoJson] = useState<FeatureCollection | null>(null);
   const [switzerlandGeoJson, setSwitzerlandGeoJson] = useState<FeatureCollection | null>(null);
@@ -219,7 +193,7 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
     };
   }, []);
 
-  const groups = useMemo(() => {
+  const markers = useMemo(() => {
     const franceAreas = new Map<string, [number, number]>();
     franceDepartmentsGeoJson?.features.forEach((feature) => {
       const properties = feature.properties as { code?: unknown; nom?: unknown } | null;
@@ -232,20 +206,42 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
     const swissCenter = switzerlandGeoJson?.features[0]
       ? featureCenter(switzerlandGeoJson.features[0]) ?? switzerlandCenter
       : switzerlandCenter;
-    const grouped = new Map<string, Listing[]>();
-    listings.forEach((listing) => {
+    const points = listings.map((listing) => {
       const isSwiss = listing.country === "Suisse";
       const position = listing.coordinates
         ?? (isSwiss
           ? swissCenter
           : franceAreas.get(normalizeLocation(listing.department)) ?? franceCenter);
-      const key = position.join(",");
-      grouped.set(key, [...(grouped.get(key) ?? []), listing]);
+      return { listing, position };
     });
-    return [...grouped.entries()].map(([key, listingsAtLocation]) => ({
-      position: key.split(",").map(Number) as [number, number],
-      listings: listingsAtLocation,
-    }));
+
+    const occurrences = new Map<string, number>();
+    const totals = new Map<string, number>();
+    points.forEach(({ position }) => {
+      const key = position.join(",");
+      totals.set(key, (totals.get(key) ?? 0) + 1);
+    });
+
+    return points.map(({ listing, position }, index) => {
+      const key = position.join(",");
+      const occurrence = occurrences.get(key) ?? 0;
+      occurrences.set(key, occurrence + 1);
+      const total = totals.get(key) ?? 1;
+      if (total === 1) return { listing, position, color: markerColors[index % markerColors.length] };
+
+      // Separate adverts published in the same city just enough to make each
+      // individual point selectable, while keeping them near that city.
+      const angle = (occurrence / total) * Math.PI * 2;
+      const distance = 0.035 * (1 + Math.floor(occurrence / 6));
+      return {
+        listing,
+        position: [
+          position[0] + Math.sin(angle) * distance,
+          position[1] + (Math.cos(angle) * distance) / Math.max(Math.cos(position[0] * Math.PI / 180), 0.25),
+        ] as [number, number],
+        color: markerColors[index % markerColors.length],
+      };
+    });
   }, [franceDepartmentsGeoJson, listings, switzerlandGeoJson]);
 
   const franceOutlineGeoJson = useMemo(
@@ -267,7 +263,6 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
         />
         <ZoomControl position="bottomright" />
         <FitListings listings={listings} selectedCountry={selectedCountry} />
-        <AccessibleMapCounts />
         {franceDepartmentsGeoJson && <GeoJSON
           data={franceDepartmentsGeoJson}
           interactive={false}
@@ -302,29 +297,24 @@ export default function ListingsMap({ listings, selectedCountry = "" }: { listin
           }}
         />}
 
-        {groups.map(({ position, listings: listingsAtLocation }, index) => {
-          const first = listingsAtLocation[0];
-          const markerColor = markerColors[index % markerColors.length];
-          const markerRadius = listingsAtLocation.length > 1 ? 20 : 16;
+        {markers.map(({ position, listing, color }) => {
           return (
             <CircleMarker
-              key={position.join(",")}
+              key={listing.id}
               center={position}
-              radius={markerRadius}
-              pathOptions={{ color: "#f4efe5a6", fillColor: markerColor, fillOpacity: 0.76, opacity: 0.8, weight: 1 }}
+              radius={5.5}
+              pathOptions={{ color: "#f4efe5", fillColor: color, fillOpacity: 0.94, opacity: 1, weight: 1.4 }}
             >
-              <Tooltip permanent direction="center" className={`start-map-count start-map-count--${listingsAtLocation.length}`}>
-                {listingsAtLocation.length}
+              <Tooltip direction="top" offset={[0, -8]}>
+                {listing.city} · {listing.title}
               </Tooltip>
               <Popup minWidth={230}>
                 <div className="grid gap-3 text-[#22221e]">
-                  <strong>{first.city} · {first.department} · {first.country ?? "France"}</strong>
-                  {listingsAtLocation.map((listing) => (
-                    <Link key={listing.id} to={`/annonce/${listing.slug ?? listing.id}`} className="border-t border-black/10 pt-2 no-underline">
-                      <span className="block text-xs font-semibold text-[#9b762c] uppercase">{listing.category}</span>
-                      <span className="mt-1 block font-semibold text-[#22221e]">{listing.title}</span>
-                    </Link>
-                  ))}
+                  <strong>{listing.city} · {listing.department} · {listing.country ?? "France"}</strong>
+                  <Link to={`/annonce/${listing.slug ?? listing.id}`} className="border-t border-black/10 pt-2 no-underline">
+                    <span className="block text-xs font-semibold text-[#9b762c] uppercase">{listing.category}</span>
+                    <span className="mt-1 block font-semibold text-[#22221e]">{listing.title}</span>
+                  </Link>
                 </div>
               </Popup>
             </CircleMarker>

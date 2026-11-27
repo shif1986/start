@@ -239,7 +239,9 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="home-categories-section relative overflow-hidden border-t border-start-cream/10 px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
+      <section className="home-categories-section relative isolate overflow-hidden border-t border-start-cream/10 px-[clamp(20px,5vw,72px)] py-28 text-start-cream shadow-[inset_0_1px_0_rgba(255,255,255,.025)] max-sm:py-16">
+        <div className="home-categories-orbit home-categories-orbit--one" aria-hidden="true" />
+        <div className="home-categories-orbit home-categories-orbit--two" aria-hidden="true" />
         <div className="home-categories-header relative z-10 mb-14 flex items-end justify-between gap-6 max-sm:mb-9 max-sm:flex-col max-sm:items-start">
           <div>
             <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[.22em] text-network-yellow uppercase"><span className="size-1.5 rounded-full bg-network-yellow" aria-hidden="true" />
